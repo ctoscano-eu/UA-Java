@@ -7,11 +7,13 @@ import java.util.Locale;
 import org.opcfoundation.ua.application.Client;
 import org.opcfoundation.ua.application.SessionChannel;
 import org.opcfoundation.ua.builtintypes.DataValue;
+import org.opcfoundation.ua.builtintypes.ExpandedNodeId;
 import org.opcfoundation.ua.builtintypes.LocalizedText;
 import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.StatusCode;
 import org.opcfoundation.ua.cert.DefaultCertificateValidator;
 import org.opcfoundation.ua.cert.PkiDirectoryCertificateStore;
+import org.opcfoundation.ua.common.NamespaceTable;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
 import org.opcfoundation.ua.core.Attributes;
@@ -36,6 +38,7 @@ public class MyCLient {
 	private DefaultCertificateValidator myCertValidator;
 	private MyCertValidationListener myCertValidationListener;
 	private KeyPair myHttpsCertificate;
+	private NamespaceTable namespaceTable;
 
 	public String appName;
 	public Client client;
@@ -92,6 +95,9 @@ public class MyCLient {
 		// The certificate to use for HTTPS
 		myHttpsCertificate = ExampleKeys.getHttpsCert(appName);
 		client.getApplication().getHttpsSettings().setKeyPair(myHttpsCertificate);
+
+		// Not required to create the Client but usefull for later service invocations
+		namespaceTable = new NamespaceTable();
 	}
 
 	public SessionChannel createSession(String url) throws ServiceResultException {
@@ -122,9 +128,14 @@ public class MyCLient {
 		BrowseResponse res = sessionChannel.Browse(null, null, null, nodesToBrowse);
 
 		assertEquals(0, res.getDiagnosticInfos().length);
+		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
 		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
 
 		return res.getResults()[0].getReferences();
+	}
+
+	public ReferenceDescription[] browse(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+		return browse(toNodeId(expandedNodeIdArray));
 	}
 
 	public DataValue[] read(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
@@ -134,9 +145,21 @@ public class MyCLient {
 		ReadResponse res = sessionChannel.Read(null, null, TimestampsToReturn.Neither, nodesToRead);
 
 		assertEquals(0, res.getDiagnosticInfos().length);
+		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
 		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
 
 		return res.getResults();
+	}
+
+	public DataValue[] read(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+		return read(toNodeId(expandedNodeIdArray));
+	}
+
+	private NodeId[] toNodeId(ExpandedNodeId... expandedNodeIdArray) throws ServiceResultException {
+		NodeId[] nodeIdArray = new NodeId[expandedNodeIdArray.length];
+		for (int i = 0; i < nodeIdArray.length; ++i)
+			nodeIdArray[i] = namespaceTable.toNodeId(expandedNodeIdArray[i]);
+		return nodeIdArray;
 	}
 
 }

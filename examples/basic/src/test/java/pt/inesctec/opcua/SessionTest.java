@@ -37,11 +37,19 @@ public class SessionTest {
 		try {
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
 			ReferenceDescription[] references = myClient.browse(nodeIdArray);
-
 			assertEquals(3, references.length);
 			assertEquals("Objects", references[0].getBrowseName().getName());
 			assertEquals("Types", references[1].getBrowseName().getName());
 			assertEquals("Views", references[2].getBrowseName().getName());
+			
+			references = myClient.browse(references[0].getNodeId());
+			assertEquals(3, references.length);
+			assertEquals("Server", references[0].getBrowseName().getName());
+			assertEquals("MyCNCDevice", references[1].getBrowseName().getName());
+			assertEquals("MyCNCDevice", references[2].getBrowseName().getName());
+			
+			references = myClient.browse(references[0].getNodeId());
+			assertEquals(12, references.length);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
