@@ -3,9 +3,11 @@ package pt.inesctec.opcua;
 import java.util.Locale;
 
 import org.opcfoundation.ua.application.Client;
+import org.opcfoundation.ua.application.SessionChannel;
 import org.opcfoundation.ua.builtintypes.LocalizedText;
 import org.opcfoundation.ua.cert.DefaultCertificateValidator;
 import org.opcfoundation.ua.cert.PkiDirectoryCertificateStore;
+import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
 import org.opcfoundation.ua.examples.certs.ExampleKeys;
 import org.opcfoundation.ua.transport.security.HttpsSecurityPolicy;
@@ -21,13 +23,15 @@ public class MyCLient {
 	private DefaultCertificateValidator myCertValidator;
 	private MyCertValidationListener myCertValidationListener;
 	private KeyPair myHttpsCertificate;
+	private SessionChannel sessionChannel;
 
-	public MyCLient(String appName) {
+	public MyCLient() {
 		super();
-		this.appName = appName;
 	}
 
-	public void create() throws ServiceResultException {
+	public void create(String appName) throws ServiceResultException {
+
+		this.appName = appName;
 
 		// Set default key size for created certificates. The default value is also 2048,
 		// but in some cases you may want to specify a different size.
@@ -72,6 +76,19 @@ public class MyCLient {
 		// The certificate to use for HTTPS
 		myHttpsCertificate = ExampleKeys.getHttpsCert(appName);
 		client.getApplication().getHttpsSettings().setKeyPair(myHttpsCertificate);
+	}
+
+	public SessionChannel createSession(String url) throws ServiceResultException {
+		sessionChannel = client.createSessionChannel(url);
+		// mySession.activate("username", "123");
+		sessionChannel.activate();
+
+		return sessionChannel;
+	}
+
+	public void shutdownSession() throws ServiceFaultException, ServiceResultException {
+		sessionChannel.close();
+		sessionChannel.closeAsync();
 	}
 
 }

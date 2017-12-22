@@ -24,15 +24,10 @@
 
 package org.opcfoundation.ua.examples;
 
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.EnumSet;
 
+import org.opcfoundation.ua.application.SessionChannel;
 import org.opcfoundation.ua.builtintypes.NodeId;
-import org.opcfoundation.ua.cert.CertificateCheck;
-import org.opcfoundation.ua.cert.DefaultCertificateValidatorListener;
-import org.opcfoundation.ua.cert.ValidationResult;
-import org.opcfoundation.ua.core.ApplicationDescription;
 import org.opcfoundation.ua.core.Attributes;
 import org.opcfoundation.ua.core.BrowseDescription;
 import org.opcfoundation.ua.core.BrowseDirection;
@@ -43,10 +38,8 @@ import org.opcfoundation.ua.core.NodeClass;
 import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.TimestampsToReturn;
-import org.opcfoundation.ua.transport.security.Cert;
 
 import pt.inesctec.opcua.MyCLient;
-import pt.inesctec.opcua.MySession;
 
 /**
  * Sample client creates a connection to OPC UA Server (1st arg), browses and reads a boolean value. It is configured to work against NanoServer example, using the address opc.tcp://localhost:8666/
@@ -54,42 +47,6 @@ import pt.inesctec.opcua.MySession;
  * NOTE: Does not work against SeverExample1, since it does not support Browse
  */
 public class SampleClient {
-
-	private static class MyValidationListener implements DefaultCertificateValidatorListener {
-
-		@Override
-		public ValidationResult onValidate(Cert certificate, ApplicationDescription applicationDescription, EnumSet<CertificateCheck> passedChecks) {
-			System.out.println("Validating Server Certificate...");
-			if (passedChecks.containsAll(CertificateCheck.COMPULSORY)) {
-				System.out.println("Server Certificate is valid and trusted, accepting certificate!");
-				return ValidationResult.AcceptPermanently;
-			}
-			else {
-				System.out.println("Certificate Details: " + certificate.getCertificate().toString());
-				System.out.println("Do you want to accept this certificate?\n" + " (A=Always, Y=Yes, this time, N=No)");
-				while (true) {
-					try {
-						char c;
-						c = Character.toLowerCase((char) System.in.read());
-						if (c == 'a') {
-							return ValidationResult.AcceptPermanently;
-						}
-						if (c == 'y') {
-							return ValidationResult.AcceptOnce;
-						}
-						if (c == 'n') {
-							return ValidationResult.Reject;
-						}
-					}
-					catch (IOException e) {
-						System.out.println("Error reading input! Not accepting certificate.");
-						return ValidationResult.Reject;
-					}
-				}
-			}
-		}
-
-	}
 
 	public static void main(String[] args) throws Exception {
 		if (args.length == 0) {
@@ -99,10 +56,10 @@ public class SampleClient {
 		String url = args[0];
 		System.out.print("SampleClient: Connecting to " + url + " .. ");
 
-		MyCLient myClient = new MyCLient("SampleClient");
-		myClient.create();
+		MyCLient myClient = new MyCLient();
+		myClient.create("SampleClient");
 
-		MySession mySession = new MySession(myClient);
+		SessionChannel mySession = myClient.createSession(url);
 
 		///////////// EXECUTE //////////////
 		// Browse Root
@@ -112,20 +69,20 @@ public class SampleClient {
 		browse.setIncludeSubtypes(true);
 		browse.setNodeClassMask(NodeClass.Object, NodeClass.Variable);
 		browse.setResultMask(BrowseResultMask.All);
-		BrowseResponse res3 = mySession.sessionChannel.Browse(null, null, null, browse);
+		BrowseResponse res3 = mySession.Browse(null, null, null, browse);
 		System.out.println(res3);
 
 		// Read Namespace Array
-		ReadResponse res5 = mySession.sessionChannel.Read(null, null, TimestampsToReturn.Neither, new ReadValueId(Identifiers.Server_NamespaceArray, Attributes.Value, null, null));
+		ReadResponse res5 = mySession.Read(null, null, TimestampsToReturn.Neither, new ReadValueId(Identifiers.Server_NamespaceArray, Attributes.Value, null, null));
 		String[] namespaceArray = (String[]) res5.getResults()[0].getValue().getValue();
 		System.out.println(Arrays.toString(namespaceArray));
 
 		// Read a variable (Works with NanoServer example!)
-		ReadResponse res4 = mySession.sessionChannel.Read(null, 500.0, TimestampsToReturn.Source, new ReadValueId(new NodeId(1, 1007), Attributes.Value, null, null),
+		ReadResponse res4 = mySession.Read(null, 500.0, TimestampsToReturn.Source, new ReadValueId(new NodeId(1, 1007), Attributes.Value, null, null),
 		    new ReadValueId(new NodeId(1, 1006), Attributes.Value, null, null), new ReadValueId(new NodeId(1, "Boolean"), Attributes.Value, null, null));
 		System.out.println(res4);
 
-		mySession.shutdown();
+		myClient.shutdownSession();
 	}
 
 }
