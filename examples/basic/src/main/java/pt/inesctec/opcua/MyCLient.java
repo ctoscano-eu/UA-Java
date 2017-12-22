@@ -16,14 +16,15 @@ import org.opcfoundation.ua.utils.CertificateUtils;
 
 public class MyCLient {
 
-	private String appName;
 	private KeyPair keyPair;
-	public Client client;
 	private PkiDirectoryCertificateStore myCertStore;
 	private DefaultCertificateValidator myCertValidator;
 	private MyCertValidationListener myCertValidationListener;
 	private KeyPair myHttpsCertificate;
-	private SessionChannel sessionChannel;
+
+	public String appName;
+	public Client client;
+	public SessionChannel sessionChannel;
 
 	public MyCLient() {
 		super();
