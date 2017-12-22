@@ -11,3 +11,7 @@ bin/
 /TestCert.der
 /TestKey_https.pem
 /TestKey.pem
+
+examples/publisher/.settings
+examples/publisher/.classpath
+examples/publisher/.project
