@@ -9,11 +9,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opcfoundation.ua.builtintypes.DataValue;
 import org.opcfoundation.ua.builtintypes.NodeId;
+import org.opcfoundation.ua.builtintypes.QualifiedName;
 import org.opcfoundation.ua.builtintypes.StatusCode;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
+import org.opcfoundation.ua.core.BrowsePath;
+import org.opcfoundation.ua.core.BrowsePathResult;
 import org.opcfoundation.ua.core.Identifiers;
 import org.opcfoundation.ua.core.ReferenceDescription;
+import org.opcfoundation.ua.core.RelativePath;
+import org.opcfoundation.ua.core.RelativePathElement;
 
 public class SessionTest {
 
@@ -41,13 +46,13 @@ public class SessionTest {
 			assertEquals("Objects", references[0].getBrowseName().getName());
 			assertEquals("Types", references[1].getBrowseName().getName());
 			assertEquals("Views", references[2].getBrowseName().getName());
-			
+
 			references = myClient.browse(references[0].getNodeId());
 			assertEquals(3, references.length);
 			assertEquals("Server", references[0].getBrowseName().getName());
 			assertEquals("MyCNCDevice", references[1].getBrowseName().getName());
 			assertEquals("MyCNCDevice", references[2].getBrowseName().getName());
-			
+
 			references = myClient.browse(references[0].getNodeId());
 			assertEquals(12, references.length);
 			assertEquals("ServerArray", references[0].getBrowseName().getName());
@@ -68,30 +73,28 @@ public class SessionTest {
 		}
 	}
 
-	//	@Test
-	//	public void testTranslateRoot() {
-	//		try {
-	//			BrowsePath path = new BrowsePath();
-	//			path.setStartingNode(Identifiers.RootFolder);
-	//			RelativePath relativePath = new RelativePath();
-	//			RelativePathElement e = 
-	//			relativePath.setElements(Elements);
-	//			path.setRelativePath(RelativePath);
-	//
-	//			TranslateBrowsePathsToNodeIdsResponse res = myClient.sessionChannel.TranslateBrowsePathsToNodeIds(null, path);
-	//			checkTranslateBrowsePathsToNodeIdsResponse(res);
-	//		}
-	//		catch (Throwable t) {
-	//			t.printStackTrace();
-	//		}
-	//	}
-	//
-	//	private void checkTranslateBrowsePathsToNodeIdsResponse(TranslateBrowsePathsToNodeIdsResponse res) {
-	//		assertEquals(0, res.getDiagnosticInfos().length);
-	//
-	//		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
-	//
-	//	}
+	@Test
+	public void testTranslateRoot() {
+		try {
+			BrowsePath path = new BrowsePath();
+			path.setStartingNode(Identifiers.RootFolder);
+
+			RelativePath relativePath = new RelativePath();
+			RelativePathElement[] elements = new RelativePathElement[] { new RelativePathElement() };
+			elements[0].setTargetName(new QualifiedName("Objects"));
+			relativePath.setElements(elements);
+
+			path.setRelativePath(relativePath);
+
+			BrowsePathResult[] res = myClient.translateBrowsePathsToNodeIds(path);
+			assertEquals(1, res.length);
+			assertEquals(1, res[0].getTargets().length);
+			res[0].getTargets()[0].getTargetId().toString();
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
 
 	@Test
 	public void testReadVariables() {

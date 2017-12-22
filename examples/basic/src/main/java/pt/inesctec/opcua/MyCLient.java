@@ -19,6 +19,8 @@ import org.opcfoundation.ua.common.ServiceResultException;
 import org.opcfoundation.ua.core.Attributes;
 import org.opcfoundation.ua.core.BrowseDescription;
 import org.opcfoundation.ua.core.BrowseDirection;
+import org.opcfoundation.ua.core.BrowsePath;
+import org.opcfoundation.ua.core.BrowsePathResult;
 import org.opcfoundation.ua.core.BrowseResponse;
 import org.opcfoundation.ua.core.BrowseResultMask;
 import org.opcfoundation.ua.core.NodeClass;
@@ -26,6 +28,7 @@ import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.ReferenceDescription;
 import org.opcfoundation.ua.core.TimestampsToReturn;
+import org.opcfoundation.ua.core.TranslateBrowsePathsToNodeIdsResponse;
 import org.opcfoundation.ua.examples.certs.ExampleKeys;
 import org.opcfoundation.ua.transport.security.HttpsSecurityPolicy;
 import org.opcfoundation.ua.transport.security.KeyPair;
@@ -155,6 +158,17 @@ public class MyCLient {
 		return read(toNodeId(expandedNodeIdArray));
 	}
 
+	public BrowsePathResult[] translateBrowsePathsToNodeIds(BrowsePath... pathToTranslate) throws ServiceFaultException, ServiceResultException {
+
+		TranslateBrowsePathsToNodeIdsResponse res = sessionChannel.TranslateBrowsePathsToNodeIds(null, pathToTranslate);
+
+		assertEquals(0, res.getDiagnosticInfos().length);
+		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
+
+		return res.getResults();
+	}
+
 	private NodeId[] toNodeId(ExpandedNodeId... expandedNodeIdArray) throws ServiceResultException {
 		NodeId[] nodeIdArray = new NodeId[expandedNodeIdArray.length];
 		for (int i = 0; i < nodeIdArray.length; ++i)
@@ -162,4 +176,7 @@ public class MyCLient {
 		return nodeIdArray;
 	}
 
+	private NodeId toNodeId(ExpandedNodeId expandedNodeId) throws ServiceResultException {
+		return namespaceTable.toNodeId(expandedNodeId);
+	}
 }
