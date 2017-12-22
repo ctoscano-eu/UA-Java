@@ -15,3 +15,7 @@ bin/
 examples/publisher/.settings
 examples/publisher/.classpath
 examples/publisher/.project
+
+IntermediateCA*.der
+LeafCert.der
+RootCA.der
