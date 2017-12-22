@@ -50,6 +50,18 @@ public class SessionTest {
 			
 			references = myClient.browse(references[0].getNodeId());
 			assertEquals(12, references.length);
+			assertEquals("ServerArray", references[0].getBrowseName().getName());
+			assertEquals("NamespaceArray", references[1].getBrowseName().getName());
+			assertEquals("ServerStatus", references[2].getBrowseName().getName());
+			assertEquals("ServiceLevel", references[3].getBrowseName().getName());
+			assertEquals("Auditing", references[4].getBrowseName().getName());
+			assertEquals("EstimatedReturnTime", references[5].getBrowseName().getName());
+			assertEquals("ServerCapabilities", references[6].getBrowseName().getName());
+			assertEquals("ServerDiagnostics", references[7].getBrowseName().getName());
+			assertEquals("VendorServerInfo", references[8].getBrowseName().getName());
+			assertEquals("ServerRedundancy", references[9].getBrowseName().getName());
+			assertEquals("Namespaces", references[10].getBrowseName().getName());
+			assertEquals("ServerConfiguration", references[11].getBrowseName().getName());
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
