@@ -19,3 +19,10 @@
 /ClientServerExample_https.pem
 /ClientServerExample.der
 /ClientServerExample.pem
+
+/SampleCA.der
+/SampleCA.pem
+/SampleClient.der
+/SampleClient.pem
+/SampleClient_https.der
+/SampleClient_https.pem
