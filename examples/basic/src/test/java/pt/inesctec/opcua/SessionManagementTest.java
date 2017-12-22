@@ -18,7 +18,7 @@ public class SessionManagementTest {
 
 		assertNotNull(myClient.client);
 		assertNotNull(myClient.sessionChannel);
-		
+
 		assertNotNull(myClient.client.getApplicationHttpsSettings());
 		assertNotNull(myClient.client.getApplicatioOpcTcpSettings());
 		assertNotNull(myClient.client.getEndpointConfiguration());
@@ -35,8 +35,10 @@ public class SessionManagementTest {
 	@Test
 	public void testCreateSession() {
 		try {
-			setUp();
-			shutdown();
+			for (int i = 0; i < 3; ++i) {
+				setUp();
+				shutdown();
+			}
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
