@@ -12,12 +12,8 @@ import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.StatusCode;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
-import org.opcfoundation.ua.core.Attributes;
 import org.opcfoundation.ua.core.Identifiers;
-import org.opcfoundation.ua.core.ReadResponse;
-import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.ReferenceDescription;
-import org.opcfoundation.ua.core.TimestampsToReturn;
 
 public class SessionTest {
 
@@ -39,7 +35,8 @@ public class SessionTest {
 	@Test
 	public void testBrowseRoot() {
 		try {
-			ReferenceDescription[] references = myClient.browse(Identifiers.RootFolder);
+			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
+			ReferenceDescription[] references = myClient.browse(nodeIdArray);
 
 			assertEquals(3, references.length);
 			assertEquals("Objects", references[0].getBrowseName().getName());
@@ -77,27 +74,17 @@ public class SessionTest {
 	//	}
 
 	@Test
-	public void testReadNamespaceArray() {
-		try {
-			DataValue[] dataValues = myClient.read(Identifiers.Server_NamespaceArray);
-
-			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());
-			assertNotNull(dataValues[0].getValue().toString());
-		}
-		catch (Throwable t) {
-			t.printStackTrace();
-		}
-	}
-
-	@Test
 	public void testReadVariables() {
 		try {
-			DataValue[] dataValues = myClient.read(new NodeId[] {new NodeId(1, 1007), new NodeId(1, 1006), new NodeId(1, "Boolean")});
-			
+			NodeId[] nodeIdArray = new NodeId[] { Identifiers.Server_NamespaceArray, new NodeId(1, 1007), new NodeId(1, 1006), new NodeId(1, "Boolean") };
+			DataValue[] dataValues = myClient.read(nodeIdArray);
+
 			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());
 			assertEquals(StatusCode.GOOD, dataValues[1].getStatusCode());
-			assertNotEquals(StatusCode.GOOD, dataValues[2].getStatusCode());
+			assertEquals(StatusCode.GOOD, dataValues[1].getStatusCode());
+			assertNotEquals(StatusCode.GOOD, dataValues[3].getStatusCode());
 			assertNotNull(dataValues[0].getValue().toString());
+			assertNotNull(dataValues[1].getValue().toString());
 			assertNotNull(dataValues[1].getValue().toString());
 		}
 		catch (Throwable t) {

@@ -107,16 +107,19 @@ public class MyCLient {
 		sessionChannel.closeAsync();
 	}
 
-	public ReferenceDescription[] browse(NodeId nodeId) throws ServiceFaultException, ServiceResultException {
-		BrowseDescription nodeToBrowse = new BrowseDescription();
-		nodeToBrowse.setNodeId(nodeId);
-		nodeToBrowse.setBrowseDirection(BrowseDirection.Forward);
-		nodeToBrowse.setIncludeSubtypes(true);
-		nodeToBrowse.setNodeClassMask(NodeClass.Object, NodeClass.Variable);
-		nodeToBrowse.setResultMask(BrowseResultMask.All);
-		//browse.setReferenceTypeId
+	public ReferenceDescription[] browse(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+		BrowseDescription[] nodesToBrowse = new BrowseDescription[nodeIdArray.length];
+		for (int i = 0; i < nodeIdArray.length; ++i) {
+			nodesToBrowse[i] = new BrowseDescription();
+			nodesToBrowse[i].setNodeId(nodeIdArray[i]);
+			nodesToBrowse[i].setBrowseDirection(BrowseDirection.Forward);
+			nodesToBrowse[i].setIncludeSubtypes(true);
+			nodesToBrowse[i].setNodeClassMask(NodeClass.Object, NodeClass.Variable);
+			nodesToBrowse[i].setResultMask(BrowseResultMask.All);
+			//nodesToBrowse[i].setReferenceTypeId
+		}
 
-		BrowseResponse res = sessionChannel.Browse(null, null, null, nodeToBrowse);
+		BrowseResponse res = sessionChannel.Browse(null, null, null, nodesToBrowse);
 
 		assertEquals(0, res.getDiagnosticInfos().length);
 		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
@@ -125,9 +128,9 @@ public class MyCLient {
 	}
 
 	public DataValue[] read(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
-		ReadValueId[] nodesToRead = new ReadValueId[nodeIdArray.length]; 
-    for (int i=0; i < nodeIdArray.length; ++i)
-    	nodesToRead[i] = new ReadValueId(nodeIdArray[i], Attributes.Value, null, null);
+		ReadValueId[] nodesToRead = new ReadValueId[nodeIdArray.length];
+		for (int i = 0; i < nodeIdArray.length; ++i)
+			nodesToRead[i] = new ReadValueId(nodeIdArray[i], Attributes.Value, null, null);
 		ReadResponse res = sessionChannel.Read(null, null, TimestampsToReturn.Neither, nodesToRead);
 
 		assertEquals(0, res.getDiagnosticInfos().length);
