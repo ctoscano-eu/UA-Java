@@ -38,15 +38,15 @@ public class SessionTest {
 	@Test
 	public void testBrowseRoot() {
 		try {
-			BrowseDescription browse = new BrowseDescription();
-			browse.setNodeId(Identifiers.RootFolder);
-			browse.setBrowseDirection(BrowseDirection.Forward);
-			browse.setIncludeSubtypes(true);
-			browse.setNodeClassMask(NodeClass.Object, NodeClass.Variable);
-			browse.setResultMask(BrowseResultMask.All);
+			BrowseDescription startingNode = new BrowseDescription();
+			startingNode.setNodeId(Identifiers.RootFolder);
+			startingNode.setBrowseDirection(BrowseDirection.Forward);
+			startingNode.setIncludeSubtypes(true);
+			startingNode.setNodeClassMask(NodeClass.Object, NodeClass.Variable);
+			startingNode.setResultMask(BrowseResultMask.All);
 			//browse.setReferenceTypeId
 
-			BrowseResponse res = myClient.sessionChannel.Browse(null, null, null, browse);
+			BrowseResponse res = myClient.sessionChannel.Browse(null, null, null, startingNode);
 			checkBrowseResponseForRoot(res);
 		}
 		catch (Throwable t) {
