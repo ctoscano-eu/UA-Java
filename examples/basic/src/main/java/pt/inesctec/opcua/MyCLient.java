@@ -1,14 +1,29 @@
 package pt.inesctec.opcua;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Locale;
 
 import org.opcfoundation.ua.application.Client;
 import org.opcfoundation.ua.application.SessionChannel;
+import org.opcfoundation.ua.builtintypes.DataValue;
 import org.opcfoundation.ua.builtintypes.LocalizedText;
+import org.opcfoundation.ua.builtintypes.NodeId;
+import org.opcfoundation.ua.builtintypes.StatusCode;
 import org.opcfoundation.ua.cert.DefaultCertificateValidator;
 import org.opcfoundation.ua.cert.PkiDirectoryCertificateStore;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
+import org.opcfoundation.ua.core.Attributes;
+import org.opcfoundation.ua.core.BrowseDescription;
+import org.opcfoundation.ua.core.BrowseDirection;
+import org.opcfoundation.ua.core.BrowseResponse;
+import org.opcfoundation.ua.core.BrowseResultMask;
+import org.opcfoundation.ua.core.NodeClass;
+import org.opcfoundation.ua.core.ReadResponse;
+import org.opcfoundation.ua.core.ReadValueId;
+import org.opcfoundation.ua.core.ReferenceDescription;
+import org.opcfoundation.ua.core.TimestampsToReturn;
 import org.opcfoundation.ua.examples.certs.ExampleKeys;
 import org.opcfoundation.ua.transport.security.HttpsSecurityPolicy;
 import org.opcfoundation.ua.transport.security.KeyPair;
@@ -90,6 +105,35 @@ public class MyCLient {
 	public void shutdownSession() throws ServiceFaultException, ServiceResultException {
 		sessionChannel.close();
 		sessionChannel.closeAsync();
+	}
+
+	public ReferenceDescription[] browse(NodeId nodeId) throws ServiceFaultException, ServiceResultException {
+		BrowseDescription nodeToBrowse = new BrowseDescription();
+		nodeToBrowse.setNodeId(nodeId);
+		nodeToBrowse.setBrowseDirection(BrowseDirection.Forward);
+		nodeToBrowse.setIncludeSubtypes(true);
+		nodeToBrowse.setNodeClassMask(NodeClass.Object, NodeClass.Variable);
+		nodeToBrowse.setResultMask(BrowseResultMask.All);
+		//browse.setReferenceTypeId
+
+		BrowseResponse res = sessionChannel.Browse(null, null, null, nodeToBrowse);
+
+		assertEquals(0, res.getDiagnosticInfos().length);
+		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
+
+		return res.getResults()[0].getReferences();
+	}
+
+	public DataValue[] read(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+		ReadValueId[] nodesToRead = new ReadValueId[nodeIdArray.length]; 
+    for (int i=0; i < nodeIdArray.length; ++i)
+    	nodesToRead[i] = new ReadValueId(nodeIdArray[i], Attributes.Value, null, null);
+		ReadResponse res = sessionChannel.Read(null, null, TimestampsToReturn.Neither, nodesToRead);
+
+		assertEquals(0, res.getDiagnosticInfos().length);
+		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
+
+		return res.getResults();
 	}
 
 }

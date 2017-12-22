@@ -78,8 +78,10 @@ public class SampleClient {
 		System.out.println(Arrays.toString(namespaceArray));
 
 		// Read a variable (Works with NanoServer example!)
-		ReadResponse res4 = mySession.Read(null, 500.0, TimestampsToReturn.Source, new ReadValueId(new NodeId(1, 1007), Attributes.Value, null, null),
-		    new ReadValueId(new NodeId(1, 1006), Attributes.Value, null, null), new ReadValueId(new NodeId(1, "Boolean"), Attributes.Value, null, null));
+		ReadResponse res4 = mySession.Read(null, 500.0, TimestampsToReturn.Source, 
+				new ReadValueId(new NodeId(1, 1007), Attributes.Value, null, null),
+		    new ReadValueId(new NodeId(1, 1006), Attributes.Value, null, null), 
+		    new ReadValueId(new NodeId(1, "Boolean"), Attributes.Value, null, null));
 		System.out.println(res4);
 
 		myClient.shutdownSession();
