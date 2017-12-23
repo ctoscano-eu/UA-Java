@@ -135,7 +135,7 @@ public class SessionTest {
 	@Test
 	public void testRetrieveAllVariablesUnderObjects() {
 		try {
-			BrowsePathResult[] res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, "Objects");
+			BrowsePathResult[] res = myClient.translateBrowsePathsToNodeIds("/Objects");
 			ExpandedNodeId objectsNodeId = res[0].getTargets()[0].getTargetId();
 
 			List<ReferenceDescription> references = myClient.retrieveAllVariables(myClient.toNodeId(objectsNodeId));
