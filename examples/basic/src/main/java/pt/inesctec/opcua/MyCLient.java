@@ -13,6 +13,8 @@ import org.opcfoundation.ua.builtintypes.LocalizedText;
 import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.QualifiedName;
 import org.opcfoundation.ua.builtintypes.StatusCode;
+import org.opcfoundation.ua.builtintypes.UnsignedByte;
+import org.opcfoundation.ua.builtintypes.UnsignedInteger;
 import org.opcfoundation.ua.cert.DefaultCertificateValidator;
 import org.opcfoundation.ua.cert.PkiDirectoryCertificateStore;
 import org.opcfoundation.ua.common.NamespaceTable;
@@ -25,7 +27,13 @@ import org.opcfoundation.ua.core.BrowsePath;
 import org.opcfoundation.ua.core.BrowsePathResult;
 import org.opcfoundation.ua.core.BrowseResponse;
 import org.opcfoundation.ua.core.BrowseResultMask;
+import org.opcfoundation.ua.core.CreateMonitoredItemsResponse;
+import org.opcfoundation.ua.core.CreateSubscriptionResponse;
 import org.opcfoundation.ua.core.Identifiers;
+import org.opcfoundation.ua.core.MonitoredItemCreateRequest;
+import org.opcfoundation.ua.core.MonitoredItemCreateResult;
+import org.opcfoundation.ua.core.MonitoringMode;
+import org.opcfoundation.ua.core.MonitoringParameters;
 import org.opcfoundation.ua.core.NodeClass;
 import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
@@ -238,5 +246,36 @@ public class MyCLient {
 
 	public NodeId toNodeId(ExpandedNodeId expandedNodeId) throws ServiceResultException {
 		return namespaceTable.toNodeId(expandedNodeId);
+	}
+
+	public CreateSubscriptionResponse createSubscription() throws ServiceFaultException, ServiceResultException {
+		double requestedPublishingInterval = 1000.0;
+		UnsignedInteger requestedLifetimeCount = UnsignedInteger.valueOf(1000);
+		UnsignedInteger requestedMaxKeepAliveCount = UnsignedInteger.valueOf(1000);
+		UnsignedInteger maxNotificationsPerPublish = UnsignedInteger.valueOf(1);
+		UnsignedByte priority = UnsignedByte.valueOf(1);
+		CreateSubscriptionResponse res = sessionChannel.CreateSubscription(null, requestedPublishingInterval, requestedLifetimeCount, requestedMaxKeepAliveCount, maxNotificationsPerPublish, true,
+		    priority);
+
+		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+
+		return res;
+	}
+
+	public MonitoredItemCreateResult[] createMonitoredItems(UnsignedInteger subscriptionId, ReadValueId itemToMonitor) throws ServiceFaultException, ServiceResultException {
+		MonitoringParameters requestedParameters = new MonitoringParameters();
+		requestedParameters.setSamplingInterval(1000.0);
+
+		MonitoredItemCreateRequest itemToCreate = new MonitoredItemCreateRequest();
+		itemToCreate.setItemToMonitor(itemToMonitor);
+		itemToCreate.setMonitoringMode(MonitoringMode.Sampling);
+		itemToCreate.setRequestedParameters(requestedParameters);
+		CreateMonitoredItemsResponse res = sessionChannel.CreateMonitoredItems(null, subscriptionId, TimestampsToReturn.Both, itemToCreate);
+
+		assertEquals(0, res.getDiagnosticInfos().length);
+		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
+
+		return res.getResults();
 	}
 }

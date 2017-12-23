@@ -16,8 +16,12 @@ import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.StatusCode;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
+import org.opcfoundation.ua.core.Attributes;
 import org.opcfoundation.ua.core.BrowsePathResult;
+import org.opcfoundation.ua.core.CreateSubscriptionResponse;
 import org.opcfoundation.ua.core.Identifiers;
+import org.opcfoundation.ua.core.MonitoredItemCreateResult;
+import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.ReferenceDescription;
 
 public class SessionTest {
@@ -41,32 +45,35 @@ public class SessionTest {
 	public void testBrowseRoot() {
 		try {
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
-			ReferenceDescription[] references = myClient.browse(nodeIdArray);
-			assertEquals(3, references.length);
-			assertEquals("Objects", references[0].getBrowseName().getName());
-			assertEquals("Types", references[1].getBrowseName().getName());
-			assertEquals("Views", references[2].getBrowseName().getName());
+			ReferenceDescription[] references1 = myClient.browse(nodeIdArray); // "/"
+			assertEquals(3, references1.length);
+			assertEquals("Objects", references1[0].getBrowseName().getName());
+			assertEquals("Types", references1[1].getBrowseName().getName());
+			assertEquals("Views", references1[2].getBrowseName().getName());
 
-			references = myClient.browse(references[0].getNodeId());
-			assertEquals(3, references.length);
-			assertEquals("Server", references[0].getBrowseName().getName());
-			assertEquals("MyCNCDevice", references[1].getBrowseName().getName());
-			assertEquals("MyCNCDevice", references[2].getBrowseName().getName());
+			ReferenceDescription[] references2 = myClient.browse(references1[0].getNodeId()); // "/Objects"
+			assertEquals(3, references2.length);
+			assertEquals("Server", references2[0].getBrowseName().getName());
+			assertEquals("MyCNCDevice", references2[1].getBrowseName().getName());
+			assertEquals("MyCNCDevice", references2[2].getBrowseName().getName());
 
-			references = myClient.browse(references[0].getNodeId());
-			assertEquals(12, references.length);
-			assertEquals("ServerArray", references[0].getBrowseName().getName());
-			assertEquals("NamespaceArray", references[1].getBrowseName().getName());
-			assertEquals("ServerStatus", references[2].getBrowseName().getName());
-			assertEquals("ServiceLevel", references[3].getBrowseName().getName());
-			assertEquals("Auditing", references[4].getBrowseName().getName());
-			assertEquals("EstimatedReturnTime", references[5].getBrowseName().getName());
-			assertEquals("ServerCapabilities", references[6].getBrowseName().getName());
-			assertEquals("ServerDiagnostics", references[7].getBrowseName().getName());
-			assertEquals("VendorServerInfo", references[8].getBrowseName().getName());
-			assertEquals("ServerRedundancy", references[9].getBrowseName().getName());
-			assertEquals("Namespaces", references[10].getBrowseName().getName());
-			assertEquals("ServerConfiguration", references[11].getBrowseName().getName());
+			ReferenceDescription[] references3 = myClient.browse(references2[0].getNodeId());// "/Objects/Server"
+			assertEquals(12, references3.length);
+			assertEquals("ServerArray", references3[0].getBrowseName().getName());
+			assertEquals("NamespaceArray", references3[1].getBrowseName().getName());
+			assertEquals("ServerStatus", references3[2].getBrowseName().getName());
+			assertEquals("ServiceLevel", references3[3].getBrowseName().getName());
+			assertEquals("Auditing", references3[4].getBrowseName().getName());
+			assertEquals("EstimatedReturnTime", references3[5].getBrowseName().getName());
+			assertEquals("ServerCapabilities", references3[6].getBrowseName().getName());
+			assertEquals("ServerDiagnostics", references3[7].getBrowseName().getName());
+			assertEquals("VendorServerInfo", references3[8].getBrowseName().getName());
+			assertEquals("ServerRedundancy", references3[9].getBrowseName().getName());
+			assertEquals("Namespaces", references3[10].getBrowseName().getName());
+			assertEquals("ServerConfiguration", references3[11].getBrowseName().getName());
+
+			ReferenceDescription[] references4 = myClient.browse(references2[1].getNodeId());// "/Objects/MyCNCDevice"
+			assertEquals(4, references4.length);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -153,6 +160,26 @@ public class SessionTest {
 
 			List<ReferenceDescription> references = myClient.retrieveAllVariables(myClient.toNodeId(objectsNodeId));
 			assertTrue(references.size() > 0);
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testSusbribeVariable() {
+		try {
+			CreateSubscriptionResponse subscription = myClient.createSubscription();
+
+			BrowsePathResult[] var = myClient.translateBrowsePathsToNodeIds("/Objects/MyCNCDevice/Model");
+			NodeId varNodeId = myClient.toNodeId(var[0].getTargets()[0].getTargetId());
+
+			ReadValueId itemToMonitor = new ReadValueId(varNodeId, Attributes.Value, null, null);
+
+			MonitoredItemCreateResult[] res = myClient.createMonitoredItems(subscription.getSubscriptionId(), itemToMonitor);
+			assertTrue(res.length == 1);
+			assertEquals(StatusCode.GOOD, res[0].getStatusCode());
+			assertNotNull(res[0].getMonitoredItemId());
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
