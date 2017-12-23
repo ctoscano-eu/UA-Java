@@ -123,9 +123,22 @@ public class SessionTest {
 	@Test
 	public void testRetrieveAllVariablesUnderRoot() {
 		try {
+			// Retrieve the NodeId of each Variable
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
 			List<ReferenceDescription> references = myClient.retrieveAllVariables(nodeIdArray);
 			assertTrue(references.size() > 0);
+
+			// Read each Variable
+			nodeIdArray = new NodeId[references.size()];
+			for (int i = 0; i < nodeIdArray.length; ++i) {
+				nodeIdArray[i] = myClient.toNodeId(references.get(i).getNodeId());
+			}
+			DataValue[] dataValues = myClient.read(nodeIdArray);
+			for (int i = 0; i < nodeIdArray.length; ++i) {
+				//assertEquals(StatusCode.GOOD, dataValues[i].getStatusCode());  some of the status are: Bad_WaitingForInitialData (0x80320000) "Waiting for the server to obtain values from the underlying data source." 
+				assertNotNull(dataValues[i].getValue().toString());
+			}
+
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
