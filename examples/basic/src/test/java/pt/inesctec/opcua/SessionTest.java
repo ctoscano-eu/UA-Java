@@ -3,6 +3,7 @@ package pt.inesctec.opcua;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -124,7 +125,7 @@ public class SessionTest {
 		try {
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
 			List<ReferenceDescription> references = myClient.retrieveAllVariables(nodeIdArray);
-			assertEquals(89, references.size());
+			assertTrue(references.size() > 0);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -138,7 +139,7 @@ public class SessionTest {
 			ExpandedNodeId objectsNodeId = res[0].getTargets()[0].getTargetId();
 
 			List<ReferenceDescription> references = myClient.retrieveAllVariables(myClient.toNodeId(objectsNodeId));
-			assertEquals(87, references.size());
+			assertTrue(references.size() > 0);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
