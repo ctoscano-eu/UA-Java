@@ -10,6 +10,7 @@ import org.opcfoundation.ua.builtintypes.DataValue;
 import org.opcfoundation.ua.builtintypes.ExpandedNodeId;
 import org.opcfoundation.ua.builtintypes.LocalizedText;
 import org.opcfoundation.ua.builtintypes.NodeId;
+import org.opcfoundation.ua.builtintypes.QualifiedName;
 import org.opcfoundation.ua.builtintypes.StatusCode;
 import org.opcfoundation.ua.cert.DefaultCertificateValidator;
 import org.opcfoundation.ua.cert.PkiDirectoryCertificateStore;
@@ -27,6 +28,8 @@ import org.opcfoundation.ua.core.NodeClass;
 import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.ReferenceDescription;
+import org.opcfoundation.ua.core.RelativePath;
+import org.opcfoundation.ua.core.RelativePathElement;
 import org.opcfoundation.ua.core.TimestampsToReturn;
 import org.opcfoundation.ua.core.TranslateBrowsePathsToNodeIdsResponse;
 import org.opcfoundation.ua.examples.certs.ExampleKeys;
@@ -167,6 +170,35 @@ public class MyCLient {
 		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
 
 		return res.getResults();
+	}
+
+	// path must be something like "11111/222222/333333"
+	public BrowsePathResult[] translateBrowsePathsToNodeIds(NodeId startingNode, String path) throws ServiceFaultException, ServiceResultException {
+		//String[] terms = "/11111/222222/333333".split("/"); // "", "1111", .... 
+		//String[] terms2 = "11111/222222/333333".split("/"); // "1111", .... 
+		//String[] terms3 = "11111/222222/333333/".split("/"); // "1111", .... 
+		String[] terms = path.split("/");
+		if (terms.length == 0)
+			return null;
+
+		return translateBrowsePathsToNodeIds(createBrowsePath(startingNode, terms));
+	}
+
+	private BrowsePath createBrowsePath(NodeId startingNode, String[] terms) {
+		BrowsePath browsePath = new BrowsePath();
+		browsePath.setStartingNode(startingNode);
+		browsePath.setRelativePath(new RelativePath());
+
+		// build each RelativePathElement
+		RelativePathElement[] elements = new RelativePathElement[terms.length];
+		browsePath.getRelativePath().setElements(elements);
+		for (int i = 0; i < terms.length; ++i) {
+			RelativePathElement elem = new RelativePathElement();
+			elem.setTargetName(new QualifiedName(terms[i]));
+			elements[i] = elem;
+		}
+
+		return browsePath;
 	}
 
 	private NodeId[] toNodeId(ExpandedNodeId... expandedNodeIdArray) throws ServiceResultException {

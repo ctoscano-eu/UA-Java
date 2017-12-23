@@ -9,16 +9,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opcfoundation.ua.builtintypes.DataValue;
 import org.opcfoundation.ua.builtintypes.NodeId;
-import org.opcfoundation.ua.builtintypes.QualifiedName;
 import org.opcfoundation.ua.builtintypes.StatusCode;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
-import org.opcfoundation.ua.core.BrowsePath;
 import org.opcfoundation.ua.core.BrowsePathResult;
 import org.opcfoundation.ua.core.Identifiers;
 import org.opcfoundation.ua.core.ReferenceDescription;
-import org.opcfoundation.ua.core.RelativePath;
-import org.opcfoundation.ua.core.RelativePathElement;
 
 public class SessionTest {
 
@@ -76,20 +72,22 @@ public class SessionTest {
 	@Test
 	public void testTranslateRoot() {
 		try {
-			BrowsePath path = new BrowsePath();
-			path.setStartingNode(Identifiers.RootFolder);
+			BrowsePathResult[] res = null;
 
-			RelativePath relativePath = new RelativePath();
-			RelativePathElement[] elements = new RelativePathElement[] { new RelativePathElement() };
-			elements[0].setTargetName(new QualifiedName("Objects"));
-			relativePath.setElements(elements);
-
-			path.setRelativePath(relativePath);
-
-			BrowsePathResult[] res = myClient.translateBrowsePathsToNodeIds(path);
+			res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, "Objects");
 			assertEquals(1, res.length);
 			assertEquals(1, res[0].getTargets().length);
-			res[0].getTargets()[0].getTargetId().toString();
+			assertNotNull(res[0].getTargets()[0].getTargetId().toString());
+
+			res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, "Objects/Server");
+			assertEquals(1, res.length);
+			assertEquals(1, res[0].getTargets().length);
+			assertNotNull(res[0].getTargets()[0].getTargetId().toString());
+
+			res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, "Objects/Server/ServerStatus");
+			assertEquals(1, res.length);
+			assertEquals(1, res[0].getTargets().length);
+			assertNotNull(res[0].getTargets()[0].getTargetId().toString());
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
