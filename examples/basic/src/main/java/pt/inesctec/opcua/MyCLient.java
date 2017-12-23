@@ -35,13 +35,17 @@ import org.opcfoundation.ua.core.MonitoredItemCreateResult;
 import org.opcfoundation.ua.core.MonitoringMode;
 import org.opcfoundation.ua.core.MonitoringParameters;
 import org.opcfoundation.ua.core.NodeClass;
+import org.opcfoundation.ua.core.PublishResponse;
 import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.ReferenceDescription;
 import org.opcfoundation.ua.core.RelativePath;
 import org.opcfoundation.ua.core.RelativePathElement;
+import org.opcfoundation.ua.core.SubscriptionAcknowledgement;
 import org.opcfoundation.ua.core.TimestampsToReturn;
 import org.opcfoundation.ua.core.TranslateBrowsePathsToNodeIdsResponse;
+import org.opcfoundation.ua.core.WriteResponse;
+import org.opcfoundation.ua.core.WriteValue;
 import org.opcfoundation.ua.examples.certs.ExampleKeys;
 import org.opcfoundation.ua.transport.security.HttpsSecurityPolicy;
 import org.opcfoundation.ua.transport.security.KeyPair;
@@ -186,6 +190,15 @@ public class MyCLient {
 		return read(toNodeId(expandedNodeIdArray));
 	}
 
+	public StatusCode[] write(WriteValue... nodesToWrite) throws ServiceFaultException, ServiceResultException {
+		WriteResponse res = sessionChannel.Write(null, nodesToWrite);
+
+		assertEquals(0, res.getDiagnosticInfos().length);
+		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+
+		return res.getResults();
+	}
+
 	public BrowsePathResult[] translateBrowsePathsToNodeIds(BrowsePath... pathToTranslate) throws ServiceFaultException, ServiceResultException {
 
 		TranslateBrowsePathsToNodeIdsResponse res = sessionChannel.TranslateBrowsePathsToNodeIds(null, pathToTranslate);
@@ -252,7 +265,7 @@ public class MyCLient {
 		double requestedPublishingInterval = 1000.0;
 		UnsignedInteger requestedLifetimeCount = UnsignedInteger.valueOf(1000);
 		UnsignedInteger requestedMaxKeepAliveCount = UnsignedInteger.valueOf(1000);
-		UnsignedInteger maxNotificationsPerPublish = UnsignedInteger.valueOf(1);
+		UnsignedInteger maxNotificationsPerPublish = UnsignedInteger.valueOf(100);
 		UnsignedByte priority = UnsignedByte.valueOf(1);
 		CreateSubscriptionResponse res = sessionChannel.CreateSubscription(null, requestedPublishingInterval, requestedLifetimeCount, requestedMaxKeepAliveCount, maxNotificationsPerPublish, true,
 		    priority);
@@ -265,6 +278,7 @@ public class MyCLient {
 	public MonitoredItemCreateResult[] createMonitoredItems(UnsignedInteger subscriptionId, ReadValueId itemToMonitor) throws ServiceFaultException, ServiceResultException {
 		MonitoringParameters requestedParameters = new MonitoringParameters();
 		requestedParameters.setSamplingInterval(1000.0);
+		requestedParameters.setQueueSize(UnsignedInteger.valueOf(1000));
 
 		MonitoredItemCreateRequest itemToCreate = new MonitoredItemCreateRequest();
 		itemToCreate.setItemToMonitor(itemToMonitor);
@@ -277,5 +291,21 @@ public class MyCLient {
 		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
 
 		return res.getResults();
+	}
+
+	public PublishResponse publish(UnsignedInteger subscriptionId, long sequenceNumber) throws ServiceFaultException, ServiceResultException {
+		SubscriptionAcknowledgement subscriptionAcknowledgement = new SubscriptionAcknowledgement();
+		subscriptionAcknowledgement.setSequenceNumber(UnsignedInteger.valueOf(sequenceNumber));
+		subscriptionAcknowledgement.setSubscriptionId(subscriptionId);
+		PublishResponse res = sessionChannel.Publish(null, subscriptionAcknowledgement);
+
+		assertEquals(0, res.getDiagnosticInfos().length);
+		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+		res.getResults();
+		res.getAvailableSequenceNumbers();
+		res.getNotificationMessage();
+		res.getMoreNotifications();
+
+		return res;
 	}
 }

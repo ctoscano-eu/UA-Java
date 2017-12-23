@@ -14,6 +14,7 @@ import org.opcfoundation.ua.builtintypes.DataValue;
 import org.opcfoundation.ua.builtintypes.ExpandedNodeId;
 import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.StatusCode;
+import org.opcfoundation.ua.builtintypes.Variant;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
 import org.opcfoundation.ua.core.Attributes;
@@ -21,8 +22,10 @@ import org.opcfoundation.ua.core.BrowsePathResult;
 import org.opcfoundation.ua.core.CreateSubscriptionResponse;
 import org.opcfoundation.ua.core.Identifiers;
 import org.opcfoundation.ua.core.MonitoredItemCreateResult;
+import org.opcfoundation.ua.core.PublishResponse;
 import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.ReferenceDescription;
+import org.opcfoundation.ua.core.WriteValue;
 
 public class SessionTest {
 
@@ -167,6 +170,39 @@ public class SessionTest {
 	}
 
 	@Test
+	public void testWriteVariables() {
+		try {
+			BrowsePathResult[] var = myClient.translateBrowsePathsToNodeIds("/Objects/MyCNCDevice/Model");
+			NodeId varNodeId = myClient.toNodeId(var[0].getTargets()[0].getTargetId());
+			DataValue[] dataValues = myClient.read(varNodeId);
+			dataValues[0].setValue(new Variant("TTTDDDFFF"));
+			
+			WriteValue WriteValue = toWriteValue(varNodeId, dataValues[0]);
+
+			myClient.write();
+
+			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());
+			assertEquals(StatusCode.GOOD, dataValues[1].getStatusCode());
+			assertEquals(StatusCode.GOOD, dataValues[1].getStatusCode());
+			assertNotEquals(StatusCode.GOOD, dataValues[3].getStatusCode());
+			assertNotNull(dataValues[0].getValue().toString());
+			assertNotNull(dataValues[1].getValue().toString());
+			assertNotNull(dataValues[1].getValue().toString());
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+
+	private WriteValue toWriteValue(NodeId nodeId, DataValue dataValue) {
+		WriteValue writeValue = new WriteValue();
+		writeValue.setNodeId(nodeId);
+		writeValue.setAttributeId(Attributes.Value);
+		writeValue.setValue(dataValue);
+		return writeValue;
+	}
+
+	@Test
 	public void testSusbribeVariable() {
 		try {
 			CreateSubscriptionResponse subscription = myClient.createSubscription();
@@ -176,10 +212,13 @@ public class SessionTest {
 
 			ReadValueId itemToMonitor = new ReadValueId(varNodeId, Attributes.Value, null, null);
 
-			MonitoredItemCreateResult[] res = myClient.createMonitoredItems(subscription.getSubscriptionId(), itemToMonitor);
-			assertTrue(res.length == 1);
-			assertEquals(StatusCode.GOOD, res[0].getStatusCode());
-			assertNotNull(res[0].getMonitoredItemId());
+			MonitoredItemCreateResult[] monitoredItems = myClient.createMonitoredItems(subscription.getSubscriptionId(), itemToMonitor);
+			assertTrue(monitoredItems.length == 1);
+			assertEquals(StatusCode.GOOD, monitoredItems[0].getStatusCode());
+			assertNotNull(monitoredItems[0].getMonitoredItemId());
+
+			PublishResponse res = myClient.publish(subscription.getSubscriptionId(), 1);
+
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
