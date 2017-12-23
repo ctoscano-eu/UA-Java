@@ -2,6 +2,7 @@ package pt.inesctec.opcua;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.opcfoundation.ua.application.Client;
@@ -24,6 +25,7 @@ import org.opcfoundation.ua.core.BrowsePath;
 import org.opcfoundation.ua.core.BrowsePathResult;
 import org.opcfoundation.ua.core.BrowseResponse;
 import org.opcfoundation.ua.core.BrowseResultMask;
+import org.opcfoundation.ua.core.Identifiers;
 import org.opcfoundation.ua.core.NodeClass;
 import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
@@ -36,6 +38,8 @@ import org.opcfoundation.ua.examples.certs.ExampleKeys;
 import org.opcfoundation.ua.transport.security.HttpsSecurityPolicy;
 import org.opcfoundation.ua.transport.security.KeyPair;
 import org.opcfoundation.ua.utils.CertificateUtils;
+
+import com.google.common.collect.Lists;
 
 public class MyCLient {
 
@@ -128,7 +132,7 @@ public class MyCLient {
 			nodesToBrowse[i].setIncludeSubtypes(true);
 			nodesToBrowse[i].setNodeClassMask(NodeClass.Object, NodeClass.Variable);
 			nodesToBrowse[i].setResultMask(BrowseResultMask.All);
-			//nodesToBrowse[i].setReferenceTypeId
+			nodesToBrowse[i].setReferenceTypeId(Identifiers.HierarchicalReferences);
 		}
 
 		BrowseResponse res = sessionChannel.Browse(null, null, null, nodesToBrowse);
@@ -142,6 +146,19 @@ public class MyCLient {
 
 	public ReferenceDescription[] browse(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
 		return browse(toNodeId(expandedNodeIdArray));
+	}
+
+	public List<ReferenceDescription> retrieveAllVariables(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+		List<ReferenceDescription> output = Lists.newArrayList();
+		ReferenceDescription[] resp = browse(nodeIdArray);
+		for (int i = 0; i < resp.length; ++i) {
+			if (resp[i].getNodeClass() == NodeClass.Object)
+				output.addAll(retrieveAllVariables(toNodeId(resp[i].getNodeId())));
+			else if (resp[i].getNodeClass() == NodeClass.Variable)
+				output.add(resp[i]);
+		}
+
+		return output;
 	}
 
 	public DataValue[] read(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
@@ -184,6 +201,17 @@ public class MyCLient {
 		return translateBrowsePathsToNodeIds(createBrowsePath(startingNode, terms));
 	}
 
+	// path must be something like "/11111/222222/333333"
+	public BrowsePathResult[] translateBrowsePathsToNodeIds(String path) throws ServiceFaultException, ServiceResultException {
+		String[] terms = path.split("/");
+		if (terms.length == 0)
+			return null;
+		if (terms[0].length() != 0)
+			return null;
+
+		return translateBrowsePathsToNodeIds(Identifiers.RootFolder, path.substring(1));
+	}
+
 	private BrowsePath createBrowsePath(NodeId startingNode, String[] terms) {
 		BrowsePath browsePath = new BrowsePath();
 		browsePath.setStartingNode(startingNode);
@@ -201,14 +229,14 @@ public class MyCLient {
 		return browsePath;
 	}
 
-	private NodeId[] toNodeId(ExpandedNodeId... expandedNodeIdArray) throws ServiceResultException {
+	public NodeId[] toNodeId(ExpandedNodeId... expandedNodeIdArray) throws ServiceResultException {
 		NodeId[] nodeIdArray = new NodeId[expandedNodeIdArray.length];
 		for (int i = 0; i < nodeIdArray.length; ++i)
 			nodeIdArray[i] = namespaceTable.toNodeId(expandedNodeIdArray[i]);
 		return nodeIdArray;
 	}
 
-	private NodeId toNodeId(ExpandedNodeId expandedNodeId) throws ServiceResultException {
+	public NodeId toNodeId(ExpandedNodeId expandedNodeId) throws ServiceResultException {
 		return namespaceTable.toNodeId(expandedNodeId);
 	}
 }

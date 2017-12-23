@@ -4,10 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opcfoundation.ua.builtintypes.DataValue;
+import org.opcfoundation.ua.builtintypes.ExpandedNodeId;
 import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.StatusCode;
 import org.opcfoundation.ua.common.ServiceFaultException;
@@ -73,21 +76,24 @@ public class SessionTest {
 	public void testTranslateRoot() {
 		try {
 			BrowsePathResult[] res = null;
+			String[] names = null;
 
-			res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, "Objects");
-			assertEquals(1, res.length);
-			assertEquals(1, res[0].getTargets().length);
-			assertNotNull(res[0].getTargets()[0].getTargetId().toString());
+			names = new String[] { "Objects", "Objects/Server", "Objects/Server/ServerStatus" };
+			for (int i = 0; i < names.length; ++i) {
+				res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, names[i]);
+				assertEquals(1, res.length);
+				assertEquals(1, res[0].getTargets().length);
+				assertNotNull(res[0].getTargets()[0].getTargetId().toString());
+			}
 
-			res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, "Objects/Server");
-			assertEquals(1, res.length);
-			assertEquals(1, res[0].getTargets().length);
-			assertNotNull(res[0].getTargets()[0].getTargetId().toString());
+			names = new String[] { "/Objects", "/Objects/Server", "/Objects/Server/ServerStatus" };
+			for (int i = 0; i < names.length; ++i) {
+				res = myClient.translateBrowsePathsToNodeIds(names[i]);
+				assertEquals(1, res.length);
+				assertEquals(1, res[0].getTargets().length);
+				assertNotNull(res[0].getTargets()[0].getTargetId().toString());
+			}
 
-			res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, "Objects/Server/ServerStatus");
-			assertEquals(1, res.length);
-			assertEquals(1, res[0].getTargets().length);
-			assertNotNull(res[0].getTargets()[0].getTargetId().toString());
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -107,6 +113,32 @@ public class SessionTest {
 			assertNotNull(dataValues[0].getValue().toString());
 			assertNotNull(dataValues[1].getValue().toString());
 			assertNotNull(dataValues[1].getValue().toString());
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testRetrieveAllVariablesUnderRoot() {
+		try {
+			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
+			List<ReferenceDescription> references = myClient.retrieveAllVariables(nodeIdArray);
+			assertEquals(89, references.size());
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testRetrieveAllVariablesUnderObjects() {
+		try {
+			BrowsePathResult[] res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, "Objects");
+			ExpandedNodeId objectsNodeId = res[0].getTargets()[0].getTargetId();
+
+			List<ReferenceDescription> references = myClient.retrieveAllVariables(myClient.toNodeId(objectsNodeId));
+			assertEquals(87, references.size());
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
