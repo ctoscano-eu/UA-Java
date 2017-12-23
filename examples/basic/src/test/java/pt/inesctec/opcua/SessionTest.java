@@ -14,6 +14,7 @@ import org.opcfoundation.ua.builtintypes.DataValue;
 import org.opcfoundation.ua.builtintypes.ExpandedNodeId;
 import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.StatusCode;
+import org.opcfoundation.ua.builtintypes.UnsignedInteger;
 import org.opcfoundation.ua.builtintypes.Variant;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
@@ -176,18 +177,12 @@ public class SessionTest {
 			NodeId varNodeId = myClient.toNodeId(var[0].getTargets()[0].getTargetId());
 			DataValue[] dataValues = myClient.read(varNodeId);
 			dataValues[0].setValue(new Variant("TTTDDDFFF"));
-			
-			WriteValue WriteValue = toWriteValue(varNodeId, dataValues[0]);
 
-			myClient.write();
+			WriteValue writeValue = toWriteValue(varNodeId, dataValues[0]);
 
-			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());
-			assertEquals(StatusCode.GOOD, dataValues[1].getStatusCode());
-			assertEquals(StatusCode.GOOD, dataValues[1].getStatusCode());
-			assertNotEquals(StatusCode.GOOD, dataValues[3].getStatusCode());
-			assertNotNull(dataValues[0].getValue().toString());
-			assertNotNull(dataValues[1].getValue().toString());
-			assertNotNull(dataValues[1].getValue().toString());
+			StatusCode[] res = myClient.write(writeValue);
+
+			assertEquals(UnsignedInteger.ZERO, res[0].getValue());
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
