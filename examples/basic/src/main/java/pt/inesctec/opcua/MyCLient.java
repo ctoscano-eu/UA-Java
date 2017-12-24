@@ -35,6 +35,7 @@ import org.opcfoundation.ua.core.MonitoredItemCreateResult;
 import org.opcfoundation.ua.core.MonitoringMode;
 import org.opcfoundation.ua.core.MonitoringParameters;
 import org.opcfoundation.ua.core.NodeClass;
+import org.opcfoundation.ua.core.ObjectNode;
 import org.opcfoundation.ua.core.PublishResponse;
 import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
@@ -189,7 +190,7 @@ public class MyCLient {
 		return output;
 	}
 
-	public DataValue[] read(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+	public DataValue[] readVariableValue(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
 		ReadValueId[] nodesToRead = new ReadValueId[nodeIdArray.length];
 		for (int i = 0; i < nodeIdArray.length; ++i)
 			nodesToRead[i] = new ReadValueId(nodeIdArray[i], Attributes.Value, null, null);
@@ -202,8 +203,8 @@ public class MyCLient {
 		return res.getResults();
 	}
 
-	public DataValue[] read(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
-		return read(toNodeId(expandedNodeIdArray));
+	public DataValue[] readVariableValue(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+		return readVariableValue(toNodeId(expandedNodeIdArray));
 	}
 
 	public StatusCode[] write(WriteValue... nodesToWrite) throws ServiceFaultException, ServiceResultException {

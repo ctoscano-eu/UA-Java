@@ -116,7 +116,7 @@ public class SessionTest {
 	public void testReadVariables() {
 		try {
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.Server_NamespaceArray, new NodeId(1, 1007), new NodeId(1, 1006), new NodeId(1, "Boolean") };
-			DataValue[] dataValues = myClient.read(nodeIdArray);
+			DataValue[] dataValues = myClient.readVariableValue(nodeIdArray);
 
 			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());
 			assertEquals(StatusCode.GOOD, dataValues[1].getStatusCode());
@@ -144,7 +144,7 @@ public class SessionTest {
 			for (int i = 0; i < nodeIdArray.length; ++i) {
 				nodeIdArray[i] = myClient.toNodeId(references.get(i).getNodeId());
 			}
-			DataValue[] dataValues = myClient.read(nodeIdArray);
+			DataValue[] dataValues = myClient.readVariableValue(nodeIdArray);
 			for (int i = 0; i < nodeIdArray.length; ++i) {
 				//assertEquals(StatusCode.GOOD, dataValues[i].getStatusCode());  some of the status are: Bad_WaitingForInitialData (0x80320000) "Waiting for the server to obtain values from the underlying data source." 
 				assertNotNull(dataValues[i].getValue().toString());
@@ -175,7 +175,7 @@ public class SessionTest {
 		try {
 			BrowsePathResult[] var = myClient.translateBrowsePathsToNodeIds("/Objects/MyCNCDevice/Model");
 			NodeId varNodeId = myClient.toNodeId(var[0].getTargets()[0].getTargetId());
-			DataValue[] dataValues = myClient.read(varNodeId);
+			DataValue[] dataValues = myClient.readVariableValue(varNodeId);
 			dataValues[0].setValue(new Variant("TTTDDDFFF"));
 
 			WriteValue writeValue = toWriteValue(varNodeId, dataValues[0]);
