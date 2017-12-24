@@ -50,9 +50,22 @@ import org.opcfoundation.ua.examples.certs.ExampleKeys;
 import org.opcfoundation.ua.transport.security.HttpsSecurityPolicy;
 import org.opcfoundation.ua.transport.security.KeyPair;
 import org.opcfoundation.ua.utils.CertificateUtils;
+import org.opcfoundation.ua.utils.Description;
 
 import com.google.common.collect.Lists;
-
+/*
+ * Nodes and References.
+ * Each Node has a NodeClass: Object, Variable, Method, ObjectType, VariableType, ReferenceType, DataType, View.
+ * Each Node is described by Attributes: NodeId, NodeClass, BrowseName, DisplayName, Description, WriteMask, UserWriteMask, 
+ *                                       IsAbstract, Symmetric, InverseName, ContainsNoLoops, EventNotifier, 
+ *                                       Value, DataType, ValueRank, ArrayDimensions, AccessLevel, UserAccessLevel, 
+ *                                       MinimumSamplingInterval, Historizing, Executable, UserExecutable
+ * There are some Attributes common to every Node.
+ * Properties allow to define additional information describing a Node. 
+ * References do not contain any Attributes or Properties.
+ * Nodes of the NodeClass Variable represent a value. Nodes of the NodeClass Object are used to structure the Address Space 
+ * (they contain only Attributes, Properties, Variables and Methods.
+ */
 public class MyCLient {
 
 	private KeyPair keyPair;
