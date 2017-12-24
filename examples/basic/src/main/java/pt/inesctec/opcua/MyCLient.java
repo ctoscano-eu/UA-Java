@@ -135,7 +135,10 @@ public class MyCLient {
 		sessionChannel.closeAsync();
 	}
 
-	public ReferenceDescription[] browse(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+	/*
+	 * Takes a list of starting Nodes and returns a list of connected Nodes for each starting Node.
+	 */
+	public ReferenceDescription[] browseNodeOjectsAndVariables(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
 		BrowseDescription[] nodesToBrowse = new BrowseDescription[nodeIdArray.length];
 		for (int i = 0; i < nodeIdArray.length; ++i) {
 			nodesToBrowse[i] = new BrowseDescription();
@@ -156,16 +159,16 @@ public class MyCLient {
 		return res.getResults()[0].getReferences();
 	}
 
-	public ReferenceDescription[] browse(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
-		return browse(toNodeId(expandedNodeIdArray));
+	public ReferenceDescription[] browseNodeOjectsAndVariables(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+		return browseNodeOjectsAndVariables(toNodeId(expandedNodeIdArray));
 	}
 
-	public List<ReferenceDescription> retrieveAllVariables(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+	public List<ReferenceDescription> browseHierarchyOfNodeVariables(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
 		List<ReferenceDescription> output = Lists.newArrayList();
-		ReferenceDescription[] resp = browse(nodeIdArray);
+		ReferenceDescription[] resp = browseNodeOjectsAndVariables(nodeIdArray);
 		for (int i = 0; i < resp.length; ++i) {
 			if (resp[i].getNodeClass() == NodeClass.Object)
-				output.addAll(retrieveAllVariables(toNodeId(resp[i].getNodeId())));
+				output.addAll(browseHierarchyOfNodeVariables(toNodeId(resp[i].getNodeId())));
 			else if (resp[i].getNodeClass() == NodeClass.Variable)
 				output.add(resp[i]);
 		}

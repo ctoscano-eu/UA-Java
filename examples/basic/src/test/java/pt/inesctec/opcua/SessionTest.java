@@ -49,19 +49,19 @@ public class SessionTest {
 	public void testBrowseRoot() {
 		try {
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
-			ReferenceDescription[] references1 = myClient.browse(nodeIdArray); // "/"
+			ReferenceDescription[] references1 = myClient.browseNodeOjectsAndVariables(nodeIdArray); // "/"
 			assertEquals(3, references1.length);
 			assertEquals("Objects", references1[0].getBrowseName().getName());
 			assertEquals("Types", references1[1].getBrowseName().getName());
 			assertEquals("Views", references1[2].getBrowseName().getName());
 
-			ReferenceDescription[] references2 = myClient.browse(references1[0].getNodeId()); // "/Objects"
+			ReferenceDescription[] references2 = myClient.browseNodeOjectsAndVariables(references1[0].getNodeId()); // "/Objects"
 			assertEquals(3, references2.length);
 			assertEquals("Server", references2[0].getBrowseName().getName());
 			assertEquals("MyCNCDevice", references2[1].getBrowseName().getName());
 			assertEquals("MyCNCDevice", references2[2].getBrowseName().getName());
 
-			ReferenceDescription[] references3 = myClient.browse(references2[0].getNodeId());// "/Objects/Server"
+			ReferenceDescription[] references3 = myClient.browseNodeOjectsAndVariables(references2[0].getNodeId());// "/Objects/Server"
 			assertEquals(12, references3.length);
 			assertEquals("ServerArray", references3[0].getBrowseName().getName());
 			assertEquals("NamespaceArray", references3[1].getBrowseName().getName());
@@ -76,7 +76,7 @@ public class SessionTest {
 			assertEquals("Namespaces", references3[10].getBrowseName().getName());
 			assertEquals("ServerConfiguration", references3[11].getBrowseName().getName());
 
-			ReferenceDescription[] references4 = myClient.browse(references2[1].getNodeId());// "/Objects/MyCNCDevice"
+			ReferenceDescription[] references4 = myClient.browseNodeOjectsAndVariables(references2[1].getNodeId());// "/Objects/MyCNCDevice"
 			assertEquals(4, references4.length);
 		}
 		catch (Throwable t) {
@@ -136,7 +136,7 @@ public class SessionTest {
 		try {
 			// Retrieve the NodeId of each Variable
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
-			List<ReferenceDescription> references = myClient.retrieveAllVariables(nodeIdArray);
+			List<ReferenceDescription> references = myClient.browseHierarchyOfNodeVariables(nodeIdArray);
 			assertTrue(references.size() > 0);
 
 			// Read each Variable
@@ -162,7 +162,7 @@ public class SessionTest {
 			BrowsePathResult[] res = myClient.translateBrowsePathsToNodeIds("/Objects");
 			ExpandedNodeId objectsNodeId = res[0].getTargets()[0].getTargetId();
 
-			List<ReferenceDescription> references = myClient.retrieveAllVariables(myClient.toNodeId(objectsNodeId));
+			List<ReferenceDescription> references = myClient.browseHierarchyOfNodeVariables(myClient.toNodeId(objectsNodeId));
 			assertTrue(references.size() > 0);
 		}
 		catch (Throwable t) {
