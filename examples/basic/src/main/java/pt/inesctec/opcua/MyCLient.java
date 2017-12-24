@@ -35,7 +35,6 @@ import org.opcfoundation.ua.core.MonitoredItemCreateResult;
 import org.opcfoundation.ua.core.MonitoringMode;
 import org.opcfoundation.ua.core.MonitoringParameters;
 import org.opcfoundation.ua.core.NodeClass;
-import org.opcfoundation.ua.core.ObjectNode;
 import org.opcfoundation.ua.core.PublishResponse;
 import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
@@ -51,9 +50,9 @@ import org.opcfoundation.ua.examples.certs.ExampleKeys;
 import org.opcfoundation.ua.transport.security.HttpsSecurityPolicy;
 import org.opcfoundation.ua.transport.security.KeyPair;
 import org.opcfoundation.ua.utils.CertificateUtils;
-import org.opcfoundation.ua.utils.Description;
 
 import com.google.common.collect.Lists;
+
 /*
  * Nodes and References.
  * Each Node has a NodeClass: Object, Variable, Method, ObjectType, VariableType, ReferenceType, DataType, View.
@@ -190,6 +189,10 @@ public class MyCLient {
 		return output;
 	}
 
+	/*
+	 * Used to read the value of Variables of one or more Nodes. 
+	 * Other Attributes can be read.
+	 */
 	public DataValue[] readVariableValue(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
 		ReadValueId[] nodesToRead = new ReadValueId[nodeIdArray.length];
 		for (int i = 0; i < nodeIdArray.length; ++i)
@@ -207,6 +210,9 @@ public class MyCLient {
 		return readVariableValue(toNodeId(expandedNodeIdArray));
 	}
 
+	/*
+	 * Used to write one or more Attributes of one or more Nodes
+	 */
 	public StatusCode[] write(WriteValue... nodesToWrite) throws ServiceFaultException, ServiceResultException {
 		WriteResponse res = sessionChannel.Write(null, nodesToWrite);
 
