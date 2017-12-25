@@ -115,16 +115,31 @@ public class SessionTest {
 	@Test
 	public void testReadVariableValue() {
 		try {
+			DataValue[] dataValues = null;
+
+			// With NodeIds
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.Server_NamespaceArray, new NodeId(1, 1007), new NodeId(1, 1006), new NodeId(1, "Boolean"), new NodeId(1, "/Objects/MyCNCDevice/Model") };
-			DataValue[] dataValues = myClient.readVariableValue(nodeIdArray);
+			dataValues = myClient.readVariableValue(nodeIdArray);
 
 			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());
 			assertEquals(StatusCode.GOOD, dataValues[1].getStatusCode());
-			assertEquals(StatusCode.GOOD, dataValues[1].getStatusCode());
+			assertEquals(StatusCode.GOOD, dataValues[2].getStatusCode());
 			assertNotEquals(StatusCode.GOOD, dataValues[3].getStatusCode());
 			assertNotNull(dataValues[0].getValue().toString());
 			assertNotNull(dataValues[1].getValue().toString());
+			assertNotNull(dataValues[2].getValue().toString());
+
+			// With BrowsePaths
+			String[] pathArray = new String[] { "/Objects/Server/ServerArray", "/Objects/Server/ServerStatus", "/Objects/Server/ServiceLevel" };
+			dataValues = myClient.readVariableValue(pathArray);
+
+			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());
+			assertEquals(StatusCode.GOOD, dataValues[1].getStatusCode());
+			assertEquals(StatusCode.GOOD, dataValues[2].getStatusCode());
+			assertNotNull(dataValues[0].getValue().toString());
 			assertNotNull(dataValues[1].getValue().toString());
+			assertNotNull(dataValues[2].getValue().toString());
+
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
