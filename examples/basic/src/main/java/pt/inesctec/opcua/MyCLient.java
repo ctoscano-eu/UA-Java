@@ -210,6 +210,15 @@ public class MyCLient {
 		return readVariableValue(toNodeId(expandedNodeIdArray));
 	}
 
+	public DataValue[] readVariableValue(String... pathArray) throws ServiceFaultException, ServiceResultException {
+		BrowsePathResult[] var = translateBrowsePathsToNodeIds(pathArray);
+		ExpandedNodeId[] varNodeIdArray = new ExpandedNodeId[var.length];
+		for (int i = 0; i < var.length; ++i)
+			varNodeIdArray[i] = var[i].getTargets()[0].getTargetId();
+
+		return readVariableValue(varNodeIdArray);
+	}
+
 	/*
 	 * Used to write one or more Attributes of one or more Nodes
 	 */
@@ -234,15 +243,23 @@ public class MyCLient {
 	}
 
 	// path must be something like "11111/222222/333333"
-	public BrowsePathResult[] translateBrowsePathsToNodeIds(NodeId startingNode, String path) throws ServiceFaultException, ServiceResultException {
+	public BrowsePathResult[] translateBrowsePathsToNodeIds(NodeId startingNode, String... pathArray) throws ServiceFaultException, ServiceResultException {
 		//String[] terms = "/11111/222222/333333".split("/"); // "", "1111", .... 
 		//String[] terms2 = "11111/222222/333333".split("/"); // "1111", .... 
 		//String[] terms3 = "11111/222222/333333/".split("/"); // "1111", .... 
-		String[] terms = path.split("/");
-		if (terms.length == 0)
-			return null;
+		String[][] termsArray = new String[pathArray.length][];
+		for (int i = 0; i < pathArray.length; ++i) {
+			String[] terms = pathArray[i].split("/");
+			if (terms.length == 0)
+				return null;
+			termsArray[i] = terms;
+		}
 
-		return translateBrowsePathsToNodeIds(createBrowsePath(startingNode, terms));
+		BrowsePath[] browsePathArray = new BrowsePath[pathArray.length];
+		for (int i = 0; i < pathArray.length; ++i)
+			browsePathArray[i] = createBrowsePath(startingNode, termsArray[i]);
+
+		return translateBrowsePathsToNodeIds(browsePathArray);
 	}
 
 	// path must be something like "/11111/222222/333333"
@@ -254,6 +271,24 @@ public class MyCLient {
 			return null;
 
 		return translateBrowsePathsToNodeIds(Identifiers.RootFolder, path.substring(1));
+	}
+
+	// path must be something like "/11111/222222/333333"
+	public BrowsePathResult[] translateBrowsePathsToNodeIds(String... pathArray) throws ServiceFaultException, ServiceResultException {
+		for (int i = 0; i < pathArray.length; ++i) {
+			String[] terms = pathArray[i].split("/");
+			if (terms.length == 0)
+				return null;
+			if (terms[0].length() != 0)
+				return null;
+		}
+
+		String[] newPathArray = new String[pathArray.length];
+		for (int i = 0; i < pathArray.length; ++i) {
+			newPathArray[i] = pathArray[i].substring(1);
+		}
+
+		return translateBrowsePathsToNodeIds(Identifiers.RootFolder, newPathArray);
 	}
 
 	private BrowsePath createBrowsePath(NodeId startingNode, String[] terms) {

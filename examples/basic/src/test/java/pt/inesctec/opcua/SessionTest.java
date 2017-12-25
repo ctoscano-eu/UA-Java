@@ -46,7 +46,7 @@ public class SessionTest {
 	}
 
 	@Test
-	public void testBrowseRoot() {
+	public void testBrowseNodeOjectsAndVariables() {
 		try {
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
 			ReferenceDescription[] references1 = myClient.browseNodeOjectsAndVariables(nodeIdArray); // "/"
@@ -85,25 +85,25 @@ public class SessionTest {
 	}
 
 	@Test
-	public void testTranslateRoot() {
+	public void testTranslateBrowsePathsToNodeIds() {
 		try {
 			BrowsePathResult[] res = null;
 			String[] names = null;
 
 			names = new String[] { "Objects", "Objects/Server", "Objects/Server/ServerStatus" };
-			for (int i = 0; i < names.length; ++i) {
-				res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, names[i]);
-				assertEquals(1, res.length);
-				assertEquals(1, res[0].getTargets().length);
-				assertNotNull(res[0].getTargets()[0].getTargetId().toString());
+			res = myClient.translateBrowsePathsToNodeIds(Identifiers.RootFolder, names);
+			assertEquals(3, res.length);
+			for (int i = 0; i < res.length; ++i) {
+				assertEquals(1, res[i].getTargets().length);
+				assertNotNull(res[i].getTargets()[0].getTargetId().toString());
 			}
 
 			names = new String[] { "/Objects", "/Objects/Server", "/Objects/Server/ServerStatus" };
-			for (int i = 0; i < names.length; ++i) {
-				res = myClient.translateBrowsePathsToNodeIds(names[i]);
-				assertEquals(1, res.length);
-				assertEquals(1, res[0].getTargets().length);
-				assertNotNull(res[0].getTargets()[0].getTargetId().toString());
+			res = myClient.translateBrowsePathsToNodeIds(names);
+			assertEquals(3, res.length);
+			for (int i = 0; i < res.length; ++i) {
+				assertEquals(1, res[i].getTargets().length);
+				assertNotNull(res[i].getTargets()[0].getTargetId().toString());
 			}
 
 		}
@@ -113,9 +113,9 @@ public class SessionTest {
 	}
 
 	@Test
-	public void testReadVariables() {
+	public void testReadVariableValue() {
 		try {
-			NodeId[] nodeIdArray = new NodeId[] { Identifiers.Server_NamespaceArray, new NodeId(1, 1007), new NodeId(1, 1006), new NodeId(1, "Boolean") };
+			NodeId[] nodeIdArray = new NodeId[] { Identifiers.Server_NamespaceArray, new NodeId(1, 1007), new NodeId(1, 1006), new NodeId(1, "Boolean"), new NodeId(1, "/Objects/MyCNCDevice/Model") };
 			DataValue[] dataValues = myClient.readVariableValue(nodeIdArray);
 
 			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());
@@ -132,7 +132,7 @@ public class SessionTest {
 	}
 
 	@Test
-	public void testRetrieveAllVariablesUnderRoot() {
+	public void testBrowseHierarchyOfNodeVariables() {
 		try {
 			// Retrieve the NodeId of each Variable
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
@@ -149,7 +149,6 @@ public class SessionTest {
 				//assertEquals(StatusCode.GOOD, dataValues[i].getStatusCode());  some of the status are: Bad_WaitingForInitialData (0x80320000) "Waiting for the server to obtain values from the underlying data source." 
 				assertNotNull(dataValues[i].getValue().toString());
 			}
-
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -157,7 +156,7 @@ public class SessionTest {
 	}
 
 	@Test
-	public void testRetrieveAllVariablesUnderObjects() {
+	public void testbrowseHierarchyOfNodeVariablesUnderObjects() {
 		try {
 			BrowsePathResult[] res = myClient.translateBrowsePathsToNodeIds("/Objects");
 			ExpandedNodeId objectsNodeId = res[0].getTargets()[0].getTargetId();
@@ -176,13 +175,15 @@ public class SessionTest {
 			BrowsePathResult[] var = myClient.translateBrowsePathsToNodeIds("/Objects/MyCNCDevice/Model");
 			NodeId varNodeId = myClient.toNodeId(var[0].getTargets()[0].getTargetId());
 			DataValue[] dataValues = myClient.readVariableValue(varNodeId);
-			dataValues[0].setValue(new Variant("TTTDDDFFF"));
+			assertEquals("NX1234", dataValues[0].getValue().toString());
+
+			dataValues[0].setValue(new Variant("NX5678"));
 
 			WriteValue writeValue = toWriteValue(varNodeId, dataValues[0]);
 
 			StatusCode[] res = myClient.write(writeValue);
-
 			assertEquals(UnsignedInteger.ZERO, res[0].getValue());
+
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -197,7 +198,7 @@ public class SessionTest {
 		return writeValue;
 	}
 
-	@Test
+	//@Test
 	public void testSusbribeVariable() {
 		try {
 			CreateSubscriptionResponse subscription = myClient.createSubscription();
