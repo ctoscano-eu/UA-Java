@@ -99,7 +99,7 @@ public class SessionTest {
 			}
 
 			names = new String[] { "/Objects", "/Objects/Server", "/Objects/Server/ServerStatus" };
-			res = myClient.translateBrowsePathsToNodeIds(names);
+			res = myClient.translateRootBrowsePathsToNodeIds(names);
 			assertEquals(3, res.length);
 			for (int i = 0; i < res.length; ++i) {
 				assertEquals(1, res[i].getTargets().length);
@@ -173,7 +173,7 @@ public class SessionTest {
 	@Test
 	public void testbrowseHierarchyOfNodeVariablesUnderObjects() {
 		try {
-			BrowsePathResult[] res = myClient.translateBrowsePathsToNodeIds("/Objects");
+			BrowsePathResult[] res = myClient.translateRootBrowsePathsToNodeIds("/Objects");
 			ExpandedNodeId objectsNodeId = res[0].getTargets()[0].getTargetId();
 
 			List<ReferenceDescription> references = myClient.browseHierarchyOfNodeVariables(myClient.toNodeId(objectsNodeId));
@@ -187,7 +187,7 @@ public class SessionTest {
 	@Test
 	public void testWriteVariables() {
 		try {
-			BrowsePathResult[] var = myClient.translateBrowsePathsToNodeIds("/Objects/MyCNCDevice/Model");
+			BrowsePathResult[] var = myClient.translateRootBrowsePathsToNodeIds("/Objects/MyCNCDevice/Model");
 			NodeId varNodeId = myClient.toNodeId(var[0].getTargets()[0].getTargetId());
 			DataValue[] dataValues = myClient.readVariableValue(varNodeId);
 			assertEquals("NX1234", dataValues[0].getValue().toString());
@@ -218,7 +218,7 @@ public class SessionTest {
 		try {
 			CreateSubscriptionResponse subscription = myClient.createSubscription();
 
-			BrowsePathResult[] var = myClient.translateBrowsePathsToNodeIds("/Objects/MyCNCDevice/Model");
+			BrowsePathResult[] var = myClient.translateRootBrowsePathsToNodeIds("/Objects/MyCNCDevice/Model");
 			NodeId varNodeId = myClient.toNodeId(var[0].getTargets()[0].getTargetId());
 
 			ReadValueId itemToMonitor = new ReadValueId(varNodeId, Attributes.Value, null, null);
