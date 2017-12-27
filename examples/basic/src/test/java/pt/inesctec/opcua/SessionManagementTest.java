@@ -11,29 +11,29 @@ import org.opcfoundation.ua.core.StatusCodes;
 
 public class SessionManagementTest {
 
-	private final String goodServerUrl = "opc.tcp://194.117.27.178:4334/UA/teste";
-	private final String badServerUrl = "opc.tcp://localhost:4334/UA/teste";
-	private MyCLient myClient;
+	private final String goodServerUrl = "opc.tcp://localhost:4334/UA/teste";      // Rui: "opc.tcp://194.117.27.178:4334/UA/teste"
+	private final String badServerUrl = "opc.tcp://194.117.27.178:4333/UA/teste";  // what is wrong in this url is the port
+	private OpcUaClient opcUaClient;
 
 	public void setUp(String serverURL) throws ServiceResultException {
-		myClient = new MyCLient();
-		myClient.create("SampleClient");
-		myClient.createSession(serverURL);
+		opcUaClient = new OpcUaClient();
+		opcUaClient.create("SampleClient");
+		opcUaClient.createOpcUaSession(serverURL);
 
-		assertNotNull(myClient.client);
-		assertNotNull(myClient.sessionChannel);
+		assertNotNull(opcUaClient.client);
+		assertNotNull(opcUaClient.getOpcUaSession(serverURL).sessionChannel);
 
-		assertNotNull(myClient.client.getApplicationHttpsSettings());
-		assertNotNull(myClient.client.getApplicatioOpcTcpSettings());
-		assertNotNull(myClient.client.getEndpointConfiguration());
-		assertNotNull(myClient.client.getEncoderContext());
+		assertNotNull(opcUaClient.client.getApplicationHttpsSettings());
+		assertNotNull(opcUaClient.client.getApplicatioOpcTcpSettings());
+		assertNotNull(opcUaClient.client.getEndpointConfiguration());
+		assertNotNull(opcUaClient.client.getEncoderContext());
 
-		assertNotNull(myClient.sessionChannel.getSecureChannel());
-		assertNotNull(myClient.sessionChannel.getSession());
+		assertNotNull(opcUaClient.getOpcUaSession(serverURL).sessionChannel.getSecureChannel());
+		assertNotNull(opcUaClient.getOpcUaSession(serverURL).sessionChannel.getSession());
 	}
 
 	public void shutdown() throws ServiceFaultException, ServiceResultException {
-		myClient.shutdownSession();
+		opcUaClient.shutdownOpcUaSession(null);
 	}
 
 	@Test
@@ -64,11 +64,11 @@ public class SessionManagementTest {
 	}
 
 	
-	public void testReconnectionOfBrokebSession() {
+	public void testReconnectionOfBrokenSession() {
 		try {
 			setUp(goodServerUrl);
 
-			myClient.translateRootBrowsePathsToNodeIds("/Objects");
+			opcUaClient.translateRootBrowsePathsToNodeIds(goodServerUrl, "/Objects");
 
 			//myClient.sessionChannel.getSecureChannel().isOpen()); // it is always true ....
 			//myClient.sessionChannel.getSecureChannel().getClass(); // org.opcfoundation.ua.transport.tcp.io.SecureChannelTcp)
@@ -78,7 +78,7 @@ public class SessionManagementTest {
 			// shutdown manually the server and then restart it
 
 			try {
-				myClient.translateRootBrowsePathsToNodeIds("/Objects");
+				opcUaClient.translateRootBrowsePathsToNodeIds(goodServerUrl, "/Objects");
 			}
 			catch (ServiceResultException t) {
 				assertEquals(StatusCodes.Bad_Timeout, t.getStatusCode().getValue());
@@ -86,7 +86,7 @@ public class SessionManagementTest {
 				//assertEquals(StatusCodes.Bad_ConnectionRejected, t.getStatusCode().getValue());
 			}
 
-			myClient.translateRootBrowsePathsToNodeIds("/Objects");
+			opcUaClient.translateRootBrowsePathsToNodeIds(goodServerUrl, "/Objects");
 
 			shutdown();
 		}

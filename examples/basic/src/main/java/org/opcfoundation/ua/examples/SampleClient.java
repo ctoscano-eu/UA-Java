@@ -26,7 +26,6 @@ package org.opcfoundation.ua.examples;
 
 import java.util.Arrays;
 
-import org.opcfoundation.ua.application.SessionChannel;
 import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.core.Attributes;
 import org.opcfoundation.ua.core.BrowseDescription;
@@ -39,7 +38,8 @@ import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.TimestampsToReturn;
 
-import pt.inesctec.opcua.MyCLient;
+import pt.inesctec.opcua.OpcUaClient;
+import pt.inesctec.opcua.OpcUaSession;
 
 /**
  * Sample client creates a connection to OPC UA Server (1st arg), browses and reads a boolean value. It is configured to work against NanoServer example, using the address opc.tcp://localhost:8666/
@@ -56,10 +56,10 @@ public class SampleClient {
 		String url = args[0];
 		System.out.print("SampleClient: Connecting to " + url + " .. ");
 
-		MyCLient myClient = new MyCLient();
-		myClient.create("SampleClient");
+		OpcUaClient opcUaClient = new OpcUaClient();
+		opcUaClient.create("SampleClient");
 
-		SessionChannel mySession = myClient.createSession(url);
+		OpcUaSession opcUaSession = opcUaClient.createOpcUaSession(url);
 
 		///////////// EXECUTE //////////////
 		// Browse Root
@@ -69,22 +69,20 @@ public class SampleClient {
 		browse.setIncludeSubtypes(true);
 		browse.setNodeClassMask(NodeClass.Object, NodeClass.Variable);
 		browse.setResultMask(BrowseResultMask.All);
-		BrowseResponse res3 = mySession.Browse(null, null, null, browse);
+		BrowseResponse res3 = opcUaSession.sessionChannel.Browse(null, null, null, browse);
 		System.out.println(res3);
 
 		// Read Namespace Array
-		ReadResponse res5 = mySession.Read(null, null, TimestampsToReturn.Neither, new ReadValueId(Identifiers.Server_NamespaceArray, Attributes.Value, null, null));
+		ReadResponse res5 = opcUaSession.sessionChannel.Read(null, null, TimestampsToReturn.Neither, new ReadValueId(Identifiers.Server_NamespaceArray, Attributes.Value, null, null));
 		String[] namespaceArray = (String[]) res5.getResults()[0].getValue().getValue();
 		System.out.println(Arrays.toString(namespaceArray));
 
 		// Read a variable (Works with NanoServer example!)
-		ReadResponse res4 = mySession.Read(null, 500.0, TimestampsToReturn.Source, 
-				new ReadValueId(new NodeId(1, 1007), Attributes.Value, null, null),
-		    new ReadValueId(new NodeId(1, 1006), Attributes.Value, null, null), 
-		    new ReadValueId(new NodeId(1, "Boolean"), Attributes.Value, null, null));
+		ReadResponse res4 = opcUaSession.sessionChannel.Read(null, 500.0, TimestampsToReturn.Source, new ReadValueId(new NodeId(1, 1007), Attributes.Value, null, null),
+		    new ReadValueId(new NodeId(1, 1006), Attributes.Value, null, null), new ReadValueId(new NodeId(1, "Boolean"), Attributes.Value, null, null));
 		System.out.println(res4);
 
-		myClient.shutdownSession();
+		opcUaSession.shutdown();
 	}
 
 }
