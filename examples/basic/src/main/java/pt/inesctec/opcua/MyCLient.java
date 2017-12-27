@@ -1,7 +1,6 @@
 package pt.inesctec.opcua;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +42,7 @@ import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.ReferenceDescription;
 import org.opcfoundation.ua.core.RelativePath;
 import org.opcfoundation.ua.core.RelativePathElement;
+import org.opcfoundation.ua.core.StatusCodes;
 import org.opcfoundation.ua.core.SubscriptionAcknowledgement;
 import org.opcfoundation.ua.core.TimestampsToReturn;
 import org.opcfoundation.ua.core.TranslateBrowsePathsToNodeIdsResponse;
@@ -80,6 +80,7 @@ public class MyCLient {
 	public String appName;
 	public Client client;
 	public SessionChannel sessionChannel;
+	private String serverUrl;
 
 	public MyCLient() {
 		super();
@@ -138,20 +139,34 @@ public class MyCLient {
 	}
 
 	public SessionChannel createSession(String url) throws ServiceResultException {
+		this.serverUrl = url;
+
 		sessionChannel = client.createSessionChannel(url);
 		// mySession.activate("username", "123");
 		ActivateSessionResponse res = sessionChannel.activate();
-		
+
 		assertEquals(0, res.getDiagnosticInfos().length);
 		assertEquals(0, res.getResults().length);
 		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+
+		sessionChannel.getSecureChannel().setOperationTimeout(5000);
 
 		return sessionChannel;
 	}
 
 	public void shutdownSession() throws ServiceFaultException, ServiceResultException {
-		sessionChannel.close();
-		sessionChannel.closeAsync();
+		try {
+			sessionChannel.close();
+		}
+		catch (Throwable t) {
+			// ignore
+		}
+		try {
+			sessionChannel.closeAsync();
+		}
+		catch (Throwable t) {
+			// ignore
+		}
 	}
 
 	/*
@@ -243,13 +258,24 @@ public class MyCLient {
 
 	public BrowsePathResult[] translateBrowsePathsToNodeIds(BrowsePath... pathToTranslate) throws ServiceFaultException, ServiceResultException {
 
-		TranslateBrowsePathsToNodeIdsResponse res = sessionChannel.TranslateBrowsePathsToNodeIds(null, pathToTranslate);
+		try {
+			TranslateBrowsePathsToNodeIdsResponse res = sessionChannel.TranslateBrowsePathsToNodeIds(null, pathToTranslate);
 
-		assertEquals(0, res.getDiagnosticInfos().length);
-		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
-		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
+			assertEquals(0, res.getDiagnosticInfos().length);
+			assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+			assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
 
-		return res.getResults();
+			return res.getResults();
+		}
+		catch (ServiceResultException e) {
+			// TODO ctoscano do the same fopr the other API calls
+			if (e.getStatusCode().getValue().equals(StatusCodes.Bad_Timeout)) {
+				shutdownSession();
+				createSession(serverUrl);
+			}
+			throw e;
+		}
+
 	}
 
 	// path must be something like "11111/222222/333333"
