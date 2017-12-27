@@ -268,7 +268,7 @@ public class MyCLient {
 			return res.getResults();
 		}
 		catch (ServiceResultException e) {
-			// TODO ctoscano do the same fopr the other API calls
+			// TODO ctoscano do the same fopr the other API callssss
 			if (e.getStatusCode().getValue().equals(StatusCodes.Bad_Timeout)) {
 				shutdownSession();
 				createSession(serverUrl);
