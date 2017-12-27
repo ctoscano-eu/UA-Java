@@ -1,6 +1,7 @@
 package pt.inesctec.opcua;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Locale;
@@ -20,6 +21,7 @@ import org.opcfoundation.ua.cert.PkiDirectoryCertificateStore;
 import org.opcfoundation.ua.common.NamespaceTable;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
+import org.opcfoundation.ua.core.ActivateSessionResponse;
 import org.opcfoundation.ua.core.Attributes;
 import org.opcfoundation.ua.core.BrowseDescription;
 import org.opcfoundation.ua.core.BrowseDirection;
@@ -138,7 +140,11 @@ public class MyCLient {
 	public SessionChannel createSession(String url) throws ServiceResultException {
 		sessionChannel = client.createSessionChannel(url);
 		// mySession.activate("username", "123");
-		sessionChannel.activate();
+		ActivateSessionResponse res = sessionChannel.activate();
+		
+		assertEquals(0, res.getDiagnosticInfos().length);
+		assertEquals(0, res.getResults().length);
+		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
 
 		return sessionChannel;
 	}
