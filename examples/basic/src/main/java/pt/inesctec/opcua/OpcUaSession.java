@@ -36,6 +36,7 @@ import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.RelativePath;
 import org.opcfoundation.ua.core.RelativePathElement;
+import org.opcfoundation.ua.core.StatusCodes;
 import org.opcfoundation.ua.core.SubscriptionAcknowledgement;
 import org.opcfoundation.ua.core.TimestampsToReturn;
 import org.opcfoundation.ua.core.TranslateBrowsePathsToNodeIdsResponse;
@@ -72,6 +73,42 @@ public class OpcUaSession {
 	private void logServiceResult(StatusCode serviceResult) {
 		if (!serviceResult.equals(StatusCode.GOOD))
 			logger.warn("ServiceResult: " + serviceResult);
+	}
+
+	private void logBrowseResults(BrowseResult[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("BrowseResult.StatusCode: " + results[i].getStatusCode());
+	}
+
+	private void logDataValues(DataValue[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("DataValue.StatusCode: " + results[i].getStatusCode());
+	}
+
+	private void logWriteStatusCode(StatusCode[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].equals(StatusCode.GOOD))
+				logger.warn("WriteStatusCode: " + results[i]);
+	}
+
+	private void logBrowsePathResults(BrowsePathResult[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("BrowsePathResult.StatusCode: " + results[i]);
+	}
+
+	private void logMonitoredItemCreateResults(MonitoredItemCreateResult[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("MonitoredItemCreateResult.StatusCode: " + results[i]);
+	}
+
+	private void logPublishResponse(StatusCode[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].equals(StatusCode.GOOD))
+				logger.warn("PublishResponse.StatusCode: " + results[i]);
 	}
 
 	public SessionChannel create(String url) throws ServiceResultException {
@@ -129,36 +166,6 @@ public class OpcUaSession {
 		logBrowseResults(res.getResults());
 
 		return res.getResults();
-	}
-
-	private void logBrowseResults(BrowseResult[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
-				logger.warn("BrowseResult.StatusCode: " + results[i].getStatusCode());
-	}
-
-	private void logDataValues(DataValue[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
-				logger.warn("DataValue.StatusCode: " + results[i].getStatusCode());
-	}
-
-	private void logWriteStatusCode(StatusCode[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].equals(StatusCode.GOOD))
-				logger.warn("WriteStatusCode: " + results[i]);
-	}
-
-	private void logBrowsePathResults(BrowsePathResult[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
-				logger.warn("BrowsePathResult.StatusCode: " + results[i]);
-	}
-
-	private void logMonitoredItemCreateResults(MonitoredItemCreateResult[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
-				logger.warn("MonitoredItemCreateResult.StatusCode: " + results[i]);
 	}
 
 	public BrowseResult[] browseNodeOjectsAndVariables(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
@@ -345,7 +352,7 @@ public class OpcUaSession {
 	 */
 	public MonitoredItemCreateResult[] createMonitoredItems(UnsignedInteger subscriptionId, ReadValueId... itemToMonitor) throws ServiceFaultException, ServiceResultException {
 		MonitoringParameters requestedParameters = new MonitoringParameters();
-		requestedParameters.setSamplingInterval(500.0);
+		requestedParameters.setSamplingInterval(-1.0);
 		requestedParameters.setQueueSize(UnsignedInteger.valueOf(10));// defines how many notifications can be queued for delivery (default value for data changes is one)
 		requestedParameters.setDiscardOldest(true);
 		//requestedParameters.setFilter();
@@ -370,20 +377,31 @@ public class OpcUaSession {
 	}
 
 	public PublishResponse publish(UnsignedInteger subscriptionId, long sequenceNumber) throws ServiceFaultException, ServiceResultException {
-		SubscriptionAcknowledgement subscriptionAcknowledgement = new SubscriptionAcknowledgement();
-		subscriptionAcknowledgement.setSequenceNumber(UnsignedInteger.valueOf(sequenceNumber));
-		subscriptionAcknowledgement.setSubscriptionId(subscriptionId);
-		PublishResponse res = sessionChannel.Publish(null, subscriptionAcknowledgement);
 
-		logDiagnosticInfos(res.getDiagnosticInfos());
-		logServiceResult(res.getResponseHeader().getServiceResult());
+		try {
+			SubscriptionAcknowledgement subscriptionAcknowledgement = new SubscriptionAcknowledgement();
+			subscriptionAcknowledgement.setSequenceNumber(UnsignedInteger.valueOf(sequenceNumber));
+			subscriptionAcknowledgement.setSubscriptionId(subscriptionId);
 
-		res.getResults();
-		res.getAvailableSequenceNumbers();
-		res.getNotificationMessage();
-		res.getMoreNotifications();
+			PublishResponse res = sessionChannel.Publish(null, subscriptionAcknowledgement);
 
-		return res;
+			logDiagnosticInfos(res.getDiagnosticInfos());
+			logServiceResult(res.getResponseHeader().getServiceResult());
+			logPublishResponse(res.getResults());
+
+			res.getResults();
+			res.getAvailableSequenceNumbers();
+			res.getNotificationMessage();
+			res.getMoreNotifications();
+
+			return res;
+		}
+		catch (ServiceResultException e) {
+			if (e.getStatusCode().getValue().equals(StatusCodes.Bad_Timeout))
+				return null;
+			else
+				throw e;
+		}
 	}
 
 }

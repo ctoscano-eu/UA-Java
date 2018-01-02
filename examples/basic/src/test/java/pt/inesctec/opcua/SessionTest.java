@@ -233,7 +233,9 @@ public class SessionTest {
 			assertNotNull(monitoredItems[0].getMonitoredItemId());
 
 			PublishResponse res = opcUaClient.publish(serverUrl, subscription.getSubscriptionId(), 0);
-			int i = 0;
+			res = opcUaClient.publish(serverUrl, subscription.getSubscriptionId(), 1);
+			res = opcUaClient.publish(serverUrl, subscription.getSubscriptionId(), 1);
+
 		}
 		catch (Throwable t) {
 			fail(t.getMessage());
