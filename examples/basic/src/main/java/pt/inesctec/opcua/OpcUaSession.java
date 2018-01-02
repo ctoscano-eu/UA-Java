@@ -271,10 +271,10 @@ public class OpcUaSession {
 
 	public CreateSubscriptionResponse createSubscription() throws ServiceFaultException, ServiceResultException {
 		double requestedPublishingInterval = 1000.0;
-		UnsignedInteger requestedLifetimeCount = UnsignedInteger.valueOf(1000);
-		UnsignedInteger requestedMaxKeepAliveCount = UnsignedInteger.valueOf(1000);
-		UnsignedInteger maxNotificationsPerPublish = UnsignedInteger.valueOf(100);
-		UnsignedByte priority = UnsignedByte.valueOf(1);
+		UnsignedInteger requestedLifetimeCount = UnsignedInteger.valueOf(10);
+		UnsignedInteger requestedMaxKeepAliveCount = UnsignedInteger.valueOf(2);
+		UnsignedInteger maxNotificationsPerPublish = UnsignedInteger.valueOf(10);
+		UnsignedByte priority = UnsignedByte.valueOf(10);
 		CreateSubscriptionResponse res = sessionChannel.CreateSubscription(null, requestedPublishingInterval, requestedLifetimeCount, requestedMaxKeepAliveCount, maxNotificationsPerPublish, true,
 		    priority);
 
@@ -285,12 +285,13 @@ public class OpcUaSession {
 
 	public MonitoredItemCreateResult[] createMonitoredItems(UnsignedInteger subscriptionId, ReadValueId itemToMonitor) throws ServiceFaultException, ServiceResultException {
 		MonitoringParameters requestedParameters = new MonitoringParameters();
-		requestedParameters.setSamplingInterval(1000.0);
-		requestedParameters.setQueueSize(UnsignedInteger.valueOf(1000));
+		requestedParameters.setSamplingInterval(100.0);
+		requestedParameters.setQueueSize(UnsignedInteger.valueOf(10));
+		requestedParameters.setDiscardOldest(true);
 
 		MonitoredItemCreateRequest itemToCreate = new MonitoredItemCreateRequest();
 		itemToCreate.setItemToMonitor(itemToMonitor);
-		itemToCreate.setMonitoringMode(MonitoringMode.Sampling);
+		itemToCreate.setMonitoringMode(MonitoringMode.Reporting);
 		itemToCreate.setRequestedParameters(requestedParameters);
 		CreateMonitoredItemsResponse res = sessionChannel.CreateMonitoredItems(null, subscriptionId, TimestampsToReturn.Both, itemToCreate);
 
