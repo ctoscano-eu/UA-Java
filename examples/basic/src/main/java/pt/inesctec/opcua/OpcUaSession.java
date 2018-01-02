@@ -279,8 +279,8 @@ public class OpcUaSession {
 	public CreateSubscriptionResponse createSubscription() throws ServiceFaultException, ServiceResultException {
 		double requestedPublishingInterval = 1000.0; // the interval when the server clears the queues and delivers the notifications to the client.
 		                                             //The Publish enabled setting defines whether the data gets delivered to the client. 
-		UnsignedInteger requestedLifetimeCount = UnsignedInteger.valueOf(10);
-		UnsignedInteger requestedMaxKeepAliveCount = UnsignedInteger.valueOf(2);
+		UnsignedInteger requestedLifetimeCount = UnsignedInteger.valueOf(60);
+		UnsignedInteger requestedMaxKeepAliveCount = UnsignedInteger.valueOf(20);
 		UnsignedInteger maxNotificationsPerPublish = UnsignedInteger.valueOf(10);
 		UnsignedByte priority = UnsignedByte.valueOf(10);
 		CreateSubscriptionResponse res = sessionChannel.CreateSubscription(null, requestedPublishingInterval, requestedLifetimeCount, requestedMaxKeepAliveCount, maxNotificationsPerPublish, true,
@@ -306,7 +306,7 @@ public class OpcUaSession {
 	 */
 	public MonitoredItemCreateResult[] createMonitoredItems(UnsignedInteger subscriptionId, ReadValueId... itemToMonitor) throws ServiceFaultException, ServiceResultException {
 		MonitoringParameters requestedParameters = new MonitoringParameters();
-		requestedParameters.setSamplingInterval(100.0);
+		requestedParameters.setSamplingInterval(500.0);
 		requestedParameters.setQueueSize(UnsignedInteger.valueOf(10));// defines how many notifications can be queued for delivery (default value for data changes is one)
 		requestedParameters.setDiscardOldest(true);
 		//requestedParameters.setFilter();
