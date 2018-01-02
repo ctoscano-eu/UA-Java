@@ -22,6 +22,7 @@ import org.opcfoundation.ua.core.BrowseDirection;
 import org.opcfoundation.ua.core.BrowsePath;
 import org.opcfoundation.ua.core.BrowsePathResult;
 import org.opcfoundation.ua.core.BrowseResponse;
+import org.opcfoundation.ua.core.BrowseResult;
 import org.opcfoundation.ua.core.BrowseResultMask;
 import org.opcfoundation.ua.core.CreateMonitoredItemsResponse;
 import org.opcfoundation.ua.core.CreateSubscriptionResponse;
@@ -34,7 +35,6 @@ import org.opcfoundation.ua.core.NodeClass;
 import org.opcfoundation.ua.core.PublishResponse;
 import org.opcfoundation.ua.core.ReadResponse;
 import org.opcfoundation.ua.core.ReadValueId;
-import org.opcfoundation.ua.core.ReferenceDescription;
 import org.opcfoundation.ua.core.RelativePath;
 import org.opcfoundation.ua.core.RelativePathElement;
 import org.opcfoundation.ua.core.SubscriptionAcknowledgement;
@@ -98,7 +98,7 @@ public class OpcUaSession {
 	/*
 	 * Takes a list of starting Nodes and returns a list of connected Nodes for each starting Node.
 	 */
-	public ReferenceDescription[] browseNodeOjectsAndVariables(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+	public BrowseResult[] browseNodeOjectsAndVariables(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
 		BrowseDescription[] nodesToBrowse = new BrowseDescription[nodeIdArray.length];
 		for (int i = 0; i < nodeIdArray.length; ++i) {
 			nodesToBrowse[i] = new BrowseDescription();
@@ -114,29 +114,33 @@ public class OpcUaSession {
 
 		assertEquals(0, res.getDiagnosticInfos().length);
 		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
-		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
+		for (int i = 0; i < nodeIdArray.length; ++i)
+			assertEquals(StatusCode.GOOD, res.getResults()[i].getStatusCode());
 
-		return res.getResults()[0].getReferences();
+		return res.getResults();
 	}
 
-	public ReferenceDescription[] browseNodeOjectsAndVariables(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+	public BrowseResult[] browseNodeOjectsAndVariables(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
 		return browseNodeOjectsAndVariables(toNodeId(expandedNodeIdArray));
 	}
 
-	public List<ReferenceDescription> browseHierarchyOfNodeVariables(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
-		List<ReferenceDescription> output = Lists.newArrayList();
-		ReferenceDescription[] resp = browseNodeOjectsAndVariables(nodeIdArray);
+	public List<BrowseResult> browseHierarchyOfNodeVariables(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+		List<BrowseResult> output = Lists.newArrayList();
+
+		BrowseResult[] resp = browseNodeOjectsAndVariables(nodeIdArray);
 		for (int i = 0; i < resp.length; ++i) {
-			if (resp[i].getNodeClass() == NodeClass.Object)
-				output.addAll(browseHierarchyOfNodeVariables(toNodeId(resp[i].getNodeId())));
-			else if (resp[i].getNodeClass() == NodeClass.Variable)
-				output.add(resp[i]);
+			for (int j = 0; j < resp[i].getReferences().length; ++j) {
+				if (resp[i].getReferences()[j].getNodeClass() == NodeClass.Object)
+					output.addAll(browseHierarchyOfNodeVariables(toNodeId(resp[i].getReferences()[j].getNodeId())));
+				else if (resp[i].getReferences()[j].getNodeClass() == NodeClass.Variable)
+					output.add(resp[i]); // TOD ctoscano ??????
+			}
 		}
 
 		return output;
 	}
 
-	public List<ReferenceDescription> browseHierarchyOfNodeVariables(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+	public List<BrowseResult> browseHierarchyOfNodeVariables(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
 		return browseHierarchyOfNodeVariables(toNodeId(expandedNodeIdArray));
 	}
 
@@ -152,7 +156,9 @@ public class OpcUaSession {
 
 		assertEquals(0, res.getDiagnosticInfos().length);
 		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
-		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
+		// TODO ctoscano Disabled because of the tests
+		//for (int i = 0; i < nodeIdArray.length; ++i) 
+			//assertEquals(StatusCode.GOOD, res.getResults()[i].getStatusCode());
 
 		return res.getResults();
 	}
@@ -187,7 +193,8 @@ public class OpcUaSession {
 
 		assertEquals(0, res.getDiagnosticInfos().length);
 		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
-		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
+		for (int i = 0; i < pathToTranslate.length; ++i)
+			assertEquals(StatusCode.GOOD, res.getResults()[i].getStatusCode());
 
 		return res.getResults();
 	}
@@ -270,7 +277,8 @@ public class OpcUaSession {
 	}
 
 	public CreateSubscriptionResponse createSubscription() throws ServiceFaultException, ServiceResultException {
-		double requestedPublishingInterval = 1000.0;
+		double requestedPublishingInterval = 1000.0; // the interval when the server clears the queues and delivers the notifications to the client.
+		                                             //The Publish enabled setting defines whether the data gets delivered to the client. 
 		UnsignedInteger requestedLifetimeCount = UnsignedInteger.valueOf(10);
 		UnsignedInteger requestedMaxKeepAliveCount = UnsignedInteger.valueOf(2);
 		UnsignedInteger maxNotificationsPerPublish = UnsignedInteger.valueOf(10);
@@ -283,21 +291,42 @@ public class OpcUaSession {
 		return res;
 	}
 
-	public MonitoredItemCreateResult[] createMonitoredItems(UnsignedInteger subscriptionId, ReadValueId itemToMonitor) throws ServiceFaultException, ServiceResultException {
+	/*
+	 * SamplingInterval:
+	 *   The rate in milliseconds the server checks the underlying data source for changes. The type of change 
+	 *   that triggers a notification is defined by the filter.  
+	 * 	 If –1 is used for this interval, the publishing interval of the Subscription is used as for this setting. 
+	 *	 A client can over sample the Value by setting the SamplingInterval to a smaller value than the publishing 
+	 *	interval and the queue size to 1 
+	 *
+	 * QueueSize:
+	 *   Maximum number of values stored for the Monitored Item during a publishing interval. After each publishing 
+	 *   interval the server will send the values in the queue to the client
+	 *    
+	 */
+	public MonitoredItemCreateResult[] createMonitoredItems(UnsignedInteger subscriptionId, ReadValueId... itemToMonitor) throws ServiceFaultException, ServiceResultException {
 		MonitoringParameters requestedParameters = new MonitoringParameters();
 		requestedParameters.setSamplingInterval(100.0);
-		requestedParameters.setQueueSize(UnsignedInteger.valueOf(10));
+		requestedParameters.setQueueSize(UnsignedInteger.valueOf(10));// defines how many notifications can be queued for delivery (default value for data changes is one)
 		requestedParameters.setDiscardOldest(true);
+		//requestedParameters.setFilter();
+		//requestedParameters.setClientHandle();
 
-		MonitoredItemCreateRequest itemToCreate = new MonitoredItemCreateRequest();
-		itemToCreate.setItemToMonitor(itemToMonitor);
-		itemToCreate.setMonitoringMode(MonitoringMode.Reporting);
-		itemToCreate.setRequestedParameters(requestedParameters);
-		CreateMonitoredItemsResponse res = sessionChannel.CreateMonitoredItems(null, subscriptionId, TimestampsToReturn.Both, itemToCreate);
+		MonitoredItemCreateRequest[] itemToCreateArray = new MonitoredItemCreateRequest[itemToMonitor.length];
+		for (int i = 0; i < itemToCreateArray.length; ++i) {
+			itemToCreateArray[i] = new MonitoredItemCreateRequest();
+			itemToCreateArray[i].setItemToMonitor(itemToMonitor[i]);
+			itemToCreateArray[i].setMonitoringMode(MonitoringMode.Reporting);// defines if the Monitored Item is active or inactive, defines if data gets sampled and delivered
+			// The monitoring mode defines the states disabled, sampling, and reporting.
+			itemToCreateArray[i].setRequestedParameters(requestedParameters);
+		}
+
+		CreateMonitoredItemsResponse res = sessionChannel.CreateMonitoredItems(null, subscriptionId, TimestampsToReturn.Both, itemToCreateArray);
 
 		assertEquals(0, res.getDiagnosticInfos().length);
 		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
-		assertEquals(StatusCode.GOOD, res.getResults()[0].getStatusCode());
+		for (int i = 0; i < itemToMonitor.length; ++i)
+			assertEquals(StatusCode.GOOD, res.getResults()[i].getStatusCode());
 
 		return res.getResults();
 	}

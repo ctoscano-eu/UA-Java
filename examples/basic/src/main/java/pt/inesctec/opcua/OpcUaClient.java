@@ -18,11 +18,11 @@ import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
 import org.opcfoundation.ua.core.BrowsePath;
 import org.opcfoundation.ua.core.BrowsePathResult;
+import org.opcfoundation.ua.core.BrowseResult;
 import org.opcfoundation.ua.core.CreateSubscriptionResponse;
 import org.opcfoundation.ua.core.MonitoredItemCreateResult;
 import org.opcfoundation.ua.core.PublishResponse;
 import org.opcfoundation.ua.core.ReadValueId;
-import org.opcfoundation.ua.core.ReferenceDescription;
 import org.opcfoundation.ua.core.StatusCodes;
 import org.opcfoundation.ua.core.WriteValue;
 import org.opcfoundation.ua.examples.certs.ExampleKeys;
@@ -166,7 +166,7 @@ public class OpcUaClient {
 	/*
 	 * Takes a list of starting Nodes and returns a list of connected Nodes for each starting Node.
 	 */
-	public ReferenceDescription[] browseNodeOjectsAndVariables(String serverUrl, NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+	public BrowseResult[] browseNodeOjectsAndVariables(String serverUrl, NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
 		try {
 			return getOpcUaSession(serverUrl).browseNodeOjectsAndVariables(nodeIdArray);
 		}
@@ -176,7 +176,7 @@ public class OpcUaClient {
 		}
 	}
 
-	public ReferenceDescription[] browseNodeOjectsAndVariables(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+	public BrowseResult[] browseNodeOjectsAndVariables(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
 		try {
 			return getOpcUaSession(serverUrl).browseNodeOjectsAndVariables(expandedNodeIdArray);
 		}
@@ -186,7 +186,7 @@ public class OpcUaClient {
 		}
 	}
 
-	public List<ReferenceDescription> browseHierarchyOfNodeVariables(String serverUrl, NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+	public List<BrowseResult> browseHierarchyOfNodeVariables(String serverUrl, NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
 		try {
 			return getOpcUaSession(serverUrl).browseHierarchyOfNodeVariables(nodeIdArray);
 		}
@@ -196,7 +196,7 @@ public class OpcUaClient {
 		}
 	}
 
-	public List<ReferenceDescription> browseHierarchyOfNodeVariables(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+	public List<BrowseResult> browseHierarchyOfNodeVariables(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
 		try {
 			return getOpcUaSession(serverUrl).browseHierarchyOfNodeVariables(expandedNodeIdArray);
 		}

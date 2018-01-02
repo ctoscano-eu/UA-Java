@@ -21,17 +21,19 @@ import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
 import org.opcfoundation.ua.core.Attributes;
 import org.opcfoundation.ua.core.BrowsePathResult;
+import org.opcfoundation.ua.core.BrowseResult;
 import org.opcfoundation.ua.core.CreateSubscriptionResponse;
 import org.opcfoundation.ua.core.Identifiers;
 import org.opcfoundation.ua.core.MonitoredItemCreateResult;
 import org.opcfoundation.ua.core.PublishResponse;
 import org.opcfoundation.ua.core.ReadValueId;
-import org.opcfoundation.ua.core.ReferenceDescription;
 import org.opcfoundation.ua.core.WriteValue;
 
 public class SessionTest {
 
 	private final String serverUrl = "opc.tcp://localhost:4334/UA/teste";
+	//private final String serverUrl = "opc.tcp://194.117.27.178:4334/UA/teste";
+
 	private OpcUaClient opcUaClient;
 
 	@Before
@@ -49,36 +51,37 @@ public class SessionTest {
 	@Test
 	public void testBrowseNodeOjectsAndVariables() {
 		try {
+
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
-			ReferenceDescription[] references1 = opcUaClient.browseNodeOjectsAndVariables(serverUrl, nodeIdArray); // "/"
-			assertEquals(3, references1.length);
-			assertEquals("Objects", references1[0].getBrowseName().getName());
-			assertEquals("Types", references1[1].getBrowseName().getName());
-			assertEquals("Views", references1[2].getBrowseName().getName());
+			BrowseResult[] res1 = opcUaClient.browseNodeOjectsAndVariables(serverUrl, nodeIdArray); // "/"
+			assertEquals(3, res1[0].getReferences().length);
+			assertEquals("Objects", res1[0].getReferences()[0].getBrowseName().getName());
+			assertEquals("Types", res1[0].getReferences()[1].getBrowseName().getName());
+			assertEquals("Views", res1[0].getReferences()[2].getBrowseName().getName());
 
-			ReferenceDescription[] references2 = opcUaClient.browseNodeOjectsAndVariables(serverUrl, references1[0].getNodeId()); // "/Objects"
-			assertEquals(3, references2.length);
-			assertEquals("Server", references2[0].getBrowseName().getName());
-			assertEquals("MyCNCDevice", references2[1].getBrowseName().getName());
-			assertEquals("MyCNCDevice", references2[2].getBrowseName().getName());
+			BrowseResult[] res2 = opcUaClient.browseNodeOjectsAndVariables(serverUrl, res1[0].getReferences()[0].getNodeId()); // "/Objects"
+			assertEquals(3, res2[0].getReferences().length);
+			assertEquals("Server", res2[0].getReferences()[0].getBrowseName().getName());
+			assertEquals("MyCNCDevice", res2[0].getReferences()[1].getBrowseName().getName());
+			assertEquals("MyCNCDevice", res2[0].getReferences()[2].getBrowseName().getName());
 
-			ReferenceDescription[] references3 = opcUaClient.browseNodeOjectsAndVariables(serverUrl, references2[0].getNodeId());// "/Objects/Server"
-			assertEquals(12, references3.length);
-			assertEquals("ServerArray", references3[0].getBrowseName().getName());
-			assertEquals("NamespaceArray", references3[1].getBrowseName().getName());
-			assertEquals("ServerStatus", references3[2].getBrowseName().getName());
-			assertEquals("ServiceLevel", references3[3].getBrowseName().getName());
-			assertEquals("Auditing", references3[4].getBrowseName().getName());
-			assertEquals("EstimatedReturnTime", references3[5].getBrowseName().getName());
-			assertEquals("ServerCapabilities", references3[6].getBrowseName().getName());
-			assertEquals("ServerDiagnostics", references3[7].getBrowseName().getName());
-			assertEquals("VendorServerInfo", references3[8].getBrowseName().getName());
-			assertEquals("ServerRedundancy", references3[9].getBrowseName().getName());
-			assertEquals("Namespaces", references3[10].getBrowseName().getName());
-			assertEquals("ServerConfiguration", references3[11].getBrowseName().getName());
+			BrowseResult[] res3 = opcUaClient.browseNodeOjectsAndVariables(serverUrl, res2[0].getReferences()[0].getNodeId());// "/Objects/Server"
+			assertEquals(12, res3[0].getReferences().length);
+			assertEquals("ServerArray", res3[0].getReferences()[0].getBrowseName().getName());
+			assertEquals("NamespaceArray", res3[0].getReferences()[1].getBrowseName().getName());
+			assertEquals("ServerStatus", res3[0].getReferences()[2].getBrowseName().getName());
+			assertEquals("ServiceLevel", res3[0].getReferences()[3].getBrowseName().getName());
+			assertEquals("Auditing", res3[0].getReferences()[4].getBrowseName().getName());
+			assertEquals("EstimatedReturnTime", res3[0].getReferences()[5].getBrowseName().getName());
+			assertEquals("ServerCapabilities", res3[0].getReferences()[6].getBrowseName().getName());
+			assertEquals("ServerDiagnostics", res3[0].getReferences()[7].getBrowseName().getName());
+			assertEquals("VendorServerInfo", res3[0].getReferences()[8].getBrowseName().getName());
+			assertEquals("ServerRedundancy", res3[0].getReferences()[9].getBrowseName().getName());
+			assertEquals("Namespaces", res3[0].getReferences()[10].getBrowseName().getName());
+			assertEquals("ServerConfiguration", res3[0].getReferences()[11].getBrowseName().getName());
 
-			ReferenceDescription[] references4 = opcUaClient.browseNodeOjectsAndVariables(serverUrl, references2[1].getNodeId());// "/Objects/MyCNCDevice"
-			assertEquals(4, references4.length);
+			BrowseResult[] res4 = opcUaClient.browseNodeOjectsAndVariables(serverUrl, res2[0].getReferences()[1].getNodeId());// "/Objects/MyCNCDevice"
+			assertEquals(4, res4[0].getReferences().length);
 		}
 		catch (Throwable t) {
 			fail(t.getMessage());
@@ -152,13 +155,13 @@ public class SessionTest {
 		try {
 			// Retrieve the NodeId of each Variable
 			NodeId[] nodeIdArray = new NodeId[] { Identifiers.RootFolder };
-			List<ReferenceDescription> references = opcUaClient.browseHierarchyOfNodeVariables(serverUrl, nodeIdArray);
-			assertTrue(references.size() > 0);
+			List<BrowseResult> res = opcUaClient.browseHierarchyOfNodeVariables(serverUrl, nodeIdArray);
+			assertTrue(res.get(0).getReferences().length > 0);
 
 			// Read each Variable
-			nodeIdArray = new NodeId[references.size()];
+			nodeIdArray = new NodeId[res.get(0).getReferences().length];
 			for (int i = 0; i < nodeIdArray.length; ++i) {
-				nodeIdArray[i] = opcUaClient.toNodeId(serverUrl, references.get(i).getNodeId());
+				nodeIdArray[i] = opcUaClient.toNodeId(serverUrl, res.get(0).getReferences()[i].getNodeId());
 			}
 			DataValue[] dataValues = opcUaClient.readVariableValue(serverUrl, nodeIdArray);
 			for (int i = 0; i < nodeIdArray.length; ++i) {
@@ -174,11 +177,11 @@ public class SessionTest {
 	@Test
 	public void testbrowseHierarchyOfNodeVariablesUnderObjects() {
 		try {
-			BrowsePathResult[] res = opcUaClient.translateRootBrowsePathsToNodeIds(serverUrl, "/Objects");
-			ExpandedNodeId objectsNodeId = res[0].getTargets()[0].getTargetId();
+			BrowsePathResult[] res1 = opcUaClient.translateRootBrowsePathsToNodeIds(serverUrl, "/Objects");
+			ExpandedNodeId objectsNodeId = res1[0].getTargets()[0].getTargetId();
 
-			List<ReferenceDescription> references = opcUaClient.browseHierarchyOfNodeVariables(serverUrl, opcUaClient.toNodeId(serverUrl, objectsNodeId));
-			assertTrue(references.size() > 0);
+			List<BrowseResult> res2 = opcUaClient.browseHierarchyOfNodeVariables(serverUrl, opcUaClient.toNodeId(serverUrl, objectsNodeId));
+			assertTrue(res2.get(0).getReferences().length > 0);
 		}
 		catch (Throwable t) {
 			fail(t.getMessage());
@@ -214,7 +217,7 @@ public class SessionTest {
 		return writeValue;
 	}
 
-	//@Test
+	@Test
 	public void testSusbribeVariable() {
 		try {
 			CreateSubscriptionResponse subscription = opcUaClient.createSubscription(serverUrl);
@@ -229,8 +232,8 @@ public class SessionTest {
 			assertEquals(StatusCode.GOOD, monitoredItems[0].getStatusCode());
 			assertNotNull(monitoredItems[0].getMonitoredItemId());
 
-			PublishResponse res = opcUaClient.publish(serverUrl, subscription.getSubscriptionId(), 1);
-
+			PublishResponse res = opcUaClient.publish(serverUrl, subscription.getSubscriptionId(), 0);
+			int i = 0;
 		}
 		catch (Throwable t) {
 			fail(t.getMessage());
