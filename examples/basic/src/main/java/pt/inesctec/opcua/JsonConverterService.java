@@ -1,5 +1,6 @@
 package pt.inesctec.opcua;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,15 +37,22 @@ public class JsonConverterService {
 	public OpcUaVariableToRetrieve json2OpcUaVariableToRetrieve(String jsonInString) throws IOException {
 		JsonNode node = mapper.readTree(jsonInString);
 		return OpcUaVariableToRetrieve.jsonToJava(node);
-		
+
 		// Following line is another way of getting same result
 		// return mapper.readValue(jsonInString, OpcUaVariableToRetrieve.class);
 	}
 
 	public List<OpcUaVariableToRetrieve> json2OpcUaVariableToRetrieveList(String jsonInString) throws IOException {
-
 		JsonNode node = mapper.readTree(jsonInString);
+		return jsonNode2OpcUaVariableToRetrieveList(node);
+	}
 
+	public List<OpcUaVariableToRetrieve> json2OpcUaVariableToRetrieveList(File file) throws IOException {
+		JsonNode node = mapper.readTree(file);
+		return jsonNode2OpcUaVariableToRetrieveList(node);
+	}
+
+	private List<OpcUaVariableToRetrieve> jsonNode2OpcUaVariableToRetrieveList(JsonNode node) throws IOException {
 		if (node.getNodeType().equals(JsonNodeType.ARRAY)) {
 			return OpcUaVariableToRetrieve.jsonArrayToJava(node);
 		}

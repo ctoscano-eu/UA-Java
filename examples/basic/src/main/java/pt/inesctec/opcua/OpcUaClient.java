@@ -1,6 +1,7 @@
 package pt.inesctec.opcua;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -142,6 +143,17 @@ public class OpcUaClient {
 		opcUaSession.shutdown();
 
 		opcUaSessionList.remove(serverUrl);
+	}
+
+	public void shutdownAllOpcUaSession() {
+		if (opcUaSessionList.isEmpty()) // no Session to shutdown 
+			return;
+
+		Iterator<String> it = this.opcUaSessionList.keySet().iterator();
+		while (it.hasNext()) {
+			String opcUaSessionUrl = it.next();
+			shutdownOpcUaSession(opcUaSessionUrl);
+		}
 	}
 
 	private void processServiceResultException(String serverUrl, ServiceResultException e) throws ServiceResultException {

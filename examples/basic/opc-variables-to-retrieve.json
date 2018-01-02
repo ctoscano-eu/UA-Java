@@ -1,0 +1,10 @@
+[
+	{
+		"serverUrl": "opc.tcp://localhost:4334/UA/teste",
+		"variableBrowsePath": "/Objects/Server/ServerArray"
+	},
+	{
+		"serverUrl": "opc.tcp://localhost:4334/UA/teste",
+		"variableBrowsePath": "/Objects/Server/ServerStatus"
+	}
+]
