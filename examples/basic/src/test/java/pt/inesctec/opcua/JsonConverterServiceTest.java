@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ConverterServiceTest {
+public class JsonConverterServiceTest {
 
 	private JsonConverterService jsonConverterService;
 
@@ -22,7 +22,7 @@ public class ConverterServiceTest {
 	}
 
 	@Test
-	public void testConvertSimpleString() {
+	public void testConvertOneJsonString() {
 		try {
 			String jsonInString = "{ \"serverUrl\" : \"opc.tcp://localhost:4334/UA/teste\", \"variableBrowsePath\" : \"/Objects/Server/ServerArray\"}";
 
@@ -37,16 +37,18 @@ public class ConverterServiceTest {
 	}
 
 	@Test
-	public void testConvertString() {
+	public void testConvertSeveralJsonStrings() {
 		try {
 			JsonConverterService jsonConverterService = new JsonConverterService();
-			String jsonInString = "{ \"serverUrl\" : \"opc.tcp://localhost:4334/UA/teste\", \"variableBrowsePath\" : \"/Objects/Server/ServerArray\"}";
-
-			OpcUaVariableToRetrieve res = jsonConverterService.json2OpcUaVariableToRetrieve(jsonInString);
+			String jsonInString = "[" + "{ \"serverUrl\" : \"opc.tcp://localhost:4334/UA/teste\", \"variableBrowsePath\" : \"/Objects/Server/ServerArray\"},"
+			    + "{ \"serverUrl\" : \"opc.tcp://localhost:4334/UA/teste\", \"variableBrowsePath\" : \"/Objects/Server/ServerArray\"}" + "]";
 
 			List<OpcUaVariableToRetrieve> list = jsonConverterService.json2OpcUaVariableToRetrieveList(jsonInString);
-			assertEquals(1, list.size());
-
+			assertEquals(2, list.size());
+			assertEquals("opc.tcp://localhost:4334/UA/teste", list.get(0).serverUrl);
+			assertEquals("/Objects/Server/ServerArray", list.get(0).variableBrowsePath);
+			assertEquals("opc.tcp://localhost:4334/UA/teste", list.get(1).serverUrl);
+			assertEquals("/Objects/Server/ServerArray", list.get(1).variableBrowsePath);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
