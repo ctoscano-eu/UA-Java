@@ -1,11 +1,10 @@
 package pt.inesctec.opcua;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 
 import org.opcfoundation.ua.application.SessionChannel;
 import org.opcfoundation.ua.builtintypes.DataValue;
+import org.opcfoundation.ua.builtintypes.DiagnosticInfo;
 import org.opcfoundation.ua.builtintypes.ExpandedNodeId;
 import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.QualifiedName;
@@ -42,10 +41,14 @@ import org.opcfoundation.ua.core.TimestampsToReturn;
 import org.opcfoundation.ua.core.TranslateBrowsePathsToNodeIdsResponse;
 import org.opcfoundation.ua.core.WriteResponse;
 import org.opcfoundation.ua.core.WriteValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 public class OpcUaSession {
+
+	private Logger logger = LoggerFactory.getLogger(OpcUaSession.class);
 
 	public OpcUaClient opcUaCLient;
 	public String serverUrl;
@@ -61,6 +64,16 @@ public class OpcUaSession {
 		this.opcUaCLient = myCLient;
 	}
 
+	private void logDiagnosticInfos(DiagnosticInfo[] diagnosticInfoAray) {
+		if (diagnosticInfoAray.length != 0)
+			logger.warn("DiagnosticInfos.length: " + diagnosticInfoAray.length);
+	}
+
+	private void logServiceResult(StatusCode serviceResult) {
+		if (!serviceResult.equals(StatusCode.GOOD))
+			logger.warn("ServiceResult: " + serviceResult);
+	}
+
 	public SessionChannel create(String url) throws ServiceResultException {
 		this.serverUrl = url;
 
@@ -71,9 +84,8 @@ public class OpcUaSession {
 		// mySession.activate("username", "123");
 		ActivateSessionResponse res = sessionChannel.activate();
 
-		assertEquals(0, res.getDiagnosticInfos().length);
-		assertEquals(0, res.getResults().length);
-		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+		logDiagnosticInfos(res.getDiagnosticInfos());
+		logServiceResult(res.getResponseHeader().getServiceResult());
 
 		sessionChannel.getSecureChannel().setOperationTimeout(5000);
 
@@ -112,12 +124,41 @@ public class OpcUaSession {
 
 		BrowseResponse res = sessionChannel.Browse(null, null, null, nodesToBrowse);
 
-		assertEquals(0, res.getDiagnosticInfos().length);
-		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
-		for (int i = 0; i < nodeIdArray.length; ++i)
-			assertEquals(StatusCode.GOOD, res.getResults()[i].getStatusCode());
+		logDiagnosticInfos(res.getDiagnosticInfos());
+		logServiceResult(res.getResponseHeader().getServiceResult());
+		logBrowseResults(res.getResults());
 
 		return res.getResults();
+	}
+
+	private void logBrowseResults(BrowseResult[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("BrowseResult.StatusCode: " + results[i].getStatusCode());
+	}
+
+	private void logDataValues(DataValue[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("DataValue.StatusCode: " + results[i].getStatusCode());
+	}
+
+	private void logWriteStatusCode(StatusCode[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].equals(StatusCode.GOOD))
+				logger.warn("WriteStatusCode: " + results[i]);
+	}
+
+	private void logBrowsePathResults(BrowsePathResult[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("BrowsePathResult.StatusCode: " + results[i]);
+	}
+
+	private void logMonitoredItemCreateResults(MonitoredItemCreateResult[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("MonitoredItemCreateResult.StatusCode: " + results[i]);
 	}
 
 	public BrowseResult[] browseNodeOjectsAndVariables(ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
@@ -154,11 +195,9 @@ public class OpcUaSession {
 			nodesToRead[i] = new ReadValueId(nodeIdArray[i], Attributes.Value, null, null);
 		ReadResponse res = sessionChannel.Read(null, null, TimestampsToReturn.Neither, nodesToRead);
 
-		assertEquals(0, res.getDiagnosticInfos().length);
-		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
-		// TODO ctoscano Disabled because of the tests
-		//for (int i = 0; i < nodeIdArray.length; ++i) 
-			//assertEquals(StatusCode.GOOD, res.getResults()[i].getStatusCode());
+		logDiagnosticInfos(res.getDiagnosticInfos());
+		logServiceResult(res.getResponseHeader().getServiceResult());
+		logDataValues(res.getResults());
 
 		return res.getResults();
 	}
@@ -182,8 +221,9 @@ public class OpcUaSession {
 	public StatusCode[] write(WriteValue... nodesToWrite) throws ServiceFaultException, ServiceResultException {
 		WriteResponse res = sessionChannel.Write(null, nodesToWrite);
 
-		assertEquals(0, res.getDiagnosticInfos().length);
-		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+		logDiagnosticInfos(res.getDiagnosticInfos());
+		logServiceResult(res.getResponseHeader().getServiceResult());
+		logWriteStatusCode(res.getResults());
 
 		return res.getResults();
 	}
@@ -191,10 +231,9 @@ public class OpcUaSession {
 	public BrowsePathResult[] translateBrowsePathsToNodeIds(BrowsePath... pathToTranslate) throws ServiceFaultException, ServiceResultException {
 		TranslateBrowsePathsToNodeIdsResponse res = sessionChannel.TranslateBrowsePathsToNodeIds(null, pathToTranslate);
 
-		assertEquals(0, res.getDiagnosticInfos().length);
-		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
-		for (int i = 0; i < pathToTranslate.length; ++i)
-			assertEquals(StatusCode.GOOD, res.getResults()[i].getStatusCode());
+		logDiagnosticInfos(res.getDiagnosticInfos());
+		logServiceResult(res.getResponseHeader().getServiceResult());
+		logBrowsePathResults(res.getResults());
 
 		return res.getResults();
 	}
@@ -286,7 +325,7 @@ public class OpcUaSession {
 		CreateSubscriptionResponse res = sessionChannel.CreateSubscription(null, requestedPublishingInterval, requestedLifetimeCount, requestedMaxKeepAliveCount, maxNotificationsPerPublish, true,
 		    priority);
 
-		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+		logServiceResult(res.getResponseHeader().getServiceResult());
 
 		return res;
 	}
@@ -323,10 +362,9 @@ public class OpcUaSession {
 
 		CreateMonitoredItemsResponse res = sessionChannel.CreateMonitoredItems(null, subscriptionId, TimestampsToReturn.Both, itemToCreateArray);
 
-		assertEquals(0, res.getDiagnosticInfos().length);
-		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
-		for (int i = 0; i < itemToMonitor.length; ++i)
-			assertEquals(StatusCode.GOOD, res.getResults()[i].getStatusCode());
+		logDiagnosticInfos(res.getDiagnosticInfos());
+		logServiceResult(res.getResponseHeader().getServiceResult());
+		logMonitoredItemCreateResults(res.getResults());
 
 		return res.getResults();
 	}
@@ -337,8 +375,9 @@ public class OpcUaSession {
 		subscriptionAcknowledgement.setSubscriptionId(subscriptionId);
 		PublishResponse res = sessionChannel.Publish(null, subscriptionAcknowledgement);
 
-		assertEquals(0, res.getDiagnosticInfos().length);
-		assertEquals(StatusCode.GOOD, res.getResponseHeader().getServiceResult());
+		logDiagnosticInfos(res.getDiagnosticInfos());
+		logServiceResult(res.getResponseHeader().getServiceResult());
+
 		res.getResults();
 		res.getAvailableSequenceNumbers();
 		res.getNotificationMessage();
