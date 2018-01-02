@@ -27,7 +27,7 @@ public class Application {
 			OpcUaVariableToRetrieve opcUaVariable = list.get(i);
 
 			DataValue[] dataValueArray = opcUaClient.readVariableValue(opcUaVariable.serverUrl, opcUaVariable.variableBrowsePath);
-
+			System.out.println("opcUaVariable: " + opcUaVariable.variableBrowsePath + " Value:" + dataValueArray[0].getValue());
 		}
 
 		// Shutdown all OpcUaSession
