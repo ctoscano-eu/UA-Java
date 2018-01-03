@@ -13,6 +13,7 @@ public class OpcUaVariablesToFetch {
 
 	public OpcUaProperties opcUaProperties;
 	public MongoProperties mongoProperties;
+	public long fetchCycle; // milliseconds
 	public List<OpcUaVariable> opcUaVariables;
 	public DataValue[] dataValues; // not to be serialized/deserialized on/from Json
 
@@ -31,6 +32,8 @@ public class OpcUaVariablesToFetch {
 		StringBuffer buf = new StringBuffer();
 		buf.append(opcUaProperties.toString());
 		buf.append(mongoProperties.toString());
+		buf.append(" fetchCycle: ");
+		buf.append("fetchCycle");
 		for (OpcUaVariable opcUaVariable : opcUaVariables) {
 			buf.append(' ');
 			buf.append(opcUaVariable.toString());
@@ -48,6 +51,7 @@ public class OpcUaVariablesToFetch {
 			obj.opcUaProperties = OpcUaProperties.jsonToJava(node.get("opcUaProperties"));
 			obj.mongoProperties = MongoProperties.jsonToJava(node.get("mongoProperties"));
 			obj.opcUaVariables = OpcUaVariable.jsonArrayToJava(node.get("opcUaVariables"));
+			obj.fetchCycle = node.get("fetchCycle").longValue();
 
 			return obj;
 		}

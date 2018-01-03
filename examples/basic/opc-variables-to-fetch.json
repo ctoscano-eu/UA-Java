@@ -13,6 +13,7 @@
 		  "userName" : "",
 		  "password" : ""
 		},
+		"fetchCycle": 1000,
 		"opcUaVariables": [
 			{
 				"name": "/Objects/Server/ServerArray",
@@ -38,6 +39,7 @@
       "userName" : "",
       "password" : ""
     },
+    "fetchCycle": 1000,
     "opcUaVariables": [
       {
         "name": "/Objects/Server/ServerArray",

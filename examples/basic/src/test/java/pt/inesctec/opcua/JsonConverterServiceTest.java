@@ -40,7 +40,8 @@ public class JsonConverterServiceTest {
 					"      \"collection\" : \"xpto\",\r\n" + 
 					"		  \"userName\" : \"\",\r\n" + 
 					"		  \"password\" : \"\"\r\n" + 
-					"		},\r\n" + 
+					"		},\r\n" +     
+					"   \"fetchCycle\": 1000," +
 					"		\"opcUaVariables\": [\r\n" + 
 					"			{\r\n" + 
 					"				\"name\": \"/Objects/Server/ServerArray\",\r\n" + 
@@ -90,6 +91,7 @@ public class JsonConverterServiceTest {
 					"		  \"userName\" : \"\",\r\n" + 
 					"		  \"password\" : \"\"\r\n" + 
 					"		},\r\n" + 
+					"   \"fetchCycle\": 1000," +
 					"		\"opcUaVariables\": [\r\n" + 
 					"			{\r\n" + 
 					"				\"name\": \"/Objects/Server/ServerArray\",\r\n" + 
@@ -115,6 +117,7 @@ public class JsonConverterServiceTest {
 					"      \"userName\" : \"\",\r\n" + 
 					"      \"password\" : \"\"\r\n" + 
 					"    },\r\n" + 
+					"   \"fetchCycle\": 1000," +
 					"    \"opcUaVariables\": [\r\n" + 
 					"      {\r\n" + 
 					"        \"name\": \"/Objects/Server/ServerArray\",\r\n" + 

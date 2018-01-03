@@ -10,7 +10,7 @@ import org.opcfoundation.ua.builtintypes.StatusCode;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
 
-public class OpcUaVariableToFetchTest {
+public class OpcUaVariablesToFetchTest {
 
 	private final String serverUrl = "opc.tcp://localhost:4334/UA/teste";
 	private OpcUaClient opcUaClient;
