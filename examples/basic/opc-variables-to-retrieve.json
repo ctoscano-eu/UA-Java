@@ -1,10 +1,30 @@
 [
 	{
-		"serverUrl": "opc.tcp://localhost:4334/UA/teste",
-		"variableBrowsePath": "/Objects/Server/ServerArray"
+		"opcUaServerUrl": "opc.tcp://localhost:4334/UA/teste",
+		"mongoDbCollection": "xpto",
+		"opcUaVariables": [
+			{
+				"opcUaVariable": "/Objects/Server/ServerArray",
+				"opcUaVariableType": "String"
+			},
+			{
+				"opcUaVariable": "/Objects/Server/ServerStatus",
+				"opcUaVariableType": "String"
+			}
+		]
 	},
-	{
-		"serverUrl": "opc.tcp://localhost:4334/UA/teste",
-		"variableBrowsePath": "/Objects/Server/ServerStatus"
-	}
+  {
+    "opcUaServerUrl": "opc.tcp://localhost:4334/UA/teste",
+    "mongoDbCollection": "xpta",
+    "opcUaVariables": [
+      {
+        "opcUaVariable": "/Objects/Server/ServerArray",
+        "opcUaVariableType": "String"
+      },
+      {
+        "opcUaVariable": "/Objects/Server/ServerStatus",
+        "opcUaVariableType": "String"
+      }
+    ]
+  }
 ]

@@ -30,35 +30,35 @@ public class JsonConverterService {
 		mapper.setSerializationInclusion(Include.NON_EMPTY);
 	}
 
-	public String java2Json(OpcUaVariableToRetrieve opcUaVariableToRetrieve) throws JsonProcessingException {
+	public String java2Json(OpcUaVariablesToReadFromServer opcUaVariableToRetrieve) throws JsonProcessingException {
 		return mapper.writeValueAsString(opcUaVariableToRetrieve);
 	}
 
-	public OpcUaVariableToRetrieve json2OpcUaVariableToRetrieve(String jsonInString) throws IOException {
+	public OpcUaVariablesToReadFromServer json2OpcUaVariableToRetrieve(String jsonInString) throws IOException {
 		JsonNode node = mapper.readTree(jsonInString);
-		return OpcUaVariableToRetrieve.jsonToJava(node);
+		return OpcUaVariablesToReadFromServer.jsonToJava(node);
 
 		// Following line is another way of getting same result
 		// return mapper.readValue(jsonInString, OpcUaVariableToRetrieve.class);
 	}
 
-	public List<OpcUaVariableToRetrieve> json2OpcUaVariableToRetrieveList(String jsonInString) throws IOException {
+	public List<OpcUaVariablesToReadFromServer> json2OpcUaVariableToRetrieveList(String jsonInString) throws IOException {
 		JsonNode node = mapper.readTree(jsonInString);
 		return jsonNode2OpcUaVariableToRetrieveList(node);
 	}
 
-	public List<OpcUaVariableToRetrieve> json2OpcUaVariableToRetrieveList(File file) throws IOException {
+	public List<OpcUaVariablesToReadFromServer> json2OpcUaVariableToRetrieveList(File file) throws IOException {
 		JsonNode node = mapper.readTree(file);
 		return jsonNode2OpcUaVariableToRetrieveList(node);
 	}
 
-	private List<OpcUaVariableToRetrieve> jsonNode2OpcUaVariableToRetrieveList(JsonNode node) throws IOException {
+	private List<OpcUaVariablesToReadFromServer> jsonNode2OpcUaVariableToRetrieveList(JsonNode node) throws IOException {
 		if (node.getNodeType().equals(JsonNodeType.ARRAY)) {
-			return OpcUaVariableToRetrieve.jsonArrayToJava(node);
+			return OpcUaVariablesToReadFromServer.jsonArrayToJava(node);
 		}
 		else if (node.getNodeType().equals(JsonNodeType.OBJECT)) {
-			List<OpcUaVariableToRetrieve> list = new ArrayList<OpcUaVariableToRetrieve>();
-			list.add(OpcUaVariableToRetrieve.jsonToJava(node));
+			List<OpcUaVariablesToReadFromServer> list = new ArrayList<OpcUaVariablesToReadFromServer>();
+			list.add(OpcUaVariablesToReadFromServer.jsonToJava(node));
 			return list;
 		}
 		else

@@ -3,15 +3,13 @@ package pt.inesctec.opcua;
 import java.io.File;
 import java.util.List;
 
-import org.opcfoundation.ua.builtintypes.DataValue;
-
 public class Application {
 
 	public static void main(String[] args) throws Exception {
 
 		JsonConverterService jsonConverterService = new JsonConverterService();
 
-		List<OpcUaVariableToRetrieve> list = jsonConverterService.json2OpcUaVariableToRetrieveList(new File("opc-variables-to-retrieve.json"));
+		List<OpcUaVariablesToReadFromServer> list = jsonConverterService.json2OpcUaVariableToRetrieveList(new File("opc-variables-to-retrieve.json"));
 
 		// Create OpcUaClient
 		OpcUaClient opcUaClient = new OpcUaClient();
@@ -19,15 +17,16 @@ public class Application {
 
 		// Create one OpcUaSession for each variable (duplicates are ignored)
 		for (int i = 0; i < list.size(); ++i) {
-			opcUaClient.createOpcUaSession(list.get(i).serverUrl);
+			opcUaClient.createOpcUaSession(list.get(i).opcUaServerUrl);
 		}
 
 		// now retrieve each variable value
 		for (int i = 0; i < list.size(); ++i) {
-			OpcUaVariableToRetrieve opcUaVariable = list.get(i);
+			OpcUaVariablesToReadFromServer opcUaVariablesToReadFromServer = list.get(i);
 
-			DataValue[] dataValueArray = opcUaClient.readVariableValue(opcUaVariable.serverUrl, opcUaVariable.variableBrowsePath);
-			System.out.println("opcUaVariable: " + opcUaVariable.variableBrowsePath + " Value:" + dataValueArray[0].getValue());
+			opcUaVariablesToReadFromServer.dataValueArray = opcUaClient.readVariableValue(opcUaVariablesToReadFromServer.opcUaServerUrl,
+			    opcUaVariablesToReadFromServer.getOpcUaVariableNames().toArray(new String[0]));
+			System.out.println(opcUaVariablesToReadFromServer);
 		}
 
 		// Shutdown all OpcUaSession

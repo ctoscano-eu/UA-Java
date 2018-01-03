@@ -24,12 +24,14 @@ public class JsonConverterServiceTest {
 	@Test
 	public void testConvertOneJsonString() {
 		try {
-			String jsonInString = "{ \"serverUrl\" : \"opc.tcp://localhost:4334/UA/teste\", \"variableBrowsePath\" : \"/Objects/Server/ServerArray\"}";
+			String jsonInString = "{" + "		\"opcUaServerUrl\": \"opc.tcp://localhost:4334/UA/teste\"," + "		\"mongoDbCollection\": \"xpto\"," + "		\"opcUaVariables\": [" + "			{"
+			    + "				\"opcUaVariable\": \"/Objects/Server/ServerArray\"," + "				\"opcUaVariableType\": \"String\"" + "			}," + "			{"
+			    + "				\"opcUaVariable\": \"/Objects/Server/ServerStatus\"," + "				\"opcUaVariableType\": \"String\"" + "			}" + "		]" + "	}";
 
-			OpcUaVariableToRetrieve obj = jsonConverterService.json2OpcUaVariableToRetrieve(jsonInString);
-			assertEquals("opc.tcp://localhost:4334/UA/teste", obj.serverUrl);
-			assertEquals("/Objects/Server/ServerArray", obj.variableBrowsePath);
-
+			OpcUaVariablesToReadFromServer obj = jsonConverterService.json2OpcUaVariableToRetrieve(jsonInString);
+			assertEquals("opc.tcp://localhost:4334/UA/teste", obj.opcUaServerUrl);
+			assertEquals("xpto", obj.mongoDbCollection);
+			assertEquals(2, obj.opcUaVariableArray.size());
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -40,15 +42,20 @@ public class JsonConverterServiceTest {
 	public void testConvertSeveralJsonStrings() {
 		try {
 			JsonConverterService jsonConverterService = new JsonConverterService();
-			String jsonInString = "[" + "{ \"serverUrl\" : \"opc.tcp://localhost:4334/UA/teste\", \"variableBrowsePath\" : \"/Objects/Server/ServerArray\"},"
-			    + "{ \"serverUrl\" : \"opc.tcp://localhost:4334/UA/teste\", \"variableBrowsePath\" : \"/Objects/Server/ServerArray\"}" + "]";
+			String jsonInString = "[" + "	{" + "		\"opcUaServerUrl\": \"opc.tcp://localhost:4334/UA/teste\"," + "		\"mongoDbCollection\": \"xpto\"," + "		\"opcUaVariables\": [" + "			{"
+			    + "				\"opcUaVariable\": \"/Objects/Server/ServerArray\"," + "				\"opcUaVariableType\": \"String\"" + "			}," + "			{"
+			    + "				\"opcUaVariable\": \"/Objects/Server/ServerStatus\"," + "				\"opcUaVariableType\": \"String\"" + "			}" + "		]" + "	}," + "  {"
+			    + "    \"opcUaServerUrl\": \"opc.tcp://localhost:4334/UA/teste\"," + "    \"mongoDbCollection\": \"xpto\"," + "    \"opcUaVariables\": [" + "      {"
+			    + "        \"opcUaVariable\": \"/Objects/Server/ServerArray\"," + "        \"opcUaVariableType\": \"String\"" + "      }," + "      {"
+			    + "        \"opcUaVariable\": \"/Objects/Server/ServerStatus\"," + "        \"opcUaVariableType\": \"String\"" + "      }" + "    ]" + "  }" + "]" + "";
 
-			List<OpcUaVariableToRetrieve> list = jsonConverterService.json2OpcUaVariableToRetrieveList(jsonInString);
+			List<OpcUaVariablesToReadFromServer> list = jsonConverterService.json2OpcUaVariableToRetrieveList(jsonInString);
 			assertEquals(2, list.size());
-			assertEquals("opc.tcp://localhost:4334/UA/teste", list.get(0).serverUrl);
-			assertEquals("/Objects/Server/ServerArray", list.get(0).variableBrowsePath);
-			assertEquals("opc.tcp://localhost:4334/UA/teste", list.get(1).serverUrl);
-			assertEquals("/Objects/Server/ServerArray", list.get(1).variableBrowsePath);
+			for (OpcUaVariablesToReadFromServer opcUaVariablesToReadFromServer : list) {
+				assertEquals("opc.tcp://localhost:4334/UA/teste", opcUaVariablesToReadFromServer.opcUaServerUrl);
+				assertEquals("xpto", opcUaVariablesToReadFromServer.mongoDbCollection);
+				assertEquals(2, opcUaVariablesToReadFromServer.opcUaVariableArray.size());
+			}
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
