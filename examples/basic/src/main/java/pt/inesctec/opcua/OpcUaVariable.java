@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 
 public class OpcUaVariable {
 
-	public String opcUaVariable;
-	public String opcUaVariableType;
+	public String name;
+	public String type;
 
 	public OpcUaVariable() {
 		super();
@@ -18,18 +18,18 @@ public class OpcUaVariable {
 
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
-		buf.append("opcUaVariable: ");
-		buf.append(opcUaVariable);
-		buf.append(" opcUaVariableType: ");
-		buf.append(opcUaVariableType);
+		buf.append("name: ");
+		buf.append(name);
+		buf.append(" type: ");
+		buf.append(type);
 		return buf.toString();
 	}
 
 	public static OpcUaVariable jsonToJava(JsonNode node) {
 		if (node.getNodeType().equals(JsonNodeType.OBJECT)) {
 			OpcUaVariable obj = new OpcUaVariable();
-			obj.opcUaVariable = node.get("opcUaVariable").textValue();
-			obj.opcUaVariableType = node.get("opcUaVariableType").textValue();
+			obj.name = node.get("name").textValue();
+			obj.type = node.get("type").textValue();
 
 			return obj;
 		}
@@ -38,7 +38,7 @@ public class OpcUaVariable {
 	}
 
 	public static List<OpcUaVariable> jsonArrayToJava(JsonNode node) {
-		List<OpcUaVariable> list = new ArrayList();
+		List<OpcUaVariable> list = new ArrayList<OpcUaVariable>();
 
 		if (node.getNodeType().equals(JsonNodeType.ARRAY)) {
 			Iterator<JsonNode> it = node.iterator();

@@ -24,7 +24,7 @@ public class Application {
 		for (int i = 0; i < list.size(); ++i) {
 			OpcUaVariablesToReadFromServer opcUaVariablesToReadFromServer = list.get(i);
 
-			opcUaVariablesToReadFromServer.dataValueArray = opcUaClient.readVariableValue(opcUaVariablesToReadFromServer.opcUaServerUrl,
+			opcUaVariablesToReadFromServer.dataValues = opcUaClient.readVariableValue(opcUaVariablesToReadFromServer.opcUaServerUrl,
 			    opcUaVariablesToReadFromServer.getOpcUaVariableNames().toArray(new String[0]));
 			System.out.println(opcUaVariablesToReadFromServer);
 		}

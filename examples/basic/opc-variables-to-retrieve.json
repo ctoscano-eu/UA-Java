@@ -4,12 +4,12 @@
 		"mongoDbCollection": "xpto",
 		"opcUaVariables": [
 			{
-				"opcUaVariable": "/Objects/Server/ServerArray",
-				"opcUaVariableType": "String"
+				"name": "/Objects/Server/ServerArray",
+				"type": "String"
 			},
 			{
-				"opcUaVariable": "/Objects/Server/ServerStatus",
-				"opcUaVariableType": "String"
+				"name": "/Objects/Server/ServerStatus",
+				"type": "String"
 			}
 		]
 	},
@@ -18,12 +18,12 @@
     "mongoDbCollection": "xpta",
     "opcUaVariables": [
       {
-        "opcUaVariable": "/Objects/Server/ServerArray",
-        "opcUaVariableType": "String"
+        "name": "/Objects/Server/ServerArray",
+        "type": "String"
       },
       {
-        "opcUaVariable": "/Objects/Server/ServerStatus",
-        "opcUaVariableType": "String"
+        "name": "/Objects/Server/ServerStatus",
+        "type": "String"
       }
     ]
   }

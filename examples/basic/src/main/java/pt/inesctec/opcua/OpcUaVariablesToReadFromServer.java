@@ -13,18 +13,17 @@ public class OpcUaVariablesToReadFromServer {
 
 	public String opcUaServerUrl;
 	public String mongoDbCollection;
-	public List<OpcUaVariable> opcUaVariableArray;
-	public DataValue[] dataValueArray; // not to be serialized/deserialized on/from Json
+	public List<OpcUaVariable> opcUaVariables;
+	public DataValue[] dataValues; // not to be serialized/deserialized on/from Json
 
 	public OpcUaVariablesToReadFromServer() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public List<String> getOpcUaVariableNames() {
 		List<String> list = new ArrayList<String>();
-		for (OpcUaVariable opcUaVariable : opcUaVariableArray)
-			list.add(opcUaVariable.opcUaVariable);
+		for (OpcUaVariable opcUaVariable : opcUaVariables)
+			list.add(opcUaVariable.name);
 		return list;
 	}
 
@@ -34,11 +33,11 @@ public class OpcUaVariablesToReadFromServer {
 		buf.append(opcUaServerUrl);
 		buf.append("mongoDbCollection: ");
 		buf.append(mongoDbCollection);
-		for (OpcUaVariable opcUaVariable : opcUaVariableArray) {
+		for (OpcUaVariable opcUaVariable : opcUaVariables) {
 			buf.append(' ');
-			buf.append(opcUaVariableArray.toString());
+			buf.append(opcUaVariable.toString());
 		}
-		for (DataValue dataValue : dataValueArray) {
+		for (DataValue dataValue : dataValues) {
 			buf.append(' ');
 			buf.append(dataValue.toString());
 		}
@@ -50,7 +49,7 @@ public class OpcUaVariablesToReadFromServer {
 			OpcUaVariablesToReadFromServer obj = new OpcUaVariablesToReadFromServer();
 			obj.opcUaServerUrl = node.get("opcUaServerUrl").textValue();
 			obj.mongoDbCollection = node.get("mongoDbCollection").textValue();
-			obj.opcUaVariableArray = OpcUaVariable.jsonArrayToJava(node.get("opcUaVariables"));
+			obj.opcUaVariables = OpcUaVariable.jsonArrayToJava(node.get("opcUaVariables"));
 
 			return obj;
 		}
