@@ -1,6 +1,7 @@
 package pt.inesctec.opcua;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import pt.inesctec.opcua.model.OpcUaVariablesToFetch;
@@ -17,22 +18,23 @@ public class Application {
 		OpcUaClient opcUaClient = new OpcUaClient();
 		opcUaClient.create("SampleClient");
 
-		// Create one OpcUaSession for each variable (duplicates are ignored)
-		for (int i = 0; i < list.size(); ++i) {
-			opcUaClient.createOpcUaSession(list.get(i).opcUaProperties);
+		// Create one OpcUaSession for each OpcUaVariablesToFetch (duplicates are ignored)
+		for (OpcUaVariablesToFetch opcUaVariablesToFetch : list)
+			opcUaClient.createOpcUaSession(opcUaVariablesToFetch.opcUaProperties);
+
+		// Now create and start a Fetcher thread for each OpcUaVariablesToFetch
+		List<OpcUaVariablesFetcher> opcUaVariablesFetcherList = new ArrayList<OpcUaVariablesFetcher>();
+		for (OpcUaVariablesToFetch opcUaVariablesToFetch : list) {
+			OpcUaVariablesFetcher opcUaVariablesFetcher = new OpcUaVariablesFetcher(opcUaClient, opcUaVariablesToFetch);
+			opcUaVariablesFetcherList.add(opcUaVariablesFetcher);
+
+			opcUaVariablesFetcher.run();
 		}
 
-		// now retrieve each variable value
-		for (int i = 0; i < list.size(); ++i) {
-			OpcUaVariablesToFetch opcUaVariablesToReadFromServer = list.get(i);
+		// Create a ShutdownHook to shutdown all opcUaVariablesFetchers when the Application initiates shutdown
+		ShutdownHook shutdownHook = new ShutdownHook(opcUaClient, opcUaVariablesFetcherList);
+		Runtime.getRuntime().addShutdownHook(shutdownHook);
 
-			opcUaVariablesToReadFromServer.dataValues = opcUaClient.readVariableValue(opcUaVariablesToReadFromServer.opcUaProperties.serverUrl,
-			    opcUaVariablesToReadFromServer.getOpcUaVariableNames().toArray(new String[0]));
-			System.out.println(opcUaVariablesToReadFromServer);
-		}
-
-		// Shutdown all OpcUaSession
-		opcUaClient.shutdownAllOpcUaSession();
 	}
 
 }

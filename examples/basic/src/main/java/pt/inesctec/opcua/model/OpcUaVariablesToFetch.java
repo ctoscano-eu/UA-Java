@@ -45,6 +45,15 @@ public class OpcUaVariablesToFetch {
 		return buf.toString();
 	}
 
+	public String dataValuesToString() {
+		StringBuffer buf = new StringBuffer();
+		for (DataValue dataValue : dataValues) {
+			buf.append(dataValue.toString());
+			buf.append("\r\n");
+		}
+		return buf.toString();
+	}
+
 	public static OpcUaVariablesToFetch jsonToJava(JsonNode node) {
 		if (node.getNodeType().equals(JsonNodeType.OBJECT)) {
 			OpcUaVariablesToFetch obj = new OpcUaVariablesToFetch();
