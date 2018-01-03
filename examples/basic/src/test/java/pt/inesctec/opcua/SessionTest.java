@@ -29,6 +29,8 @@ import org.opcfoundation.ua.core.PublishResponse;
 import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.WriteValue;
 
+import pt.inesctec.opcua.model.OpcUaProperties;
+
 public class SessionTest {
 
 	private final String serverUrl = "opc.tcp://localhost:4334/UA/teste";
@@ -40,7 +42,7 @@ public class SessionTest {
 	public void setUp() throws ServiceResultException {
 		opcUaClient = new OpcUaClient();
 		opcUaClient.create("SampleClient");
-		opcUaClient.createOpcUaSession(serverUrl);
+		opcUaClient.createOpcUaSession(new OpcUaProperties(serverUrl, null, null));
 	}
 
 	@After

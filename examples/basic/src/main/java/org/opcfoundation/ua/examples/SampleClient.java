@@ -40,6 +40,7 @@ import org.opcfoundation.ua.core.TimestampsToReturn;
 
 import pt.inesctec.opcua.OpcUaClient;
 import pt.inesctec.opcua.OpcUaSession;
+import pt.inesctec.opcua.model.OpcUaProperties;
 
 /**
  * Sample client creates a connection to OPC UA Server (1st arg), browses and reads a boolean value. It is configured to work against NanoServer example, using the address opc.tcp://localhost:8666/
@@ -59,7 +60,7 @@ public class SampleClient {
 		OpcUaClient opcUaClient = new OpcUaClient();
 		opcUaClient.create("SampleClient");
 
-		OpcUaSession opcUaSession = opcUaClient.createOpcUaSession(url);
+		OpcUaSession opcUaSession = opcUaClient.createOpcUaSession(new OpcUaProperties(url, null, null));
 
 		///////////// EXECUTE //////////////
 		// Browse Root

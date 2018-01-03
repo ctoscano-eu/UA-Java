@@ -9,16 +9,18 @@ import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
 import org.opcfoundation.ua.core.StatusCodes;
 
+import pt.inesctec.opcua.model.OpcUaProperties;
+
 public class SessionManagementTest {
 
-	private final String goodServerUrl = "opc.tcp://localhost:4334/UA/teste";      // Rui: "opc.tcp://194.117.27.178:4334/UA/teste"
-	private final String badServerUrl = "opc.tcp://194.117.27.178:4333/UA/teste";  // what is wrong in this url is the port
+	private final String goodServerUrl = "opc.tcp://localhost:4334/UA/teste"; // Rui: "opc.tcp://194.117.27.178:4334/UA/teste"
+	private final String badServerUrl = "opc.tcp://194.117.27.178:4333/UA/teste"; // what is wrong in this url is the port
 	private OpcUaClient opcUaClient;
 
 	public void setUp(String serverURL) throws ServiceResultException {
 		opcUaClient = new OpcUaClient();
 		opcUaClient.create("SampleClient");
-		opcUaClient.createOpcUaSession(serverURL);
+		opcUaClient.createOpcUaSession(new OpcUaProperties(serverURL, null, null));
 
 		assertNotNull(opcUaClient.client);
 		assertNotNull(opcUaClient.getOpcUaSession(serverURL).sessionChannel);
@@ -63,7 +65,6 @@ public class SessionManagementTest {
 		}
 	}
 
-	
 	public void testReconnectionOfBrokenSession() {
 		try {
 			setUp(goodServerUrl);

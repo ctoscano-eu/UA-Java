@@ -10,6 +10,8 @@ import org.opcfoundation.ua.builtintypes.StatusCode;
 import org.opcfoundation.ua.common.ServiceFaultException;
 import org.opcfoundation.ua.common.ServiceResultException;
 
+import pt.inesctec.opcua.model.OpcUaProperties;
+
 public class OpcUaVariablesToFetchTest {
 
 	private final String serverUrl = "opc.tcp://localhost:4334/UA/teste";
@@ -19,7 +21,7 @@ public class OpcUaVariablesToFetchTest {
 	public void setUp() throws ServiceResultException {
 		opcUaClient = new OpcUaClient();
 		opcUaClient.create("SampleClient");
-		opcUaClient.createOpcUaSession(serverUrl);
+		opcUaClient.createOpcUaSession(new OpcUaProperties(serverUrl, null, null));
 	}
 
 	@After

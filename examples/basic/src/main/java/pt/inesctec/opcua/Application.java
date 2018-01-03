@@ -19,7 +19,7 @@ public class Application {
 
 		// Create one OpcUaSession for each variable (duplicates are ignored)
 		for (int i = 0; i < list.size(); ++i) {
-			opcUaClient.createOpcUaSession(list.get(i).opcUaProperties.serverUrl);
+			opcUaClient.createOpcUaSession(list.get(i).opcUaProperties);
 		}
 
 		// now retrieve each variable value

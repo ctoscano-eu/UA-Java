@@ -32,6 +32,8 @@ import org.opcfoundation.ua.utils.CertificateUtils;
 
 import com.google.common.collect.Maps;
 
+import pt.inesctec.opcua.model.OpcUaProperties;
+
 /*
  * Nodes and References.
  * Each Node has a NodeClass: Object, Variable, Method, ObjectType, VariableType, ReferenceType, DataType, View.
@@ -123,14 +125,14 @@ public class OpcUaClient {
 		return opcUaSessionList.get(serverUrl);
 	}
 
-	public OpcUaSession createOpcUaSession(String serverUrl) throws ServiceResultException {
-		if (opcUaSessionList.containsKey(serverUrl))
-			return opcUaSessionList.get(serverUrl); // return existing SessionChannel
+	public OpcUaSession createOpcUaSession(OpcUaProperties opcUaProperties) throws ServiceResultException {
+		if (opcUaSessionList.containsKey(opcUaProperties.serverUrl))
+			return opcUaSessionList.get(opcUaProperties.serverUrl); // return existing SessionChannel
 
 		OpcUaSession opcUaSession = new OpcUaSession(this);
-		opcUaSession.create(serverUrl);
+		opcUaSession.create(opcUaProperties);
 
-		opcUaSessionList.put(serverUrl, opcUaSession);
+		opcUaSessionList.put(opcUaProperties.serverUrl, opcUaSession);
 
 		return opcUaSession;
 	}
@@ -159,7 +161,7 @@ public class OpcUaClient {
 	private void processServiceResultException(String serverUrl, ServiceResultException e) throws ServiceResultException {
 		if (e.getStatusCode().getValue().equals(StatusCodes.Bad_Timeout)) {
 			shutdownOpcUaSession(serverUrl);
-			createOpcUaSession(serverUrl);
+			createOpcUaSession(getOpcUaSession(serverUrl).opcUaProperties);
 		}
 	}
 

@@ -47,12 +47,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import pt.inesctec.opcua.model.OpcUaProperties;
+
 public class OpcUaSession {
 
 	private Logger logger = LoggerFactory.getLogger(OpcUaSession.class);
 
 	public OpcUaClient opcUaCLient;
-	public String serverUrl;
+	public OpcUaProperties opcUaProperties;
 	public SessionChannel sessionChannel;
 	private NamespaceTable namespaceTable;
 
@@ -65,61 +67,22 @@ public class OpcUaSession {
 		this.opcUaCLient = myCLient;
 	}
 
-	private void logDiagnosticInfos(DiagnosticInfo[] diagnosticInfoAray) {
-		if (diagnosticInfoAray.length != 0)
-			logger.warn("DiagnosticInfos.length: " + diagnosticInfoAray.length);
-	}
-
-	private void logServiceResult(StatusCode serviceResult) {
-		if (!serviceResult.equals(StatusCode.GOOD))
-			logger.warn("ServiceResult: " + serviceResult);
-	}
-
-	private void logBrowseResults(BrowseResult[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
-				logger.warn("BrowseResult.StatusCode: " + results[i].getStatusCode());
-	}
-
-	private void logDataValues(DataValue[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
-				logger.warn("DataValue.StatusCode: " + results[i].getStatusCode());
-	}
-
-	private void logWriteStatusCode(StatusCode[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].equals(StatusCode.GOOD))
-				logger.warn("WriteStatusCode: " + results[i]);
-	}
-
-	private void logBrowsePathResults(BrowsePathResult[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
-				logger.warn("BrowsePathResult.StatusCode: " + results[i]);
-	}
-
-	private void logMonitoredItemCreateResults(MonitoredItemCreateResult[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
-				logger.warn("MonitoredItemCreateResult.StatusCode: " + results[i]);
-	}
-
-	private void logPublishResponse(StatusCode[] results) {
-		for (int i = 0; i < results.length; ++i)
-			if (!results[i].equals(StatusCode.GOOD))
-				logger.warn("PublishResponse.StatusCode: " + results[i]);
-	}
-
-	public SessionChannel create(String url) throws ServiceResultException {
-		this.serverUrl = url;
+	/*
+	 * userName & password may be null
+	 */
+	public SessionChannel create(OpcUaProperties opcUaProperties) throws ServiceResultException {
+		this.opcUaProperties = opcUaProperties;
 
 		// Not required to create the Client but usefull for later service invocations
 		this.namespaceTable = new NamespaceTable();
 
-		sessionChannel = opcUaCLient.client.createSessionChannel(url);
-		// mySession.activate("username", "123");
-		ActivateSessionResponse res = sessionChannel.activate();
+		sessionChannel = opcUaCLient.client.createSessionChannel(opcUaProperties.serverUrl);
+
+		ActivateSessionResponse res = null;
+		if (opcUaProperties.userName != null && opcUaProperties.password != null)
+			res = sessionChannel.activate(opcUaProperties.userName, opcUaProperties.password);
+		else
+			res = sessionChannel.activate();
 
 		logDiagnosticInfos(res.getDiagnosticInfos());
 		logServiceResult(res.getResponseHeader().getServiceResult());
@@ -402,6 +365,52 @@ public class OpcUaSession {
 			else
 				throw e;
 		}
+	}
+
+	private void logDiagnosticInfos(DiagnosticInfo[] diagnosticInfoAray) {
+		if (diagnosticInfoAray.length != 0)
+			logger.warn("DiagnosticInfos.length: " + diagnosticInfoAray.length);
+	}
+
+	private void logServiceResult(StatusCode serviceResult) {
+		if (!serviceResult.equals(StatusCode.GOOD))
+			logger.warn("ServiceResult: " + serviceResult);
+	}
+
+	private void logBrowseResults(BrowseResult[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("BrowseResult.StatusCode: " + results[i].getStatusCode());
+	}
+
+	private void logDataValues(DataValue[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("DataValue.StatusCode: " + results[i].getStatusCode());
+	}
+
+	private void logWriteStatusCode(StatusCode[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].equals(StatusCode.GOOD))
+				logger.warn("WriteStatusCode: " + results[i]);
+	}
+
+	private void logBrowsePathResults(BrowsePathResult[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("BrowsePathResult.StatusCode: " + results[i]);
+	}
+
+	private void logMonitoredItemCreateResults(MonitoredItemCreateResult[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].getStatusCode().equals(StatusCode.GOOD))
+				logger.warn("MonitoredItemCreateResult.StatusCode: " + results[i]);
+	}
+
+	private void logPublishResponse(StatusCode[] results) {
+		for (int i = 0; i < results.length; ++i)
+			if (!results[i].equals(StatusCode.GOOD))
+				logger.warn("PublishResponse.StatusCode: " + results[i]);
 	}
 
 }

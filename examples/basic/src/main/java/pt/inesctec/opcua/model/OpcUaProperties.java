@@ -17,6 +17,13 @@ public class OpcUaProperties {
 		super();
 	}
 
+	public OpcUaProperties(String serverUrl, String userName, String password) {
+		super();
+		this.serverUrl = serverUrl;
+		this.userName = userName;
+		this.password = password;
+	}
+
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("serverUrl: ");
