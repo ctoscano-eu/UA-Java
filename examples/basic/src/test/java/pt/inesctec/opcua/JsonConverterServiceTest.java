@@ -1,12 +1,15 @@
 package pt.inesctec.opcua;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import pt.inesctec.opcua.model.OpcUaVariablesToReadFromServer;
 
 public class JsonConverterServiceTest {
 
@@ -24,13 +27,43 @@ public class JsonConverterServiceTest {
 	@Test
 	public void testConvertOneJsonString() {
 		try {
-			String jsonInString = "{" + "		\"opcUaServerUrl\": \"opc.tcp://localhost:4334/UA/teste\"," + "		\"mongoDbCollection\": \"xpto\"," + "		\"opcUaVariables\": [" + "			{"
-			    + "				\"name\": \"/Objects/Server/ServerArray\"," + "				\"type\": \"String\"" + "			}," + "			{"
-			    + "				\"name\": \"/Objects/Server/ServerStatus\"," + "				\"type\": \"String\"" + "			}" + "		]" + "	}";
+			String jsonInString = "	{\r\n" + 
+					"	  \"opcUaProperties\" : {\r\n" + 
+					"	    \"serverUrl\": \"opc.tcp://localhost:4334/UA/teste\",\r\n" + 
+					"      \"userName\" : \"\",\r\n" + 
+					"      \"password\" : \"\"\r\n" + 
+					"	  },\r\n" + 
+					"		\"mongoProperties\" : {\r\n" + 
+					"		  \"host\" : \"localhost\",\r\n" + 
+					"		  \"port\" : \"27017\",\r\n" + 
+					"		  \"database\" : \"sensor_data_saver\",\r\n" + 
+					"      \"collection\" : \"xpto\",\r\n" + 
+					"		  \"userName\" : \"\",\r\n" + 
+					"		  \"password\" : \"\"\r\n" + 
+					"		},\r\n" + 
+					"		\"opcUaVariables\": [\r\n" + 
+					"			{\r\n" + 
+					"				\"name\": \"/Objects/Server/ServerArray\",\r\n" + 
+					"				\"type\": \"String\"\r\n" + 
+					"			},\r\n" + 
+					"			{\r\n" + 
+					"				\"name\": \"/Objects/Server/ServerStatus\",\r\n" + 
+					"				\"type\": \"String\"\r\n" + 
+					"			}\r\n" + 
+					"		]\r\n" + 
+					"	}\r\n" + 
+					"";
 
 			OpcUaVariablesToReadFromServer obj = jsonConverterService.json2OpcUaVariableToRetrieve(jsonInString);
-			assertEquals("opc.tcp://localhost:4334/UA/teste", obj.opcUaServerUrl);
-			assertEquals("xpto", obj.mongoDbCollection);
+			assertEquals("opc.tcp://localhost:4334/UA/teste", obj.opcUaProperties.serverUrl);
+			assertNull(obj.opcUaProperties.userName);
+			assertNull(obj.opcUaProperties.password);
+			assertEquals("localhost", obj.mongoProperties.host);
+			assertEquals("27017", obj.mongoProperties.port);
+			assertEquals("sensor_data_saver", obj.mongoProperties.database);
+			assertEquals("xpto", obj.mongoProperties.collection);
+			assertNull(obj.mongoProperties.userName);
+			assertNull(obj.mongoProperties.password);
 			assertEquals(2, obj.opcUaVariables.size());
 		}
 		catch (Throwable t) {
@@ -42,19 +75,73 @@ public class JsonConverterServiceTest {
 	public void testConvertSeveralJsonStrings() {
 		try {
 			JsonConverterService jsonConverterService = new JsonConverterService();
-			String jsonInString = "[" + "	{" + "		\"opcUaServerUrl\": \"opc.tcp://localhost:4334/UA/teste\"," + "		\"mongoDbCollection\": \"xpto\"," + "		\"opcUaVariables\": [" + "			{"
-			    + "				\"name\": \"/Objects/Server/ServerArray\"," + "				\"type\": \"String\"" + "			}," + "			{"
-			    + "				\"name\": \"/Objects/Server/ServerStatus\"," + "				\"type\": \"String\"" + "			}" + "		]" + "	}," + "  {"
-			    + "    \"opcUaServerUrl\": \"opc.tcp://localhost:4334/UA/teste\"," + "    \"mongoDbCollection\": \"xpto\"," + "    \"opcUaVariables\": [" + "      {"
-			    + "        \"name\": \"/Objects/Server/ServerArray\"," + "        \"type\": \"String\"" + "      }," + "      {"
-			    + "        \"name\": \"/Objects/Server/ServerStatus\"," + "        \"type\": \"String\"" + "      }" + "    ]" + "  }" + "]" + "";
+			String jsonInString = "[\r\n" + 
+					"	{\r\n" + 
+					"	  \"opcUaProperties\" : {\r\n" + 
+					"	    \"serverUrl\": \"opc.tcp://localhost:4334/UA/teste\",\r\n" + 
+					"      \"userName\" : \"\",\r\n" + 
+					"      \"password\" : \"\"\r\n" + 
+					"	  },\r\n" + 
+					"		\"mongoProperties\" : {\r\n" + 
+					"		  \"host\" : \"localhost\",\r\n" + 
+					"		  \"port\" : \"27017\",\r\n" + 
+					"		  \"database\" : \"sensor_data_saver\",\r\n" + 
+					"      \"collection\" : \"xpto\",\r\n" + 
+					"		  \"userName\" : \"\",\r\n" + 
+					"		  \"password\" : \"\"\r\n" + 
+					"		},\r\n" + 
+					"		\"opcUaVariables\": [\r\n" + 
+					"			{\r\n" + 
+					"				\"name\": \"/Objects/Server/ServerArray\",\r\n" + 
+					"				\"type\": \"String\"\r\n" + 
+					"			},\r\n" + 
+					"			{\r\n" + 
+					"				\"name\": \"/Objects/Server/ServerStatus\",\r\n" + 
+					"				\"type\": \"String\"\r\n" + 
+					"			}\r\n" + 
+					"		]\r\n" + 
+					"	},\r\n" + 
+					"  {\r\n" + 
+					"    \"opcUaProperties\" : {\r\n" + 
+					"      \"serverUrl\": \"opc.tcp://localhost:4334/UA/teste\",\r\n" + 
+					"      \"userName\" : \"\",\r\n" + 
+					"      \"password\" : \"\"\r\n" + 
+					"    },\r\n" + 
+					"    \"mongoProperties\" : {\r\n" + 
+					"      \"host\" : \"localhost\",\r\n" + 
+					"      \"port\" : \"27017\",\r\n" + 
+					"      \"database\" : \"sensor_data_saver\",\r\n" + 
+					"      \"collection\" : \"xpto\",\r\n" + 
+					"      \"userName\" : \"\",\r\n" + 
+					"      \"password\" : \"\"\r\n" + 
+					"    },\r\n" + 
+					"    \"opcUaVariables\": [\r\n" + 
+					"      {\r\n" + 
+					"        \"name\": \"/Objects/Server/ServerArray\",\r\n" + 
+					"        \"type\": \"String\"\r\n" + 
+					"      },\r\n" + 
+					"      {\r\n" + 
+					"        \"name\": \"/Objects/Server/ServerStatus\",\r\n" + 
+					"        \"type\": \"String\"\r\n" + 
+					"      }\r\n" + 
+					"    ]\r\n" + 
+					"  }\r\n" + 
+					"]\r\n" + 
+					"";
 
 			List<OpcUaVariablesToReadFromServer> list = jsonConverterService.json2OpcUaVariableToRetrieveList(jsonInString);
 			assertEquals(2, list.size());
-			for (OpcUaVariablesToReadFromServer opcUaVariablesToReadFromServer : list) {
-				assertEquals("opc.tcp://localhost:4334/UA/teste", opcUaVariablesToReadFromServer.opcUaServerUrl);
-				assertEquals("xpto", opcUaVariablesToReadFromServer.mongoDbCollection);
-				assertEquals(2, opcUaVariablesToReadFromServer.opcUaVariables.size());
+			for (OpcUaVariablesToReadFromServer obj : list) {
+				assertEquals("opc.tcp://localhost:4334/UA/teste", obj.opcUaProperties.serverUrl);
+				assertNull(obj.opcUaProperties.userName);
+				assertNull(obj.opcUaProperties.password);
+				assertEquals("localhost", obj.mongoProperties.host);
+				assertEquals("27017", obj.mongoProperties.port);
+				assertEquals("sensor_data_saver", obj.mongoProperties.database);
+				assertEquals("xpto", obj.mongoProperties.collection);
+				assertNull(obj.mongoProperties.userName);
+				assertNull(obj.mongoProperties.password);
+				assertEquals(2, obj.opcUaVariables.size());
 			}
 		}
 		catch (Throwable t) {

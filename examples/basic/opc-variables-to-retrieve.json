@@ -1,7 +1,18 @@
 [
 	{
-		"opcUaServerUrl": "opc.tcp://localhost:4334/UA/teste",
-		"mongoDbCollection": "xpto",
+	  "opcUaProperties" : {
+	    "serverUrl": "opc.tcp://localhost:4334/UA/teste",
+      "userName" : "",
+      "password" : ""
+	  },
+		"mongoProperties" : {
+		  "host" : "localhost",
+		  "port" : "27017",
+		  "database" : "sensor_data_saver",
+      "collection" : "xpto",
+		  "userName" : "",
+		  "password" : ""
+		},
 		"opcUaVariables": [
 			{
 				"name": "/Objects/Server/ServerArray",
@@ -14,8 +25,19 @@
 		]
 	},
   {
-    "opcUaServerUrl": "opc.tcp://localhost:4334/UA/teste",
-    "mongoDbCollection": "xpta",
+    "opcUaProperties" : {
+      "serverUrl": "opc.tcp://localhost:4334/UA/teste",
+      "userName" : "",
+      "password" : ""
+    },
+    "mongoProperties" : {
+      "host" : "localhost",
+      "port" : "27017",
+      "database" : "sensor_data_saver",
+      "collection" : "xpto",
+      "userName" : "",
+      "password" : ""
+    },
     "opcUaVariables": [
       {
         "name": "/Objects/Server/ServerArray",

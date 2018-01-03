@@ -3,6 +3,8 @@ package pt.inesctec.opcua;
 import java.io.File;
 import java.util.List;
 
+import pt.inesctec.opcua.model.OpcUaVariablesToReadFromServer;
+
 public class Application {
 
 	public static void main(String[] args) throws Exception {
@@ -17,14 +19,14 @@ public class Application {
 
 		// Create one OpcUaSession for each variable (duplicates are ignored)
 		for (int i = 0; i < list.size(); ++i) {
-			opcUaClient.createOpcUaSession(list.get(i).opcUaServerUrl);
+			opcUaClient.createOpcUaSession(list.get(i).opcUaProperties.serverUrl);
 		}
 
 		// now retrieve each variable value
 		for (int i = 0; i < list.size(); ++i) {
 			OpcUaVariablesToReadFromServer opcUaVariablesToReadFromServer = list.get(i);
 
-			opcUaVariablesToReadFromServer.dataValues = opcUaClient.readVariableValue(opcUaVariablesToReadFromServer.opcUaServerUrl,
+			opcUaVariablesToReadFromServer.dataValues = opcUaClient.readVariableValue(opcUaVariablesToReadFromServer.opcUaProperties.serverUrl,
 			    opcUaVariablesToReadFromServer.getOpcUaVariableNames().toArray(new String[0]));
 			System.out.println(opcUaVariablesToReadFromServer);
 		}

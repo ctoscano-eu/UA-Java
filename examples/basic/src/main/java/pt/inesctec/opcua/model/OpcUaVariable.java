@@ -1,4 +1,4 @@
-package pt.inesctec.opcua;
+package pt.inesctec.opcua.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;

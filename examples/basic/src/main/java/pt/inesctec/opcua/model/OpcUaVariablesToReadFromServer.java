@@ -1,4 +1,4 @@
-package pt.inesctec.opcua;
+package pt.inesctec.opcua.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 
 public class OpcUaVariablesToReadFromServer {
 
-	public String opcUaServerUrl;
-	public String mongoDbCollection;
+	public OpcUaProperties opcUaProperties;
+	public MongoProperties mongoProperties;
 	public List<OpcUaVariable> opcUaVariables;
 	public DataValue[] dataValues; // not to be serialized/deserialized on/from Json
 
@@ -29,10 +29,8 @@ public class OpcUaVariablesToReadFromServer {
 
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
-		buf.append("opcUaServerUrl: ");
-		buf.append(opcUaServerUrl);
-		buf.append("mongoDbCollection: ");
-		buf.append(mongoDbCollection);
+		buf.append(opcUaProperties.toString());
+		buf.append(mongoProperties.toString());
 		for (OpcUaVariable opcUaVariable : opcUaVariables) {
 			buf.append(' ');
 			buf.append(opcUaVariable.toString());
@@ -47,8 +45,8 @@ public class OpcUaVariablesToReadFromServer {
 	public static OpcUaVariablesToReadFromServer jsonToJava(JsonNode node) {
 		if (node.getNodeType().equals(JsonNodeType.OBJECT)) {
 			OpcUaVariablesToReadFromServer obj = new OpcUaVariablesToReadFromServer();
-			obj.opcUaServerUrl = node.get("opcUaServerUrl").textValue();
-			obj.mongoDbCollection = node.get("mongoDbCollection").textValue();
+			obj.opcUaProperties = OpcUaProperties.jsonToJava(node.get("opcUaProperties"));
+			obj.mongoProperties = MongoProperties.jsonToJava(node.get("mongoProperties"));
 			obj.opcUaVariables = OpcUaVariable.jsonArrayToJava(node.get("opcUaVariables"));
 
 			return obj;
@@ -58,7 +56,7 @@ public class OpcUaVariablesToReadFromServer {
 	}
 
 	public static List<OpcUaVariablesToReadFromServer> jsonArrayToJava(JsonNode node) {
-		List<OpcUaVariablesToReadFromServer> list = new ArrayList();
+		List<OpcUaVariablesToReadFromServer> list = new ArrayList<OpcUaVariablesToReadFromServer>();
 
 		if (node.getNodeType().equals(JsonNodeType.ARRAY)) {
 			Iterator<JsonNode> it = node.iterator();
