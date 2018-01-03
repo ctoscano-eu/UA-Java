@@ -3,7 +3,7 @@ package pt.inesctec.opcua;
 import java.io.File;
 import java.util.List;
 
-import pt.inesctec.opcua.model.OpcUaVariablesToReadFromServer;
+import pt.inesctec.opcua.model.OpcUaVariablesToFetch;
 
 public class Application {
 
@@ -11,7 +11,7 @@ public class Application {
 
 		JsonConverterService jsonConverterService = new JsonConverterService();
 
-		List<OpcUaVariablesToReadFromServer> list = jsonConverterService.json2OpcUaVariableToRetrieveList(new File("opc-variables-to-retrieve.json"));
+		List<OpcUaVariablesToFetch> list = jsonConverterService.json2OpcUaVariableToFetchList(new File("opc-variables-to-fetch.json"));
 
 		// Create OpcUaClient
 		OpcUaClient opcUaClient = new OpcUaClient();
@@ -24,7 +24,7 @@ public class Application {
 
 		// now retrieve each variable value
 		for (int i = 0; i < list.size(); ++i) {
-			OpcUaVariablesToReadFromServer opcUaVariablesToReadFromServer = list.get(i);
+			OpcUaVariablesToFetch opcUaVariablesToReadFromServer = list.get(i);
 
 			opcUaVariablesToReadFromServer.dataValues = opcUaClient.readVariableValue(opcUaVariablesToReadFromServer.opcUaProperties.serverUrl,
 			    opcUaVariablesToReadFromServer.getOpcUaVariableNames().toArray(new String[0]));

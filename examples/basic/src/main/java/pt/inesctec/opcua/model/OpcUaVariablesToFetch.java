@@ -9,14 +9,14 @@ import org.opcfoundation.ua.builtintypes.DataValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 
-public class OpcUaVariablesToReadFromServer {
+public class OpcUaVariablesToFetch {
 
 	public OpcUaProperties opcUaProperties;
 	public MongoProperties mongoProperties;
 	public List<OpcUaVariable> opcUaVariables;
 	public DataValue[] dataValues; // not to be serialized/deserialized on/from Json
 
-	public OpcUaVariablesToReadFromServer() {
+	public OpcUaVariablesToFetch() {
 		super();
 	}
 
@@ -42,9 +42,9 @@ public class OpcUaVariablesToReadFromServer {
 		return buf.toString();
 	}
 
-	public static OpcUaVariablesToReadFromServer jsonToJava(JsonNode node) {
+	public static OpcUaVariablesToFetch jsonToJava(JsonNode node) {
 		if (node.getNodeType().equals(JsonNodeType.OBJECT)) {
-			OpcUaVariablesToReadFromServer obj = new OpcUaVariablesToReadFromServer();
+			OpcUaVariablesToFetch obj = new OpcUaVariablesToFetch();
 			obj.opcUaProperties = OpcUaProperties.jsonToJava(node.get("opcUaProperties"));
 			obj.mongoProperties = MongoProperties.jsonToJava(node.get("mongoProperties"));
 			obj.opcUaVariables = OpcUaVariable.jsonArrayToJava(node.get("opcUaVariables"));
@@ -55,8 +55,8 @@ public class OpcUaVariablesToReadFromServer {
 			return null;
 	}
 
-	public static List<OpcUaVariablesToReadFromServer> jsonArrayToJava(JsonNode node) {
-		List<OpcUaVariablesToReadFromServer> list = new ArrayList<OpcUaVariablesToReadFromServer>();
+	public static List<OpcUaVariablesToFetch> jsonArrayToJava(JsonNode node) {
+		List<OpcUaVariablesToFetch> list = new ArrayList<OpcUaVariablesToFetch>();
 
 		if (node.getNodeType().equals(JsonNodeType.ARRAY)) {
 			Iterator<JsonNode> it = node.iterator();

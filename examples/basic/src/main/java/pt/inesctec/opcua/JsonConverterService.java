@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 
-import pt.inesctec.opcua.model.OpcUaVariablesToReadFromServer;
+import pt.inesctec.opcua.model.OpcUaVariablesToFetch;
 
 /*
  * standard Data forms: "yyyy-MM-dd'T'HH:mm:ss.SSSZ", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSS", "EEE, dd MMM yyyy HH:mm:ss zzz", "yyyy-MM-dd"
@@ -32,35 +32,35 @@ public class JsonConverterService {
 		mapper.setSerializationInclusion(Include.NON_EMPTY);
 	}
 
-	public String java2Json(OpcUaVariablesToReadFromServer opcUaVariableToRetrieve) throws JsonProcessingException {
-		return mapper.writeValueAsString(opcUaVariableToRetrieve);
+	public String java2Json(OpcUaVariablesToFetch opcUaVariableToFetch) throws JsonProcessingException {
+		return mapper.writeValueAsString(opcUaVariableToFetch);
 	}
 
-	public OpcUaVariablesToReadFromServer json2OpcUaVariableToRetrieve(String jsonInString) throws IOException {
+	public OpcUaVariablesToFetch json2OpcUaVariableToFetch(String jsonInString) throws IOException {
 		JsonNode node = mapper.readTree(jsonInString);
-		return OpcUaVariablesToReadFromServer.jsonToJava(node);
+		return OpcUaVariablesToFetch.jsonToJava(node);
 
 		// Following line is another way of getting same result
-		// return mapper.readValue(jsonInString, OpcUaVariableToRetrieve.class);
+		// return mapper.readValue(jsonInString, OpcUaVariableToFetch.class);
 	}
 
-	public List<OpcUaVariablesToReadFromServer> json2OpcUaVariableToRetrieveList(String jsonInString) throws IOException {
+	public List<OpcUaVariablesToFetch> json2OpcUaVariableToFetchList(String jsonInString) throws IOException {
 		JsonNode node = mapper.readTree(jsonInString);
-		return jsonNode2OpcUaVariableToRetrieveList(node);
+		return jsonNode2OpcUaVariableToFetchList(node);
 	}
 
-	public List<OpcUaVariablesToReadFromServer> json2OpcUaVariableToRetrieveList(File file) throws IOException {
+	public List<OpcUaVariablesToFetch> json2OpcUaVariableToFetchList(File file) throws IOException {
 		JsonNode node = mapper.readTree(file);
-		return jsonNode2OpcUaVariableToRetrieveList(node);
+		return jsonNode2OpcUaVariableToFetchList(node);
 	}
 
-	private List<OpcUaVariablesToReadFromServer> jsonNode2OpcUaVariableToRetrieveList(JsonNode node) throws IOException {
+	private List<OpcUaVariablesToFetch> jsonNode2OpcUaVariableToFetchList(JsonNode node) throws IOException {
 		if (node.getNodeType().equals(JsonNodeType.ARRAY)) {
-			return OpcUaVariablesToReadFromServer.jsonArrayToJava(node);
+			return OpcUaVariablesToFetch.jsonArrayToJava(node);
 		}
 		else if (node.getNodeType().equals(JsonNodeType.OBJECT)) {
-			List<OpcUaVariablesToReadFromServer> list = new ArrayList<OpcUaVariablesToReadFromServer>();
-			list.add(OpcUaVariablesToReadFromServer.jsonToJava(node));
+			List<OpcUaVariablesToFetch> list = new ArrayList<OpcUaVariablesToFetch>();
+			list.add(OpcUaVariablesToFetch.jsonToJava(node));
 			return list;
 		}
 		else

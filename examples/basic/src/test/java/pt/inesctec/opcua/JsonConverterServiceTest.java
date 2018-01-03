@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import pt.inesctec.opcua.model.OpcUaVariablesToReadFromServer;
+import pt.inesctec.opcua.model.OpcUaVariablesToFetch;
 
 public class JsonConverterServiceTest {
 
@@ -54,7 +54,7 @@ public class JsonConverterServiceTest {
 					"	}\r\n" + 
 					"";
 
-			OpcUaVariablesToReadFromServer obj = jsonConverterService.json2OpcUaVariableToRetrieve(jsonInString);
+			OpcUaVariablesToFetch obj = jsonConverterService.json2OpcUaVariableToFetch(jsonInString);
 			assertEquals("opc.tcp://localhost:4334/UA/teste", obj.opcUaProperties.serverUrl);
 			assertNull(obj.opcUaProperties.userName);
 			assertNull(obj.opcUaProperties.password);
@@ -129,9 +129,9 @@ public class JsonConverterServiceTest {
 					"]\r\n" + 
 					"";
 
-			List<OpcUaVariablesToReadFromServer> list = jsonConverterService.json2OpcUaVariableToRetrieveList(jsonInString);
+			List<OpcUaVariablesToFetch> list = jsonConverterService.json2OpcUaVariableToFetchList(jsonInString);
 			assertEquals(2, list.size());
-			for (OpcUaVariablesToReadFromServer obj : list) {
+			for (OpcUaVariablesToFetch obj : list) {
 				assertEquals("opc.tcp://localhost:4334/UA/teste", obj.opcUaProperties.serverUrl);
 				assertNull(obj.opcUaProperties.userName);
 				assertNull(obj.opcUaProperties.password);
