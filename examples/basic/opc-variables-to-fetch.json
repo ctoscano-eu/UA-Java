@@ -13,14 +13,14 @@
 		  "userName" : "",
 		  "password" : ""
 		},
-		"fetchCycle": 1000,
+		"fetchCycle": "1000",
 		"opcUaVariables": [
 			{
 				"name": "/Objects/Server/ServerArray",
 				"type": "String"
 			},
 			{
-				"name": "/Objects/Server/ServerStatus",
+				"name": "/Objects/Server/NamespaceArray",
 				"type": "String"
 			}
 		]
@@ -39,14 +39,14 @@
       "userName" : "",
       "password" : ""
     },
-    "fetchCycle": 1000,
+    "fetchCycle": "1000",
     "opcUaVariables": [
       {
-        "name": "/Objects/Server/ServerArray",
+        "name": "/Objects/Server/ServiceLevel",
         "type": "String"
       },
       {
-        "name": "/Objects/Server/ServerStatus",
+        "name": "/Objects/Server/Auditing",
         "type": "String"
       }
     ]

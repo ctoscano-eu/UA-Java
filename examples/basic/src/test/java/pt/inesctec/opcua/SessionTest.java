@@ -136,7 +136,7 @@ public class SessionTest {
 			assertNotNull(dataValues[2].getValue().toString());
 
 			// With BrowsePaths
-			String[] pathArray = new String[] { "/Objects/Server/ServerArray", "/Objects/Server/ServerStatus", "/Objects/Server/ServiceLevel" };
+			String[] pathArray = new String[] { "/Objects/Server/ServerArray", "/Objects/Server/NamespaceArray", "/Objects/Server/ServerStatus", "/Objects/Server/ServiceLevel", "/Objects/Server/Auditing", "/Objects/Server/EstimatedReturnTime", "/Objects/Server/ServerCapabilities", "/Objects/Server/ServerDiagnostics", "/Objects/Server/VendorServerInfo", "/Objects/Server/ServerRedundancy", "/Objects/Server/Namespaces", "/Objects/Server/ServerConfiguration" };
 			dataValues = opcUaClient.readVariableValue(serverUrl, pathArray);
 
 			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());
@@ -145,7 +145,6 @@ public class SessionTest {
 			assertNotNull(dataValues[0].getValue().toString());
 			assertNotNull(dataValues[1].getValue().toString());
 			assertNotNull(dataValues[2].getValue().toString());
-
 		}
 		catch (Throwable t) {
 			fail(t.getMessage());

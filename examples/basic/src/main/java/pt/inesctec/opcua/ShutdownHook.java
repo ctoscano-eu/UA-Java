@@ -2,7 +2,12 @@ package pt.inesctec.opcua;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ShutdownHook extends Thread {
+
+	private Logger logger = LoggerFactory.getLogger(ShutdownHook.class);
 
 	private OpcUaClient opcUaClient;
 	private List<OpcUaVariablesFetcher> opcUaVariablesFetcherList;
@@ -14,7 +19,7 @@ public class ShutdownHook extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("Shutdown hook ran!");
+		logger.info("Shutdown in progress ...");
 
 		for (OpcUaVariablesFetcher opcUaVariablesFetcher : opcUaVariablesFetcherList) {
 			opcUaVariablesFetcher.setShutdown(true);
@@ -25,6 +30,7 @@ public class ShutdownHook extends Thread {
 				catch (InterruptedException e) {
 					// ignore
 				}
+			logger.info("OpcUaVariablesFetcher shutdown.");
 		}
 
 		// Shutdown all OpcUaSession

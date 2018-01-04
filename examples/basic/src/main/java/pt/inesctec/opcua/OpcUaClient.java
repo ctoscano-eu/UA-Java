@@ -1,6 +1,5 @@
 package pt.inesctec.opcua;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -29,8 +28,8 @@ import org.opcfoundation.ua.examples.certs.ExampleKeys;
 import org.opcfoundation.ua.transport.security.HttpsSecurityPolicy;
 import org.opcfoundation.ua.transport.security.KeyPair;
 import org.opcfoundation.ua.utils.CertificateUtils;
-
-import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.inesctec.opcua.model.OpcUaProperties;
 
@@ -49,6 +48,8 @@ import pt.inesctec.opcua.model.OpcUaProperties;
  */
 public class OpcUaClient {
 
+	private Logger logger = LoggerFactory.getLogger(OpcUaClient.class);
+
 	private KeyPair keyPair;
 	private PkiDirectoryCertificateStore myCertStore;
 	private DefaultCertificateValidator myCertValidator;
@@ -58,10 +59,15 @@ public class OpcUaClient {
 	public String appName;
 	public Client client;
 
-	HashMap<String, OpcUaSession> opcUaSessionList = Maps.newHashMap();
+	private OpcUaSessionList opcUaSessionList = new OpcUaSessionList();
 
 	public OpcUaClient() {
 		super();
+	}
+
+	// Use only on Test cases
+	public OpcUaSession getOpcUaSession(String serverUrl) {
+		return opcUaSessionList.getOpcUaSession(serverUrl);
 	}
 
 	public void create(String appName) throws ServiceResultException {
@@ -111,21 +117,11 @@ public class OpcUaClient {
 		// The certificate to use for HTTPS
 		myHttpsCertificate = ExampleKeys.getHttpsCert(appName);
 		client.getApplication().getHttpsSettings().setKeyPair(myHttpsCertificate);
+
+		logger.info("OpcUaClient created for " + appName);
 	}
 
-	/*
-	 * Get the OpcUaSession to use. 
-	 * If serverUrl == null, get the first one from the List of sessions.
-	 */
-	public OpcUaSession getOpcUaSession(String serverUrl) {
-		if (opcUaSessionList.isEmpty()) // there is no session  
-			throw new RuntimeException("There is no OpcUaSession.");
-		if (serverUrl == null) // use the first Session in the Map
-			serverUrl = opcUaSessionList.keySet().iterator().next();
-		return opcUaSessionList.get(serverUrl);
-	}
-
-	public OpcUaSession createOpcUaSession(OpcUaProperties opcUaProperties) throws ServiceResultException {
+	synchronized public OpcUaSession createOpcUaSession(OpcUaProperties opcUaProperties) throws ServiceResultException {
 		if (opcUaSessionList.containsKey(opcUaProperties.serverUrl))
 			return opcUaSessionList.get(opcUaProperties.serverUrl); // return existing SessionChannel
 
@@ -134,20 +130,24 @@ public class OpcUaClient {
 
 		opcUaSessionList.put(opcUaProperties.serverUrl, opcUaSession);
 
+		logger.info("OpcUaSession created for " + opcUaProperties.toString());
+
 		return opcUaSession;
 	}
 
-	public void shutdownOpcUaSession(String serverUrl) {
+	synchronized public void shutdownOpcUaSession(String serverUrl) {
 		if (opcUaSessionList.isEmpty()) // no Session to shutdown 
 			return;
 
-		OpcUaSession opcUaSession = getOpcUaSession(serverUrl);
+		OpcUaSession opcUaSession = opcUaSessionList.getOpcUaSession(serverUrl);
 		opcUaSession.shutdown();
+
+		logger.info("OpcUaSession shutdown on " + opcUaSession.opcUaProperties.toString());
 
 		opcUaSessionList.remove(serverUrl);
 	}
 
-	public void shutdownAllOpcUaSession() {
+	synchronized public void shutdownAllOpcUaSession() {
 		if (opcUaSessionList.isEmpty()) // no Session to shutdown 
 			return;
 
@@ -161,16 +161,16 @@ public class OpcUaClient {
 	private void processServiceResultException(String serverUrl, ServiceResultException e) throws ServiceResultException {
 		if (e.getStatusCode().getValue().equals(StatusCodes.Bad_Timeout)) {
 			shutdownOpcUaSession(serverUrl);
-			createOpcUaSession(getOpcUaSession(serverUrl).opcUaProperties);
+			createOpcUaSession(opcUaSessionList.getOpcUaSession(serverUrl).opcUaProperties);
 		}
 	}
 
 	/*
 	 * Takes a list of starting Nodes and returns a list of connected Nodes for each starting Node.
 	 */
-	public BrowseResult[] browseNodeOjectsAndVariables(String serverUrl, NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+	synchronized public BrowseResult[] browseNodeOjectsAndVariables(String serverUrl, NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).browseNodeOjectsAndVariables(nodeIdArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).browseNodeOjectsAndVariables(nodeIdArray);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -178,9 +178,9 @@ public class OpcUaClient {
 		}
 	}
 
-	public BrowseResult[] browseNodeOjectsAndVariables(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+	synchronized public BrowseResult[] browseNodeOjectsAndVariables(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).browseNodeOjectsAndVariables(expandedNodeIdArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).browseNodeOjectsAndVariables(expandedNodeIdArray);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -188,9 +188,9 @@ public class OpcUaClient {
 		}
 	}
 
-	public List<BrowseResult> browseHierarchyOfNodeVariables(String serverUrl, NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+	synchronized public List<BrowseResult> browseHierarchyOfNodeVariables(String serverUrl, NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).browseHierarchyOfNodeVariables(nodeIdArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).browseHierarchyOfNodeVariables(nodeIdArray);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -198,9 +198,9 @@ public class OpcUaClient {
 		}
 	}
 
-	public List<BrowseResult> browseHierarchyOfNodeVariables(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+	synchronized public List<BrowseResult> browseHierarchyOfNodeVariables(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).browseHierarchyOfNodeVariables(expandedNodeIdArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).browseHierarchyOfNodeVariables(expandedNodeIdArray);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -212,9 +212,9 @@ public class OpcUaClient {
 	 * Used to read the value of Variables of one or more Nodes. 
 	 * Other Attributes can be read.
 	 */
-	public DataValue[] readVariableValue(String serverUrl, NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
+	synchronized public DataValue[] readVariableValue(String serverUrl, NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).readVariableValue(nodeIdArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).readVariableValue(nodeIdArray);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -222,9 +222,9 @@ public class OpcUaClient {
 		}
 	}
 
-	public DataValue[] readVariableValue(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
+	synchronized public DataValue[] readVariableValue(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).readVariableValue(expandedNodeIdArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).readVariableValue(expandedNodeIdArray);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -232,9 +232,9 @@ public class OpcUaClient {
 		}
 	}
 
-	public DataValue[] readVariableValue(String serverUrl, String... pathArray) throws ServiceFaultException, ServiceResultException {
+	synchronized public DataValue[] readVariableValue(String serverUrl, String... pathArray) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).readVariableValue(pathArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).readVariableValue(pathArray);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -245,9 +245,9 @@ public class OpcUaClient {
 	/*
 	 * Used to write one or more Attributes of one or more Nodes
 	 */
-	public StatusCode[] write(String serverUrl, WriteValue... nodesToWrite) throws ServiceFaultException, ServiceResultException {
+	synchronized public StatusCode[] write(String serverUrl, WriteValue... nodesToWrite) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).write(nodesToWrite);
+			return opcUaSessionList.getOpcUaSession(serverUrl).write(nodesToWrite);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -255,9 +255,9 @@ public class OpcUaClient {
 		}
 	}
 
-	public BrowsePathResult[] translateBrowsePathsToNodeIds(String serverUrl, BrowsePath... pathToTranslate) throws ServiceFaultException, ServiceResultException {
+	synchronized public BrowsePathResult[] translateBrowsePathsToNodeIds(String serverUrl, BrowsePath... pathToTranslate) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).translateBrowsePathsToNodeIds(pathToTranslate);
+			return opcUaSessionList.getOpcUaSession(serverUrl).translateBrowsePathsToNodeIds(pathToTranslate);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -266,9 +266,9 @@ public class OpcUaClient {
 	}
 
 	// path must be something like "11111/222222/333333"
-	public BrowsePathResult[] translateBrowsePathsToNodeIds(String serverUrl, NodeId startingNode, String... pathArray) throws ServiceFaultException, ServiceResultException {
+	synchronized public BrowsePathResult[] translateBrowsePathsToNodeIds(String serverUrl, NodeId startingNode, String... pathArray) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).translateBrowsePathsToNodeIds(startingNode, pathArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).translateBrowsePathsToNodeIds(startingNode, pathArray);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -277,9 +277,9 @@ public class OpcUaClient {
 	}
 
 	// path must be something like "/11111/222222/333333"
-	public BrowsePathResult[] translateRootBrowsePathsToNodeIds(String serverUrl, String path) throws ServiceFaultException, ServiceResultException {
+	synchronized public BrowsePathResult[] translateRootBrowsePathsToNodeIds(String serverUrl, String path) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).translateRootBrowsePathsToNodeIds(path);
+			return opcUaSessionList.getOpcUaSession(serverUrl).translateRootBrowsePathsToNodeIds(path);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -288,9 +288,9 @@ public class OpcUaClient {
 	}
 
 	// path must be something like "/11111/222222/333333"
-	public BrowsePathResult[] translateRootBrowsePathsToNodeIds(String serverUrl, String... pathArray) throws ServiceFaultException, ServiceResultException {
+	synchronized public BrowsePathResult[] translateRootBrowsePathsToNodeIds(String serverUrl, String... pathArray) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).translateRootBrowsePathsToNodeIds(pathArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).translateRootBrowsePathsToNodeIds(pathArray);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -298,9 +298,9 @@ public class OpcUaClient {
 		}
 	}
 
-	public CreateSubscriptionResponse createSubscription(String serverUrl) throws ServiceFaultException, ServiceResultException {
+	synchronized public CreateSubscriptionResponse createSubscription(String serverUrl) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).createSubscription();
+			return opcUaSessionList.getOpcUaSession(serverUrl).createSubscription();
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -308,9 +308,10 @@ public class OpcUaClient {
 		}
 	}
 
-	public MonitoredItemCreateResult[] createMonitoredItems(String serverUrl, UnsignedInteger subscriptionId, ReadValueId itemToMonitor) throws ServiceFaultException, ServiceResultException {
+	synchronized public MonitoredItemCreateResult[] createMonitoredItems(String serverUrl, UnsignedInteger subscriptionId, ReadValueId itemToMonitor)
+	    throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).createMonitoredItems(subscriptionId, itemToMonitor);
+			return opcUaSessionList.getOpcUaSession(serverUrl).createMonitoredItems(subscriptionId, itemToMonitor);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -318,9 +319,9 @@ public class OpcUaClient {
 		}
 	}
 
-	public PublishResponse publish(String serverUrl, UnsignedInteger subscriptionId, long sequenceNumber) throws ServiceFaultException, ServiceResultException {
+	synchronized public PublishResponse publish(String serverUrl, UnsignedInteger subscriptionId, long sequenceNumber) throws ServiceFaultException, ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).publish(subscriptionId, sequenceNumber);
+			return opcUaSessionList.getOpcUaSession(serverUrl).publish(subscriptionId, sequenceNumber);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -328,9 +329,9 @@ public class OpcUaClient {
 		}
 	}
 
-	public NodeId[] toNodeId(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceResultException {
+	synchronized public NodeId[] toNodeId(String serverUrl, ExpandedNodeId... expandedNodeIdArray) throws ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).toNodeId(expandedNodeIdArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).toNodeId(expandedNodeIdArray);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
@@ -338,9 +339,9 @@ public class OpcUaClient {
 		}
 	}
 
-	public NodeId toNodeId(String serverUrl, ExpandedNodeId expandedNodeId) throws ServiceResultException {
+	synchronized public NodeId toNodeId(String serverUrl, ExpandedNodeId expandedNodeId) throws ServiceResultException {
 		try {
-			return getOpcUaSession(serverUrl).toNodeId(expandedNodeId);
+			return opcUaSessionList.getOpcUaSession(serverUrl).toNodeId(expandedNodeId);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
