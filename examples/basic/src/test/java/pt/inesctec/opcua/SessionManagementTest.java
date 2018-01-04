@@ -19,7 +19,7 @@ public class SessionManagementTest {
 
 	public void setUp(String serverURL) throws ServiceResultException {
 		opcUaClient = new OpcUaClient();
-		opcUaClient.create("SampleClient");
+		opcUaClient.create("OpcUaApplication");
 		opcUaClient.createOpcUaSession(new OpcUaProperties(serverURL, null, null));
 
 		assertNotNull(opcUaClient.client);

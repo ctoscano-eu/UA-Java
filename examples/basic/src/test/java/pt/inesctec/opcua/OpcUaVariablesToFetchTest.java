@@ -20,7 +20,7 @@ public class OpcUaVariablesToFetchTest {
 	@Before
 	public void setUp() throws ServiceResultException {
 		opcUaClient = new OpcUaClient();
-		opcUaClient.create("SampleClient");
+		opcUaClient.create("OpcUaApplication");
 		opcUaClient.createOpcUaSession(new OpcUaProperties(serverUrl, null, null));
 	}
 
