@@ -26,7 +26,7 @@
  * The complete license agreement can be found here:
  * http://opcfoundation.org/License/MIT/1.00/
  * ======================================================================*/
-package org.opcfoundation.ua.examples.certs;
+package pt.inesctec.opcua.certs;
 
 import java.io.File;
 import java.io.IOException;

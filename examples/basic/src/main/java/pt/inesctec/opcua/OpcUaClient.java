@@ -24,13 +24,14 @@ import org.opcfoundation.ua.core.PublishResponse;
 import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.StatusCodes;
 import org.opcfoundation.ua.core.WriteValue;
-import org.opcfoundation.ua.examples.certs.ExampleKeys;
+
 import org.opcfoundation.ua.transport.security.HttpsSecurityPolicy;
 import org.opcfoundation.ua.transport.security.KeyPair;
 import org.opcfoundation.ua.utils.CertificateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pt.inesctec.opcua.certs.ExampleKeys;
 import pt.inesctec.opcua.model.OpcUaProperties;
 
 /*
