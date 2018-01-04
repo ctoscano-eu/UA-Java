@@ -10,6 +10,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <opc-ua-stack-version>1.03.342.1-SNAPSHOT</opc-ua-stack-version>
+    <spring-boot.version>1.5.9.RELEASE</spring-boot.version>
   </properties>
 
   <dependencies>
@@ -62,6 +63,11 @@
       <artifactId>jackson-databind</artifactId>
       <version>2.9.3</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-mongodb</artifactId>
+      <version>2.0.2.RELEASE</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -73,50 +79,35 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>  <!-- packages the project as an executable jar -->
+        <version>${spring-boot.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+            <configuration>  <!-- see 83.5 Use a Spring Boot application as a dependency on https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#howto -->
+              <classifier>exec</classifier>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.6</version>
         <configuration>
-          <descriptors>
-            <!-- Builds project zip -->
-            <descriptor>src/assembly/assembly.xml</descriptor>
-          </descriptors>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+            <!-- creates a single JAR ﬁle containing all the bytecode a project 
+              needs to execute, including the bytecode from the project you are building 
+              and all the bytecode from libraries your project depends upons. -->
+          </descriptorRefs>
         </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>appassembler-maven-plugin</artifactId>
-        <version>1.10</version>
-        <configuration>
-          <repositoryLayout>flat</repositoryLayout>
-          <assembleDirectory>${project.build.directory}/assemblies</assembleDirectory>
-          <programs>
-            <program>
-              <mainClass>pt.inesctec.opcua.Application</mainClass>
-              <id>Application</id>
-            </program>
-          </programs>
-        </configuration>
-        <executions>
-          <execution>
-            <id>app-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>assemble</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+
     </plugins>
   </build>
 </project>
