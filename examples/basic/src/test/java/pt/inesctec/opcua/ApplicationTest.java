@@ -1,19 +1,31 @@
 package pt.inesctec.opcua;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.opcfoundation.ua.common.ServiceFaultException;
+import org.opcfoundation.ua.common.ServiceResultException;
 
 import pt.inesctec.opcua.model.OpcUaVariablesToFetch;
 
-public class Application {
+public class ApplicationTest {
 
-	private Logger logger = LoggerFactory.getLogger(Application.class);
+	@Before
+	public void setUp() throws ServiceResultException {
+	}
 
-	Application() {
+	@After
+	public void shutdown() throws ServiceFaultException, ServiceResultException {
+	}
+
+	@Test
+	public void testApplication() {
 		try {
 			// read OpcUaVariablesToFetch file
 			JsonConverterService jsonConverterService = new JsonConverterService();
@@ -35,17 +47,21 @@ public class Application {
 
 				opcUaVariablesFetcher.start();
 			}
-
-			// Create a ShutdownHook to shutdown all opcUaVariablesFetchers when the Application initiates shutdown
+			
+			// Wait for 5 seconds
+			Thread.sleep(5000);
+			
+			// Shutdown all threads
 			ShutdownHook shutdownHook = new ShutdownHook(opcUaClient, opcUaVariablesFetcherList);
-			Runtime.getRuntime().addShutdownHook(shutdownHook);
+			shutdownHook.start();
+			while (shutdownHook.isAlive())
+				Thread.sleep(100);
+			
 		}
 		catch (Throwable t) {
-			logger.error(t.getMessage());
+			fail(t.getMessage());
 		}
+
 	}
 
-	public static void main(String[] args) {
-		new Application();
-	}
 }
