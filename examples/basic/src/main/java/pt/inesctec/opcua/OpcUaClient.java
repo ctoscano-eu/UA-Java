@@ -24,7 +24,6 @@ import org.opcfoundation.ua.core.PublishResponse;
 import org.opcfoundation.ua.core.ReadValueId;
 import org.opcfoundation.ua.core.StatusCodes;
 import org.opcfoundation.ua.core.WriteValue;
-
 import org.opcfoundation.ua.transport.security.HttpsSecurityPolicy;
 import org.opcfoundation.ua.transport.security.KeyPair;
 import org.opcfoundation.ua.utils.CertificateUtils;
@@ -134,6 +133,13 @@ public class OpcUaClient {
 		logger.info("OpcUaSession created for " + opcUaProperties.toString());
 
 		return opcUaSession;
+	}
+
+	synchronized public OpcUaSession createOpcUaSessionIfNotAvailable(OpcUaProperties opcUaProperties) throws ServiceResultException {
+		if (opcUaSessionList.containsKey(opcUaProperties.serverUrl))
+			return opcUaSessionList.get(opcUaProperties.serverUrl); // return existing SessionChannel
+		else
+			return createOpcUaSession(opcUaProperties);
 	}
 
 	synchronized public void shutdownOpcUaSession(String serverUrl) {

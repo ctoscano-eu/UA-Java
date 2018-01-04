@@ -23,10 +23,6 @@ public class Application {
 			OpcUaClient opcUaClient = new OpcUaClient();
 			opcUaClient.create("OpcUaApplication");
 
-			// Create one OpcUaSession for each OpcUaVariablesToFetch (duplicates are ignored)
-			for (OpcUaVariablesToFetch opcUaVariablesToFetch : list)
-				opcUaClient.createOpcUaSession(opcUaVariablesToFetch.opcUaProperties);
-
 			// Now create and start a Fetcher thread for each OpcUaVariablesToFetch
 			List<OpcUaVariablesFetcher> opcUaVariablesFetcherList = new ArrayList<OpcUaVariablesFetcher>();
 			for (OpcUaVariablesToFetch opcUaVariablesToFetch : list) {

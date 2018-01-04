@@ -24,23 +24,21 @@ public class OpcUaVariablesFetcher extends Thread {
 	public void run() {
 		try {
 			while (getShutdown() == false) {
-				opcUaVariablesToFetch.dataValues = opcUaClient.readVariableValue(opcUaVariablesToFetch.opcUaProperties.serverUrl, opcUaVariablesToFetch.getOpcUaVariableNames().toArray(new String[0]));
-
-				logger.info(opcUaVariablesToFetch.dataValuesToString());
+				try {
+					opcUaClient.createOpcUaSessionIfNotAvailable(opcUaVariablesToFetch.opcUaProperties);
+					opcUaVariablesToFetch.dataValues = opcUaClient.readVariableValue(opcUaVariablesToFetch.opcUaProperties.serverUrl, opcUaVariablesToFetch.getOpcUaVariableNames().toArray(new String[0]));
+					logger.info(opcUaVariablesToFetch.dataValuesToString());
+				}
+				catch (Throwable e) {
+					logger.warn(e.getMessage());
+				}
 
 				Thread.sleep(opcUaVariablesToFetch.fetchCycle);
 			}
 		}
-		catch (ServiceFaultException e) {
-			logger.warn(e.getMessage());
-		}
-		catch (ServiceResultException e) {
-			logger.warn(e.getMessage());
-		}
 		catch (InterruptedException e) {
 			logger.warn(e.getMessage());
 		}
-
 	}
 
 	synchronized public void setShutdown(boolean flag) {
