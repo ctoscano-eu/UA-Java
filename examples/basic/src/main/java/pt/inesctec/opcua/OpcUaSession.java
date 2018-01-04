@@ -1,5 +1,6 @@
 package pt.inesctec.opcua;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.opcfoundation.ua.application.SessionChannel;
@@ -44,8 +45,6 @@ import org.opcfoundation.ua.core.WriteResponse;
 import org.opcfoundation.ua.core.WriteValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import pt.inesctec.opcua.model.OpcUaProperties;
 
@@ -136,7 +135,7 @@ public class OpcUaSession {
 	}
 
 	public List<BrowseResult> browseHierarchyOfNodeVariables(NodeId... nodeIdArray) throws ServiceFaultException, ServiceResultException {
-		List<BrowseResult> output = Lists.newArrayList();
+		List<BrowseResult> output = new ArrayList<BrowseResult>();
 
 		BrowseResult[] resp = browseNodeOjectsAndVariables(nodeIdArray);
 		for (int i = 0; i < resp.length; ++i) {

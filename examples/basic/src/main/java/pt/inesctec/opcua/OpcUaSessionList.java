@@ -3,11 +3,9 @@ package pt.inesctec.opcua;
 import java.util.HashMap;
 import java.util.Set;
 
-import com.google.common.collect.Maps;
-
 public class OpcUaSessionList {
 
-	private HashMap<String, OpcUaSession> opcUaSessionList = Maps.newHashMap();
+	private HashMap<String, OpcUaSession> opcUaSessionList = new HashMap<String, OpcUaSession>();
 
 	/*
 	 * Get the OpcUaSession to use. 
