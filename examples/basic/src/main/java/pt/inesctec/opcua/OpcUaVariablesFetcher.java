@@ -1,5 +1,8 @@
 package pt.inesctec.opcua;
 
+import java.io.IOException;
+
+import org.opcfoundation.ua.common.ServiceResultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +27,8 @@ public class OpcUaVariablesFetcher extends Thread {
 		try {
 			while (getShutdown() == false) {
 				try {
-					opcUaClient.createOpcUaSessionIfNotAvailable(opcUaVariablesToFetch.opcUaProperties);
-					opcUaVariablesToFetch.dataValues = opcUaClient.readVariableValue(opcUaVariablesToFetch.opcUaProperties.serverUrl, opcUaVariablesToFetch.getOpcUaVariableNames().toArray(new String[0]));
-					logger.info(opcUaVariablesToFetch.dataValuesToString());
-
-					String mongo = jsonConverterService.convertOpcUaVariablesToJson(opcUaVariablesToFetch);
-					logger.info(mongo);
+					fetchVariables();
+					saveVariablesOnMongoDb();
 				}
 				catch (Throwable e) {
 					logger.warn(e.getMessage());
@@ -41,6 +40,23 @@ public class OpcUaVariablesFetcher extends Thread {
 		catch (InterruptedException e) {
 			logger.warn(e.getMessage());
 		}
+	}
+
+	private void fetchVariables() throws ServiceResultException {
+		opcUaClient.createOpcUaSessionIfNotAvailable(opcUaVariablesToFetch.opcUaProperties);
+		opcUaVariablesToFetch.dataValues = opcUaClient.readVariableValue(opcUaVariablesToFetch.opcUaProperties.serverUrl, opcUaVariablesToFetch.getOpcUaVariableNames().toArray(new String[0]));
+		logger.info(opcUaVariablesToFetch.dataValuesToString());
+	}
+
+	private void saveVariablesOnMongoDb() throws IOException {
+		String jsonOpcVariables = jsonConverterService.convertOpcUaVariablesToJson(opcUaVariablesToFetch);
+		StringBuffer mongoCommand = new StringBuffer();
+		mongoCommand.append("db.");
+		mongoCommand.append(opcUaVariablesToFetch.mongoProperties.collection);
+		mongoCommand.append(".insertOne(");
+		mongoCommand.append(jsonOpcVariables);
+		mongoCommand.append(")");
+		logger.info("Mongo Command: " + mongoCommand);
 	}
 
 	synchronized public void setShutdown(boolean flag) {
