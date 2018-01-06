@@ -5,9 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opcfoundation.ua.builtintypes.DataValue;
+import org.opcfoundation.ua.builtintypes.StatusCode;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class OpcUaVariablesToFetch {
 
@@ -79,6 +82,20 @@ public class OpcUaVariablesToFetch {
 		}
 
 		return list;
+	}
+
+	public ObjectNode getOpcUaVariablesAsJsonNode() {
+		JsonNodeFactory jsonNodeFactory = new JsonNodeFactory(false);
+
+		ObjectNode jsonNode = jsonNodeFactory.objectNode();
+		for (int i = 0; i < opcUaVariables.size(); ++i) {
+			if (dataValues[i] != null && dataValues[i].getValue() != null && dataValues[i].getStatusCode().equals(StatusCode.GOOD))
+				jsonNode.put(opcUaVariables.get(i).mongoFieldName, dataValues[i].getValue().toString());
+			else
+				jsonNode.put(opcUaVariables.get(i).mongoFieldName, ""); // TODO ctoscano if we don't have any value .....
+		}
+
+		return jsonNode;
 	}
 
 }

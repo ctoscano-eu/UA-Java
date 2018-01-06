@@ -2,11 +2,14 @@ package pt.inesctec.opcua;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,10 +33,22 @@ public class JsonConverterService {
 		SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		mapper.setDateFormat(outputFormat);
 		mapper.setSerializationInclusion(Include.NON_EMPTY);
+
 	}
 
 	public String java2Json(OpcUaVariablesToFetch opcUaVariableToFetch) throws JsonProcessingException {
 		return mapper.writeValueAsString(opcUaVariableToFetch);
+	}
+
+	public String convertOpcUaVariablesToJson(OpcUaVariablesToFetch opcUaVariablesToFetch) throws IOException {
+		JsonFactory jsonFactory = new JsonFactory();
+		StringWriter stringWriter = new StringWriter();
+		JsonGenerator jsonGenerator = jsonFactory.createGenerator(stringWriter);
+
+		JsonNode jsonNode = opcUaVariablesToFetch.getOpcUaVariablesAsJsonNode();
+		mapper.writeTree(jsonGenerator, jsonNode);
+
+		return stringWriter.toString();
 	}
 
 	public OpcUaVariablesToFetch json2OpcUaVariableToFetch(String jsonInString) throws IOException {

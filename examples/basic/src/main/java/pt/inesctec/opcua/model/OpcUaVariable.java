@@ -11,6 +11,7 @@ public class OpcUaVariable {
 
 	public String name;
 	public String type;
+	public String mongoFieldName;
 
 	public OpcUaVariable() {
 		super();
@@ -22,6 +23,8 @@ public class OpcUaVariable {
 		buf.append(name);
 		buf.append(" type: ");
 		buf.append(type);
+		buf.append(" mongoFieldName: ");
+		buf.append(mongoFieldName);
 		return buf.toString();
 	}
 
@@ -30,6 +33,7 @@ public class OpcUaVariable {
 			OpcUaVariable obj = new OpcUaVariable();
 			obj.name = node.get("name").textValue();
 			obj.type = node.get("type").textValue();
+			obj.mongoFieldName = node.get("mongoFieldName").textValue();
 
 			return obj;
 		}

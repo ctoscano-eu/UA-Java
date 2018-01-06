@@ -1,54 +1,58 @@
 [
 	{
-	  "opcUaProperties" : {
-	    "serverUrl": "opc.tcp://localhost:4334/UA/teste",
-      "userName" : "",
-      "password" : ""
-	  },
-		"mongoProperties" : {
-		  "host" : "localhost",
-		  "port" : "27017",
-		  "database" : "sensor_data_saver",
-      "collection" : "xpto",
-		  "userName" : "",
-		  "password" : ""
+		"opcUaProperties": {
+			"serverUrl": "opc.tcp://localhost:4334/UA/teste",
+			"userName": "",
+			"password": ""
+		},
+		"mongoProperties": {
+			"host": "localhost",
+			"port": "27017",
+			"database": "sensor_data_saver",
+			"collection": "xpto",
+			"userName": "",
+			"password": ""
 		},
 		"fetchCycle": "1000",
 		"opcUaVariables": [
 			{
 				"name": "/Objects/Server/ServerArray",
-				"type": "String"
+				"type": "String",
+				"mongoFieldName": "ObjectsServerArray"
 			},
 			{
 				"name": "/Objects/Server/NamespaceArray",
-				"type": "String"
+				"type": "String",
+				"mongoFieldName": "ObjectsServerNamespaceArray"
 			}
 		]
 	},
-  {
-    "opcUaProperties" : {
-      "serverUrl": "opc.tcp://localhost:4334/UA/teste",
-      "userName" : "",
-      "password" : ""
-    },
-    "mongoProperties" : {
-      "host" : "localhost",
-      "port" : "27017",
-      "database" : "sensor_data_saver",
-      "collection" : "xpto",
-      "userName" : "",
-      "password" : ""
-    },
-    "fetchCycle": "1000",
-    "opcUaVariables": [
-      {
-        "name": "/Objects/Server/ServiceLevel",
-        "type": "String"
-      },
-      {
-        "name": "/Objects/Server/Auditing",
-        "type": "String"
-      }
-    ]
-  }
+	{
+		"opcUaProperties": {
+			"serverUrl": "opc.tcp://localhost:4334/UA/teste",
+			"userName": "",
+			"password": ""
+		},
+		"mongoProperties": {
+			"host": "localhost",
+			"port": "27017",
+			"database": "sensor_data_saver",
+			"collection": "xpto",
+			"userName": "",
+			"password": ""
+		},
+		"fetchCycle": "1000",
+		"opcUaVariables": [
+			{
+				"name": "/Objects/Server/ServiceLevel",
+				"type": "String",
+				"mongoFieldName": "ObjectsServerServiceLevel"
+			},
+			{
+				"name": "/Objects/Server/Auditing",
+				"type": "String",
+				"mongoFieldName": "ObjectsServerAuditing"
+			}
+		]
+	}
 ]
