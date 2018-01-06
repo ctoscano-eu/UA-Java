@@ -1,7 +1,5 @@
 package pt.inesctec.opcua;
 
-import org.opcfoundation.ua.common.ServiceFaultException;
-import org.opcfoundation.ua.common.ServiceResultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +11,7 @@ public class OpcUaVariablesFetcher extends Thread {
 
 	private OpcUaClient opcUaClient;
 	private OpcUaVariablesToFetch opcUaVariablesToFetch;
+	private JsonConverterService jsonConverterService = new JsonConverterService();
 	private boolean shutdown = false;
 
 	public OpcUaVariablesFetcher(OpcUaClient opcUaClient, OpcUaVariablesToFetch opcUaVariablesToFetch) {
@@ -28,6 +27,9 @@ public class OpcUaVariablesFetcher extends Thread {
 					opcUaClient.createOpcUaSessionIfNotAvailable(opcUaVariablesToFetch.opcUaProperties);
 					opcUaVariablesToFetch.dataValues = opcUaClient.readVariableValue(opcUaVariablesToFetch.opcUaProperties.serverUrl, opcUaVariablesToFetch.getOpcUaVariableNames().toArray(new String[0]));
 					logger.info(opcUaVariablesToFetch.dataValuesToString());
+
+					String mongo = jsonConverterService.convertOpcUaVariablesToJson(opcUaVariablesToFetch);
+					logger.info(mongo);
 				}
 				catch (Throwable e) {
 					logger.warn(e.getMessage());
