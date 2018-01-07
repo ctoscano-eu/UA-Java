@@ -20,6 +20,16 @@ public class MongoProperties {
 		super();
 	}
 
+	public MongoProperties(String host, String port, String database, String collection, String userName, String password) {
+		super();
+		this.host = host;
+		this.port = port;
+		this.database = database;
+		this.collection = collection;
+		this.userName = userName;
+		this.password = password;
+	}
+
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("host: ");
