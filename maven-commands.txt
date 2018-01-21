@@ -1,0 +1,8 @@
+mvn clean package install
+
+mvn versions:use-latest-releases
+
+mvn versions:display-plugin-updates
+
+mvn enforcer:display-info
+
