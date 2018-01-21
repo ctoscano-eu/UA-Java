@@ -10,7 +10,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-   <javadoc.arg>-Xdoclint:none</javadoc.arg>
+    <skipTests>true</skipTests>
+    <javadoc.arg>-Xdoclint:none</javadoc.arg>
     <opc-ua-stack-version>1.03.342.1-SNAPSHOT</opc-ua-stack-version>
     <spring-boot.version>1.5.9.RELEASE</spring-boot.version>
     <com-fasterxml-jackson-core-version>2.9.3</com-fasterxml-jackson-core-version>
@@ -184,6 +185,15 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
         <version>2.5</version>
+      </plugin>
+
+	  <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.20.1</version>
+        <configuration>
+          <skipITs>${skipTests}</skipITs>
+        </configuration>
       </plugin>
 
     </plugins>

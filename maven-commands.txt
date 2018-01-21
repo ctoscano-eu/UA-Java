@@ -8,3 +8,5 @@ mvn enforcer:display-info
 
 mvn dependency:tree
 
+mvn clean install -Dmaven.test.skip=true
+mvn clean install -DskipTests=true
