@@ -15,6 +15,28 @@
   <build>
     <plugins>
 
+      <!-- enforces certain Maven versions -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0-M1</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.0.5</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- Used to compile the sources of the project -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -26,7 +48,8 @@
         </configuration>
       </plugin>
 
-      <!-- Used to build signatures of APIs and to check your classes against previously generated signatures -->
+      <!-- Used to build signatures of APIs and to check your classes against 
+        previously generated signatures -->
       <!-- This ensures only java 6 api is used. We check against the sun/oracle 
         implementation because there is optional support for sun security if it is 
         present and bouncy/spongycastle is not in classpath -->
@@ -104,8 +127,9 @@
           </execution>
         </executions>
       </plugin>
-      
-      <!-- Provides the JaCoCo runtime agent to your tests and allows basic report creation -->
+
+      <!-- Provides the JaCoCo runtime agent to your tests and allows basic 
+        report creation -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -135,21 +159,25 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
         <version>3.4.0.905</version>
       </plugin>
-      
-      <!-- Used during the test phase of the build lifecycle to execute the unit tests of an application, generates reports in two different file formats: txt and xml  -->
+
+      <!-- Used during the test phase of the build lifecycle to execute the 
+        unit tests of an application, generates reports in two different file formats: 
+        txt and xml -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.20.1</version>
       </plugin>
-      
-      <!-- Allow users to aggregate the project output along with its dependencies, modules, site documentation, and other files into a single distributable archive -->
+
+      <!-- Allow users to aggregate the project output along with its dependencies, 
+        modules, site documentation, and other files into a single distributable 
+        archive -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -174,21 +202,22 @@
         </executions>
       </plugin>
 
-      <!-- Used when you want to manage the versions of artifacts in a project's POM -->
+      <!-- Used when you want to manage the versions of artifacts in a project's 
+        POM -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
         <version>2.5</version>
       </plugin>
-      
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <version>1.10</version>
       </plugin>
-      
+
     </plugins>
-    
+
     <pluginManagement>
       <plugins>
         <!--This plugin's configuration is used to store Eclipse m2e settings 
@@ -228,7 +257,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.54</version>
+      <version>1.59</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -240,19 +269,19 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.2</version>
+      <version>4.5.4</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore-nio</artifactId>
-      <version>4.4.4</version>
+      <version>4.4.9</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.7</version>
+      <version>1.8.0-beta0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -263,13 +292,13 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.2.17</version>
+      <version>2.13.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.21</version>
+      <version>1.8.0-beta0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
