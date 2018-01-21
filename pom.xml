@@ -6,6 +6,7 @@
   <artifactId>opc-ua-stack</artifactId>
   <version>1.03.342.1-SNAPSHOT</version>
   <name>OPC Foundation Unified Architecture Java Stack</name>
+  <url>https://github.com/OPCFoundation/UA-Java</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -253,6 +254,7 @@
       </plugins>
     </pluginManagement>
   </build>
+  
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>
@@ -302,6 +304,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
   <profiles>
     <profile>
       <id>jdk6</id>
