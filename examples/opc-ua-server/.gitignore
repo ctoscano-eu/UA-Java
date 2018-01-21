@@ -1,0 +1,14 @@
+/target/
+/.settings/
+/NanoServer*
+/SampleCA*
+/SampleClient*
+/.classpath
+/.project
+
+/*.der
+/*.pem
+/*PKI
+
+SampleClientPKI
+OpcUaApplicationPKI

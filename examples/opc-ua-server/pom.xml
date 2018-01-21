@@ -3,9 +3,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>pt.inesctec.opcua</groupId>
-  <artifactId>opc-ua-reader</artifactId>
+  <artifactId>opc-ua-server</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <name>opc-ua-reader</name>
+  <name>opc-ua-server</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
