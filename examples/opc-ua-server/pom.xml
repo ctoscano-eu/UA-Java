@@ -187,14 +187,15 @@
         <version>2.5</version>
       </plugin>
 
+    <!-- The Failsafe Plugin is designed to run integration tests while the Surefire Plugin is designed to run unit tests  -->
 	  <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.20.1</version>
-        <configuration>
-          <skipITs>${skipTests}</skipITs>
-        </configuration>
-      </plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-failsafe-plugin</artifactId>
+      <version>2.20.1</version>
+      <configuration>
+        <skipITs>${skipTests}</skipITs>
+      </configuration>
+    </plugin>
 
     </plugins>
   </build>
