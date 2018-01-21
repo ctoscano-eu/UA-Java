@@ -6,3 +6,5 @@ mvn versions:display-plugin-updates
 
 mvn enforcer:display-info
 
+mvn dependency:tree
+

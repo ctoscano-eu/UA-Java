@@ -9,7 +9,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javadoc.arg>-Xdoclint:none</javadoc.arg>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+   <javadoc.arg>-Xdoclint:none</javadoc.arg>
     <opc-ua-stack-version>1.03.342.1-SNAPSHOT</opc-ua-stack-version>
     <spring-boot.version>1.5.9.RELEASE</spring-boot.version>
     <com-fasterxml-jackson-core-version>2.9.3</com-fasterxml-jackson-core-version>
