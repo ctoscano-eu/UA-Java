@@ -15,6 +15,9 @@
   </properties>
 
   <build>
+  
+    <defaultGoal>clean install</defaultGoal>
+  
     <plugins>
 
       <!-- enforces certain Maven versions -->
