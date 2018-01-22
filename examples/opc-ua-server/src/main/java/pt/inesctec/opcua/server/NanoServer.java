@@ -89,7 +89,6 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 	private Map<NodeId, Long> timeoutPeriods;
 	public ContinuationPoint continuationPoint;
 
-	@SuppressWarnings("serial")
 	public NanoServer(Application application) throws Exception {
 
 		super(application);
