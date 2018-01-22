@@ -215,10 +215,11 @@
         <version>2.5</version>
       </plugin>
 
+	  <!-- Contains various small independent goals to assist with the Maven build lifecycle -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.10</version>
+        <version>3.0.0</version>
       </plugin>
 
     </plugins>

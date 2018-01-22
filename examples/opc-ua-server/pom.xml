@@ -17,6 +17,123 @@
     <com-fasterxml-jackson-core-version>2.9.3</com-fasterxml-jackson-core-version>
   </properties>
 
+  <build>
+
+    <defaultGoal>clean install</defaultGoal>
+
+    <plugins>
+	
+      <!-- enforces certain Maven versions -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0-M1</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.0.5</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+	
+      <!-- Used to compile the sources of the project -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+
+      <!-- Uses the Javadoc tool to generate javadocs for the specified project -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.3</version>
+        <configuration>
+          <!-- enable these to show more warnings/errors, wont work on JDK6 
+            so commented out by default <additionalJOptions> <additionalJOption>-Xmaxerrs</additionalJOption> 
+            <additionalJOption>1000</additionalJOption> <additionalJOption>-Xmaxwarns</additionalJOption> 
+            <additionalJOption>1000</additionalJOption> </additionalJOptions> -->
+          <!-- these are for javadoc:fix goal -->
+          <fixTags>param,return,throws</fixTags>
+          <additionalparam>${javadoc.arg}</additionalparam>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadoc</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+	  <!-- Provides Spring Boot support in Maven, allowing you to package executable jar or war archives and run an application “in-place” -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+            <configuration>  <!-- see 83.5 Use a Spring Boot application as a dependency on https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#howto -->
+              <classifier>exec</classifier>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+	  <!-- Allow users to aggregate the project output along with its dependencies, 
+        modules, site documentation, and other files into a single distributable 
+        archive -->
+      <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+		<version>3.1.0</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+            <!-- creates a single JAR ﬁle containing all the bytecode a project 
+              needs to execute, including the bytecode from the project you are building 
+              and all the bytecode from libraries your project depends upons. -->
+          </descriptorRefs>
+        </configuration>
+      </plugin>
+
+	  <!-- Used when you want to manage the versions of artifacts in a project's 
+        POM -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.5</version>
+      </plugin>
+
+    <!-- The Failsafe Plugin is designed to run integration tests while the Surefire Plugin is designed to run unit tests  -->
+	  <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-failsafe-plugin</artifactId>
+      <version>2.20.1</version>
+      <configuration>
+        <skipITs>${skipTests}</skipITs>
+      </configuration>
+    </plugin>
+
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>org.opcfoundation.ua</groupId>
@@ -89,114 +206,4 @@
     </dependency>
   </dependencies>
 
-  <build>
-
-    <defaultGoal>clean install</defaultGoal>
-
-    <plugins>
-	
-      <!-- enforces certain Maven versions -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.0.0-M1</version>
-        <executions>
-          <execution>
-            <id>enforce-maven</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>3.0.5</version>
-                </requireMavenVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-	
-      <!-- Used to compile the sources of the project -->
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-
-      <!-- Uses the Javadoc tool to generate javadocs for the specified project -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
-        <configuration>
-          <!-- enable these to show more warnings/errors, wont work on JDK6 
-            so commented out by default <additionalJOptions> <additionalJOption>-Xmaxerrs</additionalJOption> 
-            <additionalJOption>1000</additionalJOption> <additionalJOption>-Xmaxwarns</additionalJOption> 
-            <additionalJOption>1000</additionalJOption> </additionalJOptions> -->
-          <!-- these are for javadoc:fix goal -->
-          <fixTags>param,return,throws</fixTags>
-          <additionalparam>${javadoc.arg}</additionalparam>
-        </configuration>
-        <executions>
-          <execution>
-            <id>attach-javadoc</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>  <!-- packages the project as an executable jar -->
-        <version>${spring-boot.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
-            <configuration>  <!-- see 83.5 Use a Spring Boot application as a dependency on https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#howto -->
-              <classifier>exec</classifier>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-            <!-- creates a single JAR ﬁle containing all the bytecode a project 
-              needs to execute, including the bytecode from the project you are building 
-              and all the bytecode from libraries your project depends upons. -->
-          </descriptorRefs>
-        </configuration>
-      </plugin>
-
-	  <!-- Used when you want to manage the versions of artifacts in a project's 
-        POM -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-        <version>2.5</version>
-      </plugin>
-
-    <!-- The Failsafe Plugin is designed to run integration tests while the Surefire Plugin is designed to run unit tests  -->
-	  <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-failsafe-plugin</artifactId>
-      <version>2.20.1</version>
-      <configuration>
-        <skipITs>${skipTests}</skipITs>
-      </configuration>
-    </plugin>
-
-    </plugins>
-  </build>
 </project>
