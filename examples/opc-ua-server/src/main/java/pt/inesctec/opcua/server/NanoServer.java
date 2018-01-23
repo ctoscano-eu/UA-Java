@@ -73,6 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pt.inesctec.opcua.certs.ExampleKeys;
+import pt.inesctec.opcua.model.RoboticManipulator;
 
 public class NanoServer extends Server implements SessionServiceSetHandler {
 
@@ -246,6 +247,14 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 
 		onBrowseActions.put(Identifiers.BaseDataType, new BrowseResult(StatusCode.GOOD, null, new ReferenceDescription[] {
 		    new ReferenceDescription(Identifiers.HasSubtype, true, new ExpandedNodeId(Identifiers.Boolean), new QualifiedName("Boolean"), new LocalizedText("Boolean"), NodeClass.DataType, null) }));
+		
+		final RoboticManipulator roboticManipulator = new RoboticManipulator("ROBOT_ID", "ROBOT_NAME", "ROBOT_STATUS");
+		
+		onBrowseActions.put(roboticManipulator.nodeId_RoboticManipulatorType, new BrowseResult(StatusCode.GOOD, null, null));
+		onBrowseActions.put(roboticManipulator.nodeId_this, new BrowseResult(StatusCode.GOOD, null, roboticManipulator.getReferenceDescriptions()));
+		onBrowseActions.put(roboticManipulator.nodeId_robotName, new BrowseResult(StatusCode.GOOD, null, roboticManipulator.getReferenceDescriptionForRobotName()));
+		onBrowseActions.put(roboticManipulator.nodeId_robotStatus, new BrowseResult(StatusCode.GOOD, null, roboticManipulator.getReferenceDescriptionForRobotStatus()));
+
 		onBrowseActions.put(Identifiers.ObjectsFolder,
 		    new BrowseResult(StatusCode.GOOD, null,
 		        new ReferenceDescription[] {
@@ -256,7 +265,9 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 		            new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(Identifiers.Server), new QualifiedName("Server"), new LocalizedText("Server"), NodeClass.Object,
 		                new ExpandedNodeId(Identifiers.ServerType)),
 		            new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(new NodeId(complianceNamespaceIndex, "StaticData")), new QualifiedName("StaticData"),
-		                new LocalizedText("StaticData"), NodeClass.Object, new ExpandedNodeId(Identifiers.FolderType)) }));
+		                new LocalizedText("StaticData"), NodeClass.Object, new ExpandedNodeId(Identifiers.FolderType)),
+		            roboticManipulator.getReferenceDescription()}));
+		
 		onBrowseActions.put(Identifiers.Server,
 		    new BrowseResult(StatusCode.GOOD, null,
 		        new ReferenceDescription[] {
@@ -665,6 +676,12 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 				put(Attributes.EventNotifier, new DataValue(new Variant(new Byte((byte) 1)), StatusCode.GOOD, null, serverTimeStamp));
 			}
 		});
+
+		onReadResultsMap.put(roboticManipulator.nodeId_this, roboticManipulator.getAttributes(serverTimeStamp));
+		onReadResultsMap.put(roboticManipulator.nodeId_RoboticManipulatorType, roboticManipulator.getAttributesForType(serverTimeStamp));
+		onReadResultsMap.put(roboticManipulator.nodeId_robotName, roboticManipulator.getAttributesForRobotName(serverTimeStamp));
+		onReadResultsMap.put(roboticManipulator.nodeId_robotStatus, roboticManipulator.getAttributesForRobotStatus(serverTimeStamp));
+
 		onReadResultsMap.put(Identifiers.ServerType, new HashMap<UnsignedInteger, DataValue>() {
 			{
 				put(Attributes.NodeId, new DataValue(new Variant(Identifiers.ServerType), StatusCode.GOOD, null, serverTimeStamp));

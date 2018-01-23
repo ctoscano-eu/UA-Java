@@ -367,7 +367,9 @@ public class OpcUaSession {
 	}
 
 	private void logDiagnosticInfos(DiagnosticInfo[] diagnosticInfoAray) {
-		if (diagnosticInfoAray.length != 0)
+		if (diagnosticInfoAray == null)
+			logger.warn("DiagnosticInfos: null");
+		else if (diagnosticInfoAray.length != 0)
 			logger.warn("DiagnosticInfos.length: " + diagnosticInfoAray.length);
 	}
 
