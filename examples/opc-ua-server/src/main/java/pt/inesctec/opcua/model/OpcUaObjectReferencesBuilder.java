@@ -27,20 +27,20 @@ public class OpcUaObjectReferencesBuilder {
 	}
 
 	private ReferenceDescription buildReferenceToObject() {
-		return new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(opcUaObject.objectAttributes.nodeId), qualifiedName(opcUaObject.objectAttributes.browseName),
+		return new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(opcUaObject.objectAttributes.nodeId), qualifiedName(opcUaObject.objectAttributes.nodeId,opcUaObject.objectAttributes.browseName),
 		    new LocalizedText(opcUaObject.objectAttributes.browseName), NodeClass.Object, new ExpandedNodeId(opcUaObject.objectTypeAttributes.nodeId));
 	}
 
 	private ReferenceDescription[] buildReferencesForObject() {
 		List<ReferenceDescription> list = new ArrayList<ReferenceDescription>();
 
-		list.add(new ReferenceDescription(Identifiers.HasTypeDefinition, true, new ExpandedNodeId(opcUaObject.objectTypeAttributes.nodeId), qualifiedName("RoboticManipulatorType"),
+		list.add(new ReferenceDescription(Identifiers.HasTypeDefinition, true, new ExpandedNodeId(opcUaObject.objectTypeAttributes.nodeId), qualifiedName(opcUaObject.objectTypeAttributes.nodeId, "RoboticManipulatorType"),
 		    new LocalizedText("RoboticManipulatorType"), NodeClass.ObjectType, new ExpandedNodeId(opcUaObject.objectTypeAttributes.nodeId)));
 
 		for (AttributesMap map : opcUaObject.variableAttributes) {
 			NodeId nodeId = map.nodeId;
 			String browseName = map.browseName;
-			list.add(new ReferenceDescription(Identifiers.HasComponent, true, new ExpandedNodeId(nodeId), qualifiedName(browseName), new LocalizedText(browseName), NodeClass.Variable,
+			list.add(new ReferenceDescription(Identifiers.HasComponent, true, new ExpandedNodeId(nodeId), qualifiedName(nodeId, browseName), new LocalizedText(browseName), NodeClass.Variable,
 			    new ExpandedNodeId(nodeId)));
 		}
 
@@ -50,7 +50,7 @@ public class OpcUaObjectReferencesBuilder {
 	private ReferenceDescription[] buildReferencesForObjectType() {
 		List<ReferenceDescription> list = new ArrayList<ReferenceDescription>();
 
-		list.add(new ReferenceDescription(Identifiers.HasComponent, false, new ExpandedNodeId(opcUaObject.objectAttributes.nodeId), qualifiedName(opcUaObject.objectAttributes.browseName),
+		list.add(new ReferenceDescription(Identifiers.HasComponent, false, new ExpandedNodeId(opcUaObject.objectAttributes.nodeId), qualifiedName(opcUaObject.objectAttributes.nodeId, opcUaObject.objectAttributes.browseName),
 		    new LocalizedText(opcUaObject.objectAttributes.browseName), NodeClass.Variable, new ExpandedNodeId(opcUaObject.objectAttributes.nodeId)));
 
 		return list.toArray(new ReferenceDescription[list.size()]);
@@ -69,7 +69,7 @@ public class OpcUaObjectReferencesBuilder {
 	private ReferencesMap buildReferencesForVariable(NodeId nodeId, String browseName) {
 		List<ReferenceDescription> list = new ArrayList<ReferenceDescription>();
 
-		list.add(new ReferenceDescription(Identifiers.HasComponent, false, new ExpandedNodeId(opcUaObject.objectAttributes.nodeId), qualifiedName(opcUaObject.objectAttributes.browseName),
+		list.add(new ReferenceDescription(Identifiers.HasComponent, false, new ExpandedNodeId(opcUaObject.objectAttributes.nodeId), qualifiedName(opcUaObject.objectAttributes.nodeId, opcUaObject.objectAttributes.browseName),
 		    new LocalizedText("RoboticManipulator"), NodeClass.Variable, new ExpandedNodeId(opcUaObject.objectAttributes.nodeId)));
 		list.add(new ReferenceDescription(Identifiers.HasTypeDefinition, true, new ExpandedNodeId(Identifiers.BaseDataVariableType), new QualifiedName("BaseDataVariableType"),
 		    new LocalizedText("BaseDataVariableType"), NodeClass.VariableType, new ExpandedNodeId(Identifiers.BaseDataVariableType)));
@@ -77,8 +77,8 @@ public class OpcUaObjectReferencesBuilder {
 		return new ReferencesMap(nodeId, browseName, list.toArray(new ReferenceDescription[list.size()]));
 	}
 
-	static private QualifiedName qualifiedName(String name) {
-		return new QualifiedName(1, name);
+	static private QualifiedName qualifiedName(NodeId nodeId, String name) {
+		return new QualifiedName(nodeId.getNamespaceIndex(), name);
 	}
 
 }

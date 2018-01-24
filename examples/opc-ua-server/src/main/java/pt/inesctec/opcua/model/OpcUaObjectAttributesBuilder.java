@@ -9,12 +9,8 @@ import org.opcfoundation.ua.builtintypes.DateTime;
 import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.UnsignedInteger;
 import org.opcfoundation.ua.core.Identifiers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OpcUaObjectAttributesBuilder {
-
-	private final Logger logger = LoggerFactory.getLogger(OpcUaAddressSpace.class);
 
 	private OpcUaObject opcUaObject;
 	private DateTime serverTimeStamp;
@@ -36,7 +32,7 @@ public class OpcUaObjectAttributesBuilder {
 	private void buildAttributesForObject() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		OpcUaObjectDeclaration decl = opcUaObject.obj.getClass().getAnnotation(OpcUaObjectDeclaration.class);
 		if (decl == null)
-			logger.warn("OpcUaObjectDeclaration not found on " + opcUaObject.obj.toString());
+			throw new RuntimeException("OpcUaObjectDeclaration not found on " + opcUaObject.obj.toString());
 
 		NodeId nodeId = new NodeId(Integer.valueOf(decl.nodeIdNamespaceIndex()), UUID.randomUUID());
 		String browseName = decl.browseName();
@@ -48,7 +44,7 @@ public class OpcUaObjectAttributesBuilder {
 	private void buildAttributesForObjectType() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		OpcUaObjectTypeDeclaration decl = opcUaObject.obj.getClass().getAnnotation(OpcUaObjectTypeDeclaration.class);
 		if (decl == null)
-			logger.warn("OpcUaObjectTypeDeclaration not found on " + opcUaObject.obj.toString());
+			throw new RuntimeException("OpcUaObjectTypeDeclaration not found on " + opcUaObject.obj.toString());
 
 		NodeId nodeId = new NodeId(Integer.valueOf(decl.nodeIdNamespaceIndex()), UUID.randomUUID());
 		String browseName = decl.browseName();
@@ -65,10 +61,24 @@ public class OpcUaObjectAttributesBuilder {
 		NodeId nodeId = new NodeId(Integer.valueOf(decl.nodeIdNamespaceIndex()), UUID.randomUUID());
 		String browseName = decl.browseName();
 		Object value = field.get(opcUaObject.obj);
-		NodeId nodeIdForVariableType = Identifiers.String;
+		NodeId nodeIdForVariableType = getNodeIdForDataType(field);
 		Map<UnsignedInteger, DataValue> attributes = AttributesMapFactory.buildMapAttributesForVariable(nodeId, browseName, value, nodeIdForVariableType, serverTimeStamp);
 
 		opcUaObject.variableAttributes.add(new AttributesMap(nodeId, browseName, attributes));
 	}
 
+	private NodeId getNodeIdForDataType(Field field) {
+		if (field.getType().getName().equals("java.lang.String"))
+			return Identifiers.String;
+		else if (field.getType().getName().equals("int"))
+			return Identifiers.Integer;
+		else if (field.getType().getName().equals("long"))
+			return Identifiers.Integer;
+		else if (field.getType().getName().equals("double"))
+			return Identifiers.Double;
+		else if (field.getType().getName().equals("float"))
+			return Identifiers.Float;
+		else
+			throw new RuntimeException("Unknown DataType: " + field.getType().getName());
+	}
 }

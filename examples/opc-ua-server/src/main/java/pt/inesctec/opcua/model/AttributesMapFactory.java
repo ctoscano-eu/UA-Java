@@ -23,7 +23,7 @@ public class AttributesMapFactory {
 
 		map.put(Attributes.NodeId, new DataValue(new Variant(nodeId), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.NodeClass, new DataValue(new Variant(NodeClass.Object), StatusCode.GOOD, null, serverTimeStamp));
-		map.put(Attributes.BrowseName, new DataValue(new Variant(qualifiedName(browseName)), StatusCode.GOOD, null, serverTimeStamp));
+		map.put(Attributes.BrowseName, new DataValue(new Variant(qualifiedName(nodeId, browseName)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.DisplayName, new DataValue(new Variant(new LocalizedText(browseName, LocalizedText.NO_LOCALE)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.Description, new DataValue(new Variant(new LocalizedText(browseName, LocalizedText.NO_LOCALE)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.WriteMask, new DataValue(new Variant(new UnsignedInteger(0)), StatusCode.GOOD, null, serverTimeStamp));
@@ -38,7 +38,7 @@ public class AttributesMapFactory {
 
 		map.put(Attributes.NodeId, new DataValue(new Variant(nodeId), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.NodeClass, new DataValue(new Variant(NodeClass.ObjectType), StatusCode.GOOD, null, serverTimeStamp));
-		map.put(Attributes.BrowseName, new DataValue(new Variant(qualifiedName(browseName)), StatusCode.GOOD, null, serverTimeStamp));
+		map.put(Attributes.BrowseName, new DataValue(new Variant(qualifiedName(nodeId, browseName)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.DisplayName, new DataValue(new Variant(new LocalizedText(browseName, LocalizedText.NO_LOCALE)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.Description, new DataValue(new Variant(new LocalizedText(browseName, LocalizedText.NO_LOCALE)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.WriteMask, new DataValue(new Variant(new UnsignedInteger(0)), StatusCode.GOOD, null, serverTimeStamp));
@@ -53,7 +53,7 @@ public class AttributesMapFactory {
 
 		map.put(Attributes.NodeId, new DataValue(new Variant(nodeId), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.NodeClass, new DataValue(new Variant(NodeClass.Variable), StatusCode.GOOD, null, serverTimeStamp));
-		map.put(Attributes.BrowseName, new DataValue(new Variant(qualifiedName(browseName)), StatusCode.GOOD, null, serverTimeStamp));
+		map.put(Attributes.BrowseName, new DataValue(new Variant(qualifiedName(nodeId, browseName)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.DisplayName, new DataValue(new Variant(new LocalizedText(browseName, LocalizedText.NO_LOCALE)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.Description, new DataValue(new Variant(new LocalizedText(browseName, LocalizedText.NO_LOCALE)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.WriteMask, new DataValue(new Variant(new UnsignedInteger(0)), StatusCode.GOOD, null, serverTimeStamp));
@@ -70,8 +70,8 @@ public class AttributesMapFactory {
 		return map;
 	}
 
-	static private QualifiedName qualifiedName(String name) {
-		return new QualifiedName(1, name);
+	static private QualifiedName qualifiedName(NodeId nodeId, String name) {
+		return new QualifiedName(nodeId.getNamespaceIndex(), name);
 	}
 
 }
