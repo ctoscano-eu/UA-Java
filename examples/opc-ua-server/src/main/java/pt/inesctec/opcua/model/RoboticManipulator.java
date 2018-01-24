@@ -15,7 +15,18 @@ import org.opcfoundation.ua.core.Identifiers;
 import org.opcfoundation.ua.core.NodeClass;
 import org.opcfoundation.ua.core.ReferenceDescription;
 
-public class RoboticManipulator {
+public class RoboticManipulator extends OpcUaMetadata {
+
+	{
+		opcUa.nodeIdForObject = "nodeId_this";
+		opcUa.browseNameForObject = "RoboticManipulator";
+		opcUa.nodeIdForType = "nodeId_RoboticManipulatorType";
+		opcUa.browseNameForType = "RoboticManipulatorType";
+		opcUa.fieldForVariable = new String[] { "robotName", "robotStatus" };
+		opcUa.nodeIdForVariableType = new NodeId[] { Identifiers.String, Identifiers.String };
+		opcUa.browseNameForVariable = new String[] { "RobotName", "RobotStatus" };
+		opcUa.nodeIdForVariable = new String[] { "nodeId_robotName", "nodeId_robotStatus" };
+	};
 
 	public String robotId;
 	public String robotName;
@@ -104,14 +115,6 @@ public class RoboticManipulator {
 
 	public Map<UnsignedInteger, DataValue> getAttributesForType(DateTime serverTimeStamp) {
 		return MapAttributesFactory.buildMapAttributesForObjectType(nodeId_RoboticManipulatorType, "RoboticManipulatorType", serverTimeStamp);
-	}
-
-	public Map<UnsignedInteger, DataValue> getAttributesForRobotName(DateTime serverTimeStamp) {
-		return MapAttributesFactory.buildMapAttributesForVariable(nodeId_robotName, "RobotName", robotName, serverTimeStamp);
-	}
-
-	public Map<UnsignedInteger, DataValue> getAttributesForRobotStatus(DateTime serverTimeStamp) {
-		return MapAttributesFactory.buildMapAttributesForVariable(nodeId_robotStatus, "RobotStatus", robotStatus, serverTimeStamp);
 	}
 
 }

@@ -49,7 +49,7 @@ public class MapAttributesFactory {
 		return map;
 	}
 
-	static public Map<UnsignedInteger, DataValue> buildMapAttributesForVariable(NodeId nodeId, String browseName, Object value, DateTime serverTimeStamp) {
+	static public Map<UnsignedInteger, DataValue> buildMapAttributesForVariable(NodeId nodeId, String browseName, Object value, NodeId nodeIdForvariableType, DateTime serverTimeStamp) {
 		HashMap<UnsignedInteger, DataValue> map = new HashMap<UnsignedInteger, DataValue>();
 
 		map.put(Attributes.NodeId, new DataValue(new Variant(nodeId), StatusCode.GOOD, null, serverTimeStamp));
@@ -60,7 +60,7 @@ public class MapAttributesFactory {
 		map.put(Attributes.WriteMask, new DataValue(new Variant(new UnsignedInteger(0)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.UserWriteMask, new DataValue(new Variant(new UnsignedInteger(0)), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.Value, new DataValue(new Variant(value), StatusCode.GOOD, null, serverTimeStamp));
-		map.put(Attributes.DataType, new DataValue(new Variant(Identifiers.String), StatusCode.GOOD, null, serverTimeStamp));
+		map.put(Attributes.DataType, new DataValue(new Variant(nodeIdForvariableType), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.ValueRank, new DataValue(new Variant(-1), StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.ArrayDimensions, new DataValue(null, StatusCode.GOOD, null, serverTimeStamp));
 		map.put(Attributes.AccessLevel, new DataValue(new Variant(new UnsignedByte(AccessLevel.CurrentRead.getValue())), StatusCode.GOOD, null, serverTimeStamp));
