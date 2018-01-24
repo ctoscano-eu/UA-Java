@@ -165,6 +165,9 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 		// *******************************************************************************
 
 		onBrowseActions = new HashMap<NodeId, BrowseResult>();
+
+		onBrowseActions.putAll(myAddressSpace.browseActionsMap);
+
 		// root node
 		onBrowseActions.put(Identifiers.RootFolder, new BrowseResult(StatusCode.GOOD, null, new ReferenceDescription[] {
 		    // Parameters: ReferenceTypeId, IsForward, NodeId, BrowseName, DisplayName,
@@ -259,11 +262,10 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 		            new ReferenceDescription(Identifiers.HasTypeDefinition, true, new ExpandedNodeId(Identifiers.FolderType), new QualifiedName("FolderType"), new LocalizedText("FolderType"),
 		                NodeClass.ObjectType, null),
 		            new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(Identifiers.Server), new QualifiedName("Server"), new LocalizedText("Server"), NodeClass.Object,
-		                new ExpandedNodeId(Identifiers.ServerType)) }));
-
-		//new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(new NodeId(complianceNamespaceIndex, "StaticData")), new QualifiedName("StaticData"),
-		//new LocalizedText("StaticData"), NodeClass.Object, new ExpandedNodeId(Identifiers.FolderType)),
-		//roboticManipulator.getReferenceDescription()}));
+		                new ExpandedNodeId(Identifiers.ServerType)),
+		            new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(new NodeId(complianceNamespaceIndex, "StaticData")), new QualifiedName("StaticData"),
+		                new LocalizedText("StaticData"), NodeClass.Object, new ExpandedNodeId(Identifiers.FolderType)),
+		            myAddressSpace.getReferenceDescription() }));
 
 		onBrowseActions.put(Identifiers.Server,
 		    new BrowseResult(StatusCode.GOOD, null,
@@ -438,6 +440,8 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 		// *******************************************************************************
 		final DateTime serverTimeStamp = DateTime.currentTime();
 		onReadResultsMap = new HashMap<NodeId, Map<UnsignedInteger, DataValue>>();
+
+		onReadResultsMap.putAll(myAddressSpace.readResultsMap);
 
 		onReadResultsMap.put(new NodeId(complianceNamespaceIndex, "Boolean"), new HashMap<UnsignedInteger, DataValue>() {
 			{
