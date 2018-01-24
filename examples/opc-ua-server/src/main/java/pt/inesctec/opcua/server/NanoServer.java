@@ -254,18 +254,17 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 		onBrowseActions.put(Identifiers.BaseDataType, new BrowseResult(StatusCode.GOOD, null, new ReferenceDescription[] {
 		    new ReferenceDescription(Identifiers.HasSubtype, true, new ExpandedNodeId(Identifiers.Boolean), new QualifiedName("Boolean"), new LocalizedText("Boolean"), NodeClass.DataType, null) }));
 
-		onBrowseActions.put(Identifiers.ObjectsFolder,
-		    new BrowseResult(StatusCode.GOOD, null,
-		        new ReferenceDescription[] {
-		            new ReferenceDescription(Identifiers.Organizes, false, new ExpandedNodeId(Identifiers.RootFolder), new QualifiedName("Root"), new LocalizedText("Root"), NodeClass.Object,
-		                new ExpandedNodeId(Identifiers.FolderType)),
-		            new ReferenceDescription(Identifiers.HasTypeDefinition, true, new ExpandedNodeId(Identifiers.FolderType), new QualifiedName("FolderType"), new LocalizedText("FolderType"),
-		                NodeClass.ObjectType, null),
-		            new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(Identifiers.Server), new QualifiedName("Server"), new LocalizedText("Server"), NodeClass.Object,
-		                new ExpandedNodeId(Identifiers.ServerType)),
-		            new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(new NodeId(complianceNamespaceIndex, "StaticData")), new QualifiedName("StaticData"),
-		                new LocalizedText("StaticData"), NodeClass.Object, new ExpandedNodeId(Identifiers.FolderType)),
-		            myAddressSpace.getReferenceDescription() }));
+		onBrowseActions.put(Identifiers.ObjectsFolder, new BrowseResult(StatusCode.GOOD, null, new ReferenceDescription[] {
+		    new ReferenceDescription(Identifiers.Organizes, false, new ExpandedNodeId(Identifiers.RootFolder), new QualifiedName("Root"), new LocalizedText("Root"), NodeClass.Object,
+		        new ExpandedNodeId(Identifiers.FolderType)),
+		    new ReferenceDescription(Identifiers.HasTypeDefinition, true, new ExpandedNodeId(Identifiers.FolderType), new QualifiedName("FolderType"), new LocalizedText("FolderType"),
+		        NodeClass.ObjectType, null),
+		    new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(Identifiers.Server), new QualifiedName("Server"), new LocalizedText("Server"), NodeClass.Object,
+		        new ExpandedNodeId(Identifiers.ServerType)),
+		    new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(new NodeId(complianceNamespaceIndex, "StaticData")), new QualifiedName("StaticData"), new LocalizedText("StaticData"),
+		        NodeClass.Object, new ExpandedNodeId(Identifiers.FolderType)),
+		    myAddressSpace.getReferenceDescription(0), 
+		    myAddressSpace.getReferenceDescription(1) }));
 
 		onBrowseActions.put(Identifiers.Server,
 		    new BrowseResult(StatusCode.GOOD, null,
