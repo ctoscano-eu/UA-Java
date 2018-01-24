@@ -10,6 +10,9 @@ import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.UnsignedInteger;
 import org.opcfoundation.ua.core.Identifiers;
 
+import pt.inesctec.opcua.server.model.annotations.OpcUaObjectDeclaration;
+import pt.inesctec.opcua.server.model.annotations.OpcUaObjectTypeDeclaration;
+
 public class OpcUaObjectAttributesBuilder {
 
 	private OpcUaObject opcUaObject;

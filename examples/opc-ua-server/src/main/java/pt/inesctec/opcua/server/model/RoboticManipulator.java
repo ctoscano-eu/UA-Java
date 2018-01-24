@@ -1,5 +1,8 @@
 package pt.inesctec.opcua.server.model;
 
+import pt.inesctec.opcua.server.model.annotations.OpcUaObjectDeclaration;
+import pt.inesctec.opcua.server.model.annotations.OpcUaObjectTypeDeclaration;
+
 @OpcUaObjectDeclaration(browseName = "RoboticManipulator", nodeIdNamespaceIndex = "2")
 @OpcUaObjectTypeDeclaration(browseName = "RoboticManipulatorType", nodeIdNamespaceIndex = "2")
 public class RoboticManipulator {
