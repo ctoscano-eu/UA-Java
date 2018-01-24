@@ -14,10 +14,9 @@ import org.opcfoundation.ua.builtintypes.UnsignedInteger;
 import org.opcfoundation.ua.builtintypes.Variant;
 import org.opcfoundation.ua.core.AccessLevel;
 import org.opcfoundation.ua.core.Attributes;
-import org.opcfoundation.ua.core.Identifiers;
 import org.opcfoundation.ua.core.NodeClass;
 
-public class MapAttributesFactory {
+public class AttributesMapFactory {
 
 	static public Map<UnsignedInteger, DataValue> buildMapAttributesForObject(NodeId nodeId, String browseName, DateTime serverTimeStamp) {
 		HashMap<UnsignedInteger, DataValue> map = new HashMap<UnsignedInteger, DataValue>();

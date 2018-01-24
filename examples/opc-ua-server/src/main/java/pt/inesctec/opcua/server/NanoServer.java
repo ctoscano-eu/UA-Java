@@ -73,7 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pt.inesctec.opcua.certs.ExampleKeys;
-import pt.inesctec.opcua.model.MyAddressSpace;
+import pt.inesctec.opcua.model.OpcUaAddressSpace;
 
 public class NanoServer extends Server implements SessionServiceSetHandler {
 
@@ -157,7 +157,7 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 
 	private void init() throws ParseException {
 
-		MyAddressSpace myAddressSpace = new MyAddressSpace();
+		OpcUaAddressSpace myAddressSpace = new OpcUaAddressSpace();
 		myAddressSpace.init();
 
 		// *******************************************************************************

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class OpcUaObjectAttributesBuilder {
 
-	private final Logger logger = LoggerFactory.getLogger(MyAddressSpace.class);
+	private final Logger logger = LoggerFactory.getLogger(OpcUaAddressSpace.class);
 
 	private OpcUaObject opcUaObject;
 	private DateTime serverTimeStamp;
@@ -40,7 +40,7 @@ public class OpcUaObjectAttributesBuilder {
 
 		NodeId nodeId = new NodeId(Integer.valueOf(decl.nodeIdNamespaceIndex()), UUID.randomUUID());
 		String browseName = decl.browseName();
-		Map<UnsignedInteger, DataValue> attributes = MapAttributesFactory.buildMapAttributesForObject(nodeId, browseName, serverTimeStamp);
+		Map<UnsignedInteger, DataValue> attributes = AttributesMapFactory.buildMapAttributesForObject(nodeId, browseName, serverTimeStamp);
 
 		opcUaObject.objectAttributes = new AttributesMap(nodeId, browseName, attributes);
 	}
@@ -52,7 +52,7 @@ public class OpcUaObjectAttributesBuilder {
 
 		NodeId nodeId = new NodeId(Integer.valueOf(decl.nodeIdNamespaceIndex()), UUID.randomUUID());
 		String browseName = decl.browseName();
-		Map<UnsignedInteger, DataValue> attributes = MapAttributesFactory.buildMapAttributesForObjectType(nodeId, browseName, serverTimeStamp);
+		Map<UnsignedInteger, DataValue> attributes = AttributesMapFactory.buildMapAttributesForObjectType(nodeId, browseName, serverTimeStamp);
 
 		opcUaObject.objectTypeAttributes = new AttributesMap(nodeId, browseName, attributes);
 	}
@@ -66,7 +66,7 @@ public class OpcUaObjectAttributesBuilder {
 		String browseName = decl.browseName();
 		Object value = field.get(opcUaObject.obj);
 		NodeId nodeIdForVariableType = Identifiers.String;
-		Map<UnsignedInteger, DataValue> attributes = MapAttributesFactory.buildMapAttributesForVariable(nodeId, browseName, value, nodeIdForVariableType, serverTimeStamp);
+		Map<UnsignedInteger, DataValue> attributes = AttributesMapFactory.buildMapAttributesForVariable(nodeId, browseName, value, nodeIdForVariableType, serverTimeStamp);
 
 		opcUaObject.variableAttributes.add(new AttributesMap(nodeId, browseName, attributes));
 	}

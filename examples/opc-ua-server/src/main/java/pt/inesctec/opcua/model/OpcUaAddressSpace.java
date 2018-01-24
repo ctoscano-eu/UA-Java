@@ -13,14 +13,14 @@ import org.opcfoundation.ua.builtintypes.UnsignedInteger;
 import org.opcfoundation.ua.core.BrowseResult;
 import org.opcfoundation.ua.core.ReferenceDescription;
 
-public class MyAddressSpace {
+public class OpcUaAddressSpace {
 
 	public List<OpcUaObject> opcUaObjectList = new ArrayList<OpcUaObject>();
 
 	public Map<NodeId, BrowseResult> browseActionsMap = new HashMap<NodeId, BrowseResult>();
 	public Map<NodeId, Map<UnsignedInteger, DataValue>> readResultsMap = new HashMap<NodeId, Map<UnsignedInteger, DataValue>>();
 
-	public MyAddressSpace() {
+	public OpcUaAddressSpace() {
 	}
 
 	public ReferenceDescription getReferenceDescription() {
