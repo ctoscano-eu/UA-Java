@@ -12,6 +12,7 @@ import org.opcfoundation.ua.core.Identifiers;
 
 import pt.inesctec.opcua.server.model.annotations.OpcUaObjectDeclaration;
 import pt.inesctec.opcua.server.model.annotations.OpcUaObjectTypeDeclaration;
+import pt.inesctec.opcua.server.model.annotations.OpcUaVariableDeclaration;
 
 public class OpcUaObjectAttributesBuilder {
 

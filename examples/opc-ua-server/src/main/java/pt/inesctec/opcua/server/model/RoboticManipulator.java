@@ -2,6 +2,7 @@ package pt.inesctec.opcua.server.model;
 
 import pt.inesctec.opcua.server.model.annotations.OpcUaObjectDeclaration;
 import pt.inesctec.opcua.server.model.annotations.OpcUaObjectTypeDeclaration;
+import pt.inesctec.opcua.server.model.annotations.OpcUaVariableDeclaration;
 
 @OpcUaObjectDeclaration(browseName = "RoboticManipulator", nodeIdNamespaceIndex = "2")
 @OpcUaObjectTypeDeclaration(browseName = "RoboticManipulatorType", nodeIdNamespaceIndex = "2")
