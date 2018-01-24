@@ -73,7 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pt.inesctec.opcua.certs.ExampleKeys;
-import pt.inesctec.opcua.model.OpcUaAddressSpace;
+import pt.inesctec.opcua.server.model.OpcUaAddressSpace;
 
 public class NanoServer extends Server implements SessionServiceSetHandler {
 

@@ -1,4 +1,4 @@
-package pt.inesctec.opcua.model;
+package pt.inesctec.opcua.server.model;
 
 import java.lang.reflect.Field;
 import java.util.Map;

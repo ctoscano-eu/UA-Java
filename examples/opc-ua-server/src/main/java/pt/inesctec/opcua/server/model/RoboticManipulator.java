@@ -1,4 +1,4 @@
-package pt.inesctec.opcua.model;
+package pt.inesctec.opcua.server.model;
 
 @OpcUaObjectDeclaration(browseName = "RoboticManipulator", nodeIdNamespaceIndex = "2")
 @OpcUaObjectTypeDeclaration(browseName = "RoboticManipulatorType", nodeIdNamespaceIndex = "2")

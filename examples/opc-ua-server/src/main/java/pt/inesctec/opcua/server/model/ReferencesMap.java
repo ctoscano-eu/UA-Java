@@ -1,4 +1,4 @@
-package pt.inesctec.opcua.model;
+package pt.inesctec.opcua.server.model;
 
 import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.core.ReferenceDescription;
