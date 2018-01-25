@@ -159,6 +159,8 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 
 		OpcUaAddressSpace myAddressSpace = new OpcUaAddressSpace();
 		myAddressSpace.init();
+		
+		onReadResultsMap.setOpcUaAddressSpace(myAddressSpace);
 
 		// *******************************************************************************
 		// Put all browse references in one HashMap for better readability and performance
@@ -437,8 +439,6 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 		// Put all read datavalues in one HashMap for better readability and performance
 		// *******************************************************************************
 		final DateTime serverTimeStamp = DateTime.currentTime();
-
-		onReadResultsMap.putAll(myAddressSpace.readResultsMap);
 
 		onReadResultsMap.put(new NodeId(complianceNamespaceIndex, "Boolean"), new HashMap<UnsignedInteger, DataValue>() {
 			{

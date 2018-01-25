@@ -1,8 +1,10 @@
 package pt.inesctec.opcua.server.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.core.ReferenceDescription;
 
 /*
@@ -12,11 +14,12 @@ import org.opcfoundation.ua.core.ReferenceDescription;
  */
 public class OpcUaObject {
 
-	public Object javaObj;  // the instance of the Java Object
-	public AttributesMap objectAttributes;  // the attributes of the OPC UA Object
-	public AttributesMap objectTypeAttributes;   // the attributes of the OPC UA ObjectType
-	public List<AttributesMap> variableAttributes = new ArrayList<AttributesMap>(); // the attributes of each OPC UA Variable
-	
+	public Object javaObj; // the instance of the Java Object
+	public AttributesMap objectAttributes; // the attributes of the OPC UA Object
+	public AttributesMap objectTypeAttributes; // the attributes of the OPC UA ObjectType
+	public Map<NodeId, OpcUaVariable> opcUaVariables = new HashMap<NodeId, OpcUaVariable>();
+	//public List<AttributesMap> variableAttributes = new ArrayList<AttributesMap>(); // the attributes of each OPC UA Variable
+
 	public ReferenceDescription referenceToObject;
 	public ReferenceDescription[] objectReferences;
 	public ReferenceDescription[] objectTypeReferences;
@@ -28,5 +31,9 @@ public class OpcUaObject {
 
 	public OpcUaObject(Object obj) {
 		this.javaObj = obj;
+	}
+
+	public Collection<OpcUaVariable> getOpcUaVariables() {
+		return opcUaVariables.values();
 	}
 }

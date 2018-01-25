@@ -37,22 +37,23 @@ public class OpcUaAddressSpace {
 		OpcUaObject opcUaObject2 = new OpcUaObject(roboticManipulator2);
 		opcUaObjectList.add(opcUaObject2);
 
-		for (OpcUaObject obj : opcUaObjectList)
+		for (OpcUaObject opcUaObject : opcUaObjectList)
 			try {
-				new OpcUaObjectAttributesBuilder(obj, DateTime.currentTime()).buildAttributes();
+				new OpcUaObjectAttributesBuilder(opcUaObject, DateTime.currentTime()).buildAttributes();
 
 				// Set the readResultsMap
-				readResultsMap.put(obj.objectAttributes.nodeId, obj.objectAttributes.attributes);
-				readResultsMap.put(obj.objectTypeAttributes.nodeId, obj.objectTypeAttributes.attributes);
-				for (AttributesMap map : obj.variableAttributes)
-					readResultsMap.put(map.nodeId, map.attributes);
+				readResultsMap.put(opcUaObject.objectAttributes.nodeId, opcUaObject.objectAttributes.attributes);
+				readResultsMap.put(opcUaObject.objectTypeAttributes.nodeId, opcUaObject.objectTypeAttributes.attributes);
+				for (NodeId nodeId : opcUaObject.opcUaVariables.keySet()) {
+					readResultsMap.put(nodeId, opcUaObject.opcUaVariables.get(nodeId).attributes);
+				}
 
-				new OpcUaObjectReferencesBuilder(obj).buildReferences();
+				new OpcUaObjectReferencesBuilder(opcUaObject).buildReferences();
 
 				// Set the browseActionsMap
-				browseActionsMap.put(obj.objectAttributes.nodeId, new BrowseResult(StatusCode.GOOD, null, obj.objectReferences));
-				browseActionsMap.put(obj.objectTypeAttributes.nodeId, new BrowseResult(StatusCode.GOOD, null, obj.objectTypeReferences));
-				for (ReferencesMap map : obj.variableReferences) {
+				browseActionsMap.put(opcUaObject.objectAttributes.nodeId, new BrowseResult(StatusCode.GOOD, null, opcUaObject.objectReferences));
+				browseActionsMap.put(opcUaObject.objectTypeAttributes.nodeId, new BrowseResult(StatusCode.GOOD, null, opcUaObject.objectTypeReferences));
+				for (ReferencesMap map : opcUaObject.variableReferences) {
 					browseActionsMap.put(map.nodeId, new BrowseResult(StatusCode.GOOD, null, map.references));
 				}
 			}

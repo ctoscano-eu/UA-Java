@@ -8,7 +8,6 @@ import org.opcfoundation.ua.builtintypes.DataValue;
 import org.opcfoundation.ua.builtintypes.DateTime;
 import org.opcfoundation.ua.builtintypes.NodeId;
 import org.opcfoundation.ua.builtintypes.UnsignedInteger;
-import org.opcfoundation.ua.core.Identifiers;
 
 import pt.inesctec.opcua.server.model.annotations.OpcUaObjectDeclaration;
 import pt.inesctec.opcua.server.model.annotations.OpcUaObjectTypeDeclaration;
@@ -62,27 +61,10 @@ public class OpcUaObjectAttributesBuilder {
 		if (decl == null)
 			return;
 
-		NodeId nodeId = new NodeId(Integer.valueOf(opcUaObject.objectAttributes.nodeId.getNamespaceIndex()), UUID.randomUUID());
-		String browseName = decl.browseName();
-		Object value = field.get(opcUaObject.javaObj);
-		NodeId nodeIdForVariableType = getNodeIdForDataType(field);
-		Map<UnsignedInteger, DataValue> attributes = AttributesMapFactory.buildMapAttributesForVariable(nodeId, browseName, value, nodeIdForVariableType, serverTimeStamp);
-
-		opcUaObject.variableAttributes.add(new AttributesMap(nodeId, browseName, attributes, field.getName()));
+		// Create OpcUaVariable
+		OpcUaVariable opcUaVariable = OpcUaVariable.build(opcUaObject, decl, field);
+		// Add OpcUaVariable to OpcUaObject
+		opcUaObject.opcUaVariables.put(opcUaVariable.nodeId, opcUaVariable);
 	}
 
-	private NodeId getNodeIdForDataType(Field field) {
-		if (field.getType().getName().equals("java.lang.String"))
-			return Identifiers.String;
-		else if (field.getType().getName().equals("int"))
-			return Identifiers.Integer;
-		else if (field.getType().getName().equals("long"))
-			return Identifiers.Integer;
-		else if (field.getType().getName().equals("double"))
-			return Identifiers.Double;
-		else if (field.getType().getName().equals("float"))
-			return Identifiers.Float;
-		else
-			throw new RuntimeException("Unknown DataType: " + field.getType().getName());
-	}
 }
