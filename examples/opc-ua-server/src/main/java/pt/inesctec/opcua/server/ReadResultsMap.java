@@ -28,7 +28,7 @@ public class ReadResultsMap {
 			return map;
 
 		// search on our address space
-		return opcUaAddressSpace.readResultsMap.get(key);
+		return opcUaAddressSpace.getResultsMap(key);
 	}
 
 	public boolean containsKey(NodeId key) {
@@ -38,7 +38,7 @@ public class ReadResultsMap {
 			return f;
 
 		// search on our address space
-		return opcUaAddressSpace.readResultsMap.containsKey(key);
+		return opcUaAddressSpace.resultsMapContainsKey(key);
 	}
 
 	public void setOpcUaAddressSpace(OpcUaAddressSpace opcUaAddressSpace) {

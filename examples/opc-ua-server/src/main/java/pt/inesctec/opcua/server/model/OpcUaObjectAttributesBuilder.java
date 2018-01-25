@@ -49,11 +49,8 @@ public class OpcUaObjectAttributesBuilder {
 		if (decl == null)
 			throw new RuntimeException("OpcUaObjectTypeDeclaration not found on " + opcUaObject.javaObj.toString());
 
-		NodeId nodeId = new NodeId(Integer.valueOf(decl.namespaceIndex()), UUID.randomUUID());
-		String browseName = decl.browseName();
-		Map<UnsignedInteger, DataValue> attributes = AttributesMapFactory.buildMapAttributesForObjectType(nodeId, browseName, serverTimeStamp);
-
-		opcUaObject.objectTypeAttributes = new AttributesMap(nodeId, browseName, attributes);
+	// Create OpcUaObjectType and add it to OpcUaObject
+		opcUaObject.opcUaObjectType = OpcUaObjectType.build(opcUaObject, decl);
 	}
 
 	private void buildAttributesForVariable(Field field) throws IllegalArgumentException, IllegalAccessException {

@@ -81,7 +81,7 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 
 	private int complianceNamespaceIndex = 1;
 
-	public Map<NodeId, BrowseResult> onBrowseActions;
+	public BrowseActionsMap onBrowseActions = new BrowseActionsMap();
 	public ReadResultsMap onReadResultsMap = new ReadResultsMap();
 	public Map<NodeId, Class<?>> datatypeMap;
 
@@ -159,16 +159,13 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 
 		OpcUaAddressSpace myAddressSpace = new OpcUaAddressSpace();
 		myAddressSpace.init();
-		
+
 		onReadResultsMap.setOpcUaAddressSpace(myAddressSpace);
+		onBrowseActions.setOpcUaAddressSpace(myAddressSpace);
 
 		// *******************************************************************************
 		// Put all browse references in one HashMap for better readability and performance
 		// *******************************************************************************
-
-		onBrowseActions = new HashMap<NodeId, BrowseResult>();
-
-		onBrowseActions.putAll(myAddressSpace.browseActionsMap);
 
 		// root node
 		onBrowseActions.put(Identifiers.RootFolder, new BrowseResult(StatusCode.GOOD, null, new ReferenceDescription[] {

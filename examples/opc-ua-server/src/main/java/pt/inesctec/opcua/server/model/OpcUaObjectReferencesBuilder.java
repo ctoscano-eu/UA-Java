@@ -29,15 +29,15 @@ public class OpcUaObjectReferencesBuilder {
 	private ReferenceDescription buildReferenceToObject() {
 		return new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(opcUaObject.objectAttributes.nodeId),
 		    qualifiedName(opcUaObject.objectAttributes.nodeId, opcUaObject.objectAttributes.browseName), new LocalizedText(opcUaObject.objectAttributes.browseName), NodeClass.Object,
-		    new ExpandedNodeId(opcUaObject.objectTypeAttributes.nodeId));
+		    new ExpandedNodeId(opcUaObject.opcUaObjectType.nodeId));
 	}
 
 	private ReferenceDescription[] buildReferencesForObject() {
 		List<ReferenceDescription> list = new ArrayList<ReferenceDescription>();
 
-		list.add(new ReferenceDescription(Identifiers.HasTypeDefinition, true, new ExpandedNodeId(opcUaObject.objectTypeAttributes.nodeId),
-		    qualifiedName(opcUaObject.objectTypeAttributes.nodeId, "RoboticManipulatorType"), new LocalizedText("RoboticManipulatorType"), NodeClass.ObjectType,
-		    new ExpandedNodeId(opcUaObject.objectTypeAttributes.nodeId)));
+		list.add(new ReferenceDescription(Identifiers.HasTypeDefinition, true, new ExpandedNodeId(opcUaObject.opcUaObjectType.nodeId),
+		    qualifiedName(opcUaObject.opcUaObjectType.nodeId, "RoboticManipulatorType"), new LocalizedText("RoboticManipulatorType"), NodeClass.ObjectType,
+		    new ExpandedNodeId(opcUaObject.opcUaObjectType.nodeId)));
 
 		for (NodeId nodeId : opcUaObject.opcUaVariables.keySet()) {
 			OpcUaVariable v = opcUaObject.opcUaVariables.get(nodeId);

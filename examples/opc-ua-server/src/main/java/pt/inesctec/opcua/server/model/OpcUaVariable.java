@@ -29,12 +29,6 @@ public class OpcUaVariable {
 	private DateTime serverTimeStamp;
 	public Map<UnsignedInteger, DataValue> attributes = new HashMap<UnsignedInteger, DataValue>(); // the attributes of the OPC UA Variable
 
-	/*	public ReferenceDescription referenceToObject;
-		public ReferenceDescription[] objectReferences;
-		public ReferenceDescription[] objectTypeReferences;
-		public ReferencesMap[] variableReferences;
-	*/
-
 	private OpcUaVariable(OpcUaObject opcUaObject, String javafield, NodeId nodeId, String browseName, NodeId nodeIdForVariableType, Object value) {
 		this.opcUaObject = opcUaObject;
 		this.javafield = javafield;

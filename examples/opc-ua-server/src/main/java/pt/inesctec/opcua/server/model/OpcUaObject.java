@@ -16,9 +16,9 @@ public class OpcUaObject {
 
 	public Object javaObj; // the instance of the Java Object
 	public AttributesMap objectAttributes; // the attributes of the OPC UA Object
-	public AttributesMap objectTypeAttributes; // the attributes of the OPC UA ObjectType
+	//public AttributesMap objectTypeAttributes; // the attributes of the OPC UA ObjectType
+	public OpcUaObjectType opcUaObjectType;
 	public Map<NodeId, OpcUaVariable> opcUaVariables = new HashMap<NodeId, OpcUaVariable>();
-	//public List<AttributesMap> variableAttributes = new ArrayList<AttributesMap>(); // the attributes of each OPC UA Variable
 
 	public ReferenceDescription referenceToObject;
 	public ReferenceDescription[] objectReferences;

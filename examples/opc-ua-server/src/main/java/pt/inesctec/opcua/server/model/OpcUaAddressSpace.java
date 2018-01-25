@@ -18,7 +18,7 @@ public class OpcUaAddressSpace {
 	public List<OpcUaObject> opcUaObjectList = new ArrayList<OpcUaObject>();
 
 	public Map<NodeId, BrowseResult> browseActionsMap = new HashMap<NodeId, BrowseResult>();
-	public Map<NodeId, Map<UnsignedInteger, DataValue>> readResultsMap = new HashMap<NodeId, Map<UnsignedInteger, DataValue>>();
+	private Map<NodeId, Map<UnsignedInteger, DataValue>> readResultsMap = new HashMap<NodeId, Map<UnsignedInteger, DataValue>>();
 
 	public OpcUaAddressSpace() {
 	}
@@ -43,7 +43,7 @@ public class OpcUaAddressSpace {
 
 				// Set the readResultsMap
 				readResultsMap.put(opcUaObject.objectAttributes.nodeId, opcUaObject.objectAttributes.attributes);
-				readResultsMap.put(opcUaObject.objectTypeAttributes.nodeId, opcUaObject.objectTypeAttributes.attributes);
+				readResultsMap.put(opcUaObject.opcUaObjectType.nodeId, opcUaObject.opcUaObjectType.attributes);
 				for (NodeId nodeId : opcUaObject.opcUaVariables.keySet()) {
 					readResultsMap.put(nodeId, opcUaObject.opcUaVariables.get(nodeId).attributes);
 				}
@@ -52,7 +52,7 @@ public class OpcUaAddressSpace {
 
 				// Set the browseActionsMap
 				browseActionsMap.put(opcUaObject.objectAttributes.nodeId, new BrowseResult(StatusCode.GOOD, null, opcUaObject.objectReferences));
-				browseActionsMap.put(opcUaObject.objectTypeAttributes.nodeId, new BrowseResult(StatusCode.GOOD, null, opcUaObject.objectTypeReferences));
+				browseActionsMap.put(opcUaObject.opcUaObjectType.nodeId, new BrowseResult(StatusCode.GOOD, null, opcUaObject.objectTypeReferences));
 				for (ReferencesMap map : opcUaObject.variableReferences) {
 					browseActionsMap.put(map.nodeId, new BrowseResult(StatusCode.GOOD, null, map.references));
 				}
@@ -60,6 +60,22 @@ public class OpcUaAddressSpace {
 			catch (Throwable e) {
 				e.printStackTrace();
 			}
+	}
+
+	public Map<UnsignedInteger, DataValue> getResultsMap(NodeId key) {
+		return readResultsMap.get(key);
+	}
+
+	public boolean resultsMapContainsKey(NodeId key) {
+		return readResultsMap.containsKey(key);
+	}
+
+	public BrowseResult getBrowseActionsMap(NodeId key) {
+		return browseActionsMap.get(key);
+	}
+
+	public boolean browseActionsMapContainsKey(NodeId key) {
+		return browseActionsMap.containsKey(key);
 	}
 
 }
