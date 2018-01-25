@@ -18,9 +18,9 @@ public class OpcUaObjectAttributesBuilder {
 	private OpcUaObject opcUaObject;
 	private DateTime serverTimeStamp;
 
-	public OpcUaObjectAttributesBuilder(OpcUaObject opcUaObject, DateTime serverTimeStamp) {
+	public OpcUaObjectAttributesBuilder(OpcUaObject opcUaObject) {
 		this.opcUaObject = opcUaObject;
-		this.serverTimeStamp = serverTimeStamp;
+		this.serverTimeStamp = DateTime.currentTime();
 	}
 
 	public void buildAttributes() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
@@ -49,7 +49,7 @@ public class OpcUaObjectAttributesBuilder {
 		if (decl == null)
 			throw new RuntimeException("OpcUaObjectTypeDeclaration not found on " + opcUaObject.javaObj.toString());
 
-	// Create OpcUaObjectType and add it to OpcUaObject
+		// Create OpcUaObjectType and add it to OpcUaObject
 		opcUaObject.opcUaObjectType = OpcUaObjectType.build(opcUaObject, decl);
 	}
 

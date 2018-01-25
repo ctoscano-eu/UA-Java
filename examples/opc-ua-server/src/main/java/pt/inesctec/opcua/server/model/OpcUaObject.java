@@ -16,7 +16,6 @@ public class OpcUaObject {
 
 	public Object javaObj; // the instance of the Java Object
 	public AttributesMap objectAttributes; // the attributes of the OPC UA Object
-	//public AttributesMap objectTypeAttributes; // the attributes of the OPC UA ObjectType
 	public OpcUaObjectType opcUaObjectType;
 	public Map<NodeId, OpcUaVariable> opcUaVariables = new HashMap<NodeId, OpcUaVariable>();
 
@@ -29,8 +28,10 @@ public class OpcUaObject {
 		super();
 	}
 
-	public OpcUaObject(Object obj) {
+	public OpcUaObject(Object obj) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		this.javaObj = obj;
+		new OpcUaObjectAttributesBuilder(this).buildAttributes();
+		new OpcUaObjectReferencesBuilder(this).buildReferences();
 	}
 
 	public Collection<OpcUaVariable> getOpcUaVariables() {

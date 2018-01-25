@@ -90,7 +90,7 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 	private Map<NodeId, Long> timeoutPeriods;
 	public ContinuationPoint continuationPoint;
 
-	public NanoServer(Application application) throws Exception {
+	public NanoServer(Application application) throws Throwable {
 
 		super(application);
 
@@ -155,7 +155,7 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 		getApplication().close();
 	}
 
-	private void init() throws ParseException {
+	private void init() throws Throwable {
 
 		OpcUaAddressSpace myAddressSpace = new OpcUaAddressSpace();
 		myAddressSpace.init();
@@ -1311,7 +1311,7 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 		return publicHostname;
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Throwable {
 
 		// Create Application
 		String applicationName = "NanoServer";
