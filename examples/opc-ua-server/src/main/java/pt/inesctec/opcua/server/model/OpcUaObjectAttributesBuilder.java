@@ -28,17 +28,17 @@ public class OpcUaObjectAttributesBuilder {
 		buildAttributesForObject();
 		buildAttributesForObjectType();
 
-		for (Field field : opcUaObject.obj.getClass().getFields()) {
+		for (Field field : opcUaObject.javaObj.getClass().getFields()) {
 			buildAttributesForVariable(field);
 		}
 	}
 
 	private void buildAttributesForObject() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		OpcUaObjectDeclaration decl = opcUaObject.obj.getClass().getAnnotation(OpcUaObjectDeclaration.class);
+		OpcUaObjectDeclaration decl = opcUaObject.javaObj.getClass().getAnnotation(OpcUaObjectDeclaration.class);
 		if (decl == null)
-			throw new RuntimeException("OpcUaObjectDeclaration not found on " + opcUaObject.obj.toString());
+			throw new RuntimeException("OpcUaObjectDeclaration not found on " + opcUaObject.javaObj.toString());
 
-		NodeId nodeId = new NodeId(Integer.valueOf(decl.nodeIdNamespaceIndex()), UUID.randomUUID());
+		NodeId nodeId = new NodeId(Integer.valueOf(decl.namespaceIndex()), UUID.randomUUID());
 		String browseName = decl.browseName();
 		Map<UnsignedInteger, DataValue> attributes = AttributesMapFactory.buildMapAttributesForObject(nodeId, browseName, serverTimeStamp);
 
@@ -46,11 +46,11 @@ public class OpcUaObjectAttributesBuilder {
 	}
 
 	private void buildAttributesForObjectType() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		OpcUaObjectTypeDeclaration decl = opcUaObject.obj.getClass().getAnnotation(OpcUaObjectTypeDeclaration.class);
+		OpcUaObjectTypeDeclaration decl = opcUaObject.javaObj.getClass().getAnnotation(OpcUaObjectTypeDeclaration.class);
 		if (decl == null)
-			throw new RuntimeException("OpcUaObjectTypeDeclaration not found on " + opcUaObject.obj.toString());
+			throw new RuntimeException("OpcUaObjectTypeDeclaration not found on " + opcUaObject.javaObj.toString());
 
-		NodeId nodeId = new NodeId(Integer.valueOf(decl.nodeIdNamespaceIndex()), UUID.randomUUID());
+		NodeId nodeId = new NodeId(Integer.valueOf(decl.namespaceIndex()), UUID.randomUUID());
 		String browseName = decl.browseName();
 		Map<UnsignedInteger, DataValue> attributes = AttributesMapFactory.buildMapAttributesForObjectType(nodeId, browseName, serverTimeStamp);
 
@@ -62,13 +62,13 @@ public class OpcUaObjectAttributesBuilder {
 		if (decl == null)
 			return;
 
-		NodeId nodeId = new NodeId(Integer.valueOf(decl.nodeIdNamespaceIndex()), UUID.randomUUID());
+		NodeId nodeId = new NodeId(Integer.valueOf(opcUaObject.objectAttributes.nodeId.getNamespaceIndex()), UUID.randomUUID());
 		String browseName = decl.browseName();
-		Object value = field.get(opcUaObject.obj);
+		Object value = field.get(opcUaObject.javaObj);
 		NodeId nodeIdForVariableType = getNodeIdForDataType(field);
 		Map<UnsignedInteger, DataValue> attributes = AttributesMapFactory.buildMapAttributesForVariable(nodeId, browseName, value, nodeIdForVariableType, serverTimeStamp);
 
-		opcUaObject.variableAttributes.add(new AttributesMap(nodeId, browseName, attributes));
+		opcUaObject.variableAttributes.add(new AttributesMap(nodeId, browseName, attributes, field.getName()));
 	}
 
 	private NodeId getNodeIdForDataType(Field field) {

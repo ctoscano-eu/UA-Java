@@ -11,10 +11,18 @@ public class AttributesMap {
 	public NodeId nodeId;
 	public String browseName;
 	public Map<UnsignedInteger, DataValue> attributes = new HashMap<UnsignedInteger, DataValue>();
+	private String javafield;
 
 	public AttributesMap(NodeId nodeId, String browseName, Map<UnsignedInteger, DataValue> attributes) {
 		this.nodeId = nodeId;
 		this.browseName = browseName;
 		this.attributes = attributes;
+	}
+
+	public AttributesMap(NodeId nodeId, String browseName, Map<UnsignedInteger, DataValue> attributes, String javafield) {
+		this.nodeId = nodeId;
+		this.browseName = browseName;
+		this.attributes = attributes;
+    this.javafield = javafield;
 	}
 }

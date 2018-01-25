@@ -7,6 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 public @interface OpcUaObjectTypeDeclaration {
 	String browseName();
 
-	String nodeIdNamespaceIndex();
+	String namespaceIndex();
 
 }

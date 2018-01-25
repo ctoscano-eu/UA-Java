@@ -4,15 +4,15 @@ import pt.inesctec.opcua.server.model.annotations.OpcUaObjectDeclaration;
 import pt.inesctec.opcua.server.model.annotations.OpcUaObjectTypeDeclaration;
 import pt.inesctec.opcua.server.model.annotations.OpcUaVariableDeclaration;
 
-@OpcUaObjectDeclaration(browseName = "RoboticManipulator", nodeIdNamespaceIndex = "2")
-@OpcUaObjectTypeDeclaration(browseName = "RoboticManipulatorType", nodeIdNamespaceIndex = "2")
+@OpcUaObjectDeclaration(browseName = "RoboticManipulator", namespaceIndex = "2")
+@OpcUaObjectTypeDeclaration(browseName = "RoboticManipulatorType", namespaceIndex = "2")
 public class RoboticManipulator {
 
 	public String robotId;
 
-	@OpcUaVariableDeclaration(browseName = "RobotName", nodeIdNamespaceIndex = "2")
+	@OpcUaVariableDeclaration(browseName = "RobotName")
 	public String robotName;
-	@OpcUaVariableDeclaration(browseName = "RobotStatus", nodeIdNamespaceIndex = "2")
+	@OpcUaVariableDeclaration(browseName = "RobotStatus")
 	public String robotStatus;
 
 	public RoboticManipulator() {

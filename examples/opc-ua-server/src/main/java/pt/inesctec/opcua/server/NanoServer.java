@@ -82,7 +82,7 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 	private int complianceNamespaceIndex = 1;
 
 	public Map<NodeId, BrowseResult> onBrowseActions;
-	public Map<NodeId, Map<UnsignedInteger, DataValue>> onReadResultsMap;
+	public ReadResultsMap onReadResultsMap = new ReadResultsMap();
 	public Map<NodeId, Class<?>> datatypeMap;
 
 	public ArrayList<NodeId> sessions;
@@ -263,8 +263,7 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 		        new ExpandedNodeId(Identifiers.ServerType)),
 		    new ReferenceDescription(Identifiers.Organizes, true, new ExpandedNodeId(new NodeId(complianceNamespaceIndex, "StaticData")), new QualifiedName("StaticData"), new LocalizedText("StaticData"),
 		        NodeClass.Object, new ExpandedNodeId(Identifiers.FolderType)),
-		    myAddressSpace.getReferenceDescription(0), 
-		    myAddressSpace.getReferenceDescription(1) }));
+		    myAddressSpace.getReferenceDescription(0), myAddressSpace.getReferenceDescription(1) }));
 
 		onBrowseActions.put(Identifiers.Server,
 		    new BrowseResult(StatusCode.GOOD, null,
@@ -438,7 +437,6 @@ public class NanoServer extends Server implements SessionServiceSetHandler {
 		// Put all read datavalues in one HashMap for better readability and performance
 		// *******************************************************************************
 		final DateTime serverTimeStamp = DateTime.currentTime();
-		onReadResultsMap = new HashMap<NodeId, Map<UnsignedInteger, DataValue>>();
 
 		onReadResultsMap.putAll(myAddressSpace.readResultsMap);
 
