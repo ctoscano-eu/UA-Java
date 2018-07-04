@@ -208,26 +208,21 @@ public class OpcUaSession {
 	}
 
 	// path must be something like "11111/222222/333333"
-	public BrowsePathResult[] translateBrowsePathsToNodeIds(NodeId startingNode, String... pathArray) throws ServiceFaultException, ServiceResultException {
+	public BrowsePathResult[] translateBrowsePathsToNodeIds(MyBrowsePath myBrowsePath) throws ServiceFaultException, ServiceResultException {
 		//String[] terms = "/11111/222222/333333".split("/"); // "", "1111", .... 
 		//String[] terms2 = "11111/222222/333333".split("/"); // "1111", .... 
 		//String[] terms3 = "11111/222222/333333/".split("/"); // "1111", .... 
-		String[][] termsArray = new String[pathArray.length][];
-		for (int i = 0; i < pathArray.length; ++i) {
-			String[] terms = pathArray[i].split("/");
-			if (terms.length == 0)
-				return null;
-			termsArray[i] = terms;
-		}
+		String[][] termsArray = myBrowsePath.getTermsArray();
+		Integer[][] nsArray = myBrowsePath.getNameSpacesArray();
 
-		BrowsePath[] browsePathArray = new BrowsePath[pathArray.length];
-		for (int i = 0; i < pathArray.length; ++i)
-			browsePathArray[i] = createBrowsePath(startingNode, termsArray[i]);
+		BrowsePath[] browsePathArray = new BrowsePath[myBrowsePath.nrElements()];
+		for (int i = 0; i < myBrowsePath.nrElements(); ++i)
+			browsePathArray[i] = createBrowsePath(myBrowsePath.startingNode, termsArray[i], nsArray[i]);
 
 		return translateBrowsePathsToNodeIds(browsePathArray);
 	}
 
-	// path must be something like "/11111/222222/333333"
+	// path must be something like "/0/11111/0/222222/0/333333"
 	public BrowsePathResult[] translateRootBrowsePathsToNodeIds(String path) throws ServiceFaultException, ServiceResultException {
 		String[] terms = path.split("/");
 		if (terms.length == 0)
@@ -235,7 +230,9 @@ public class OpcUaSession {
 		if (terms[0].length() != 0)
 			return null;
 
-		return translateBrowsePathsToNodeIds(Identifiers.RootFolder, path.substring(1));
+		MyBrowsePath myBrowsePath = new MyBrowsePath(Identifiers.RootFolder);
+		myBrowsePath.setElements(path.substring(1));
+		return translateBrowsePathsToNodeIds(myBrowsePath);
 	}
 
 	// path must be something like "/11111/222222/333333"
@@ -253,10 +250,16 @@ public class OpcUaSession {
 			newPathArray[i] = pathArray[i].substring(1);
 		}
 
-		return translateBrowsePathsToNodeIds(Identifiers.RootFolder, newPathArray);
+		MyBrowsePath myBrowsePath = new MyBrowsePath(Identifiers.RootFolder);
+		myBrowsePath.setElements(newPathArray);
+
+		return translateBrowsePathsToNodeIds(myBrowsePath);
 	}
 
-	private BrowsePath createBrowsePath(NodeId startingNode, String[] terms) {
+	/*
+	 * ns contains the name space index of each term
+	 */
+	private BrowsePath createBrowsePath(NodeId startingNode, String[] terms, Integer[] ns) {
 		BrowsePath browsePath = new BrowsePath();
 		browsePath.setStartingNode(startingNode);
 		browsePath.setRelativePath(new RelativePath());
@@ -266,7 +269,7 @@ public class OpcUaSession {
 		browsePath.getRelativePath().setElements(elements);
 		for (int i = 0; i < terms.length; ++i) {
 			RelativePathElement elem = new RelativePathElement();
-			elem.setTargetName(new QualifiedName(terms[i]));
+			elem.setTargetName(new QualifiedName(ns[i], terms[i]));
 			elements[i] = elem;
 		}
 

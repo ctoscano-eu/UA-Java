@@ -16,12 +16,12 @@
 		"fetchCycle": "1000",
 		"opcUaVariables": [
 			{
-				"name": "/Objects/Server/ServerArray",
+				"name": "/0/Objects/0/Server/0/ServerArray",
 				"type": "String",
 				"mongoFieldName": "ObjectsServerArray"
 			},
 			{
-				"name": "/Objects/Server/NamespaceArray",
+				"name": "/0/Objects/0/Server/0/NamespaceArray",
 				"type": "String",
 				"mongoFieldName": "ObjectsServerNamespaceArray"
 			}
@@ -44,12 +44,12 @@
 		"fetchCycle": "1000",
 		"opcUaVariables": [
 			{
-				"name": "/Objects/Server/ServiceLevel",
+				"name": "/0/Objects/0/Server/0/ServiceLevel",
 				"type": "String",
 				"mongoFieldName": "ObjectsServerServiceLevel"
 			},
 			{
-				"name": "/Objects/Server/Auditing",
+				"name": "/0/Objects/0/Server/0/Auditing",
 				"type": "String",
 				"mongoFieldName": "ObjectsServerAuditing"
 			}

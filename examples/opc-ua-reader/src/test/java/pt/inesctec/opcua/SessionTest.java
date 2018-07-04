@@ -33,6 +33,7 @@ import pt.inesctec.opcua.model.OpcUaProperties;
 
 public class SessionTest {
 
+	//private final String serverUrl = "opc.tcp://194.117.27.107:53530/OPCUA/SimulationServer";
 	private final String serverUrl = "opc.tcp://localhost:4334/UA/teste";
 	//private final String serverUrl = "opc.tcp://194.117.27.178:4334/UA/teste";
 
@@ -94,24 +95,15 @@ public class SessionTest {
 	public void testTranslateBrowsePathsToNodeIds() {
 		try {
 			BrowsePathResult[] res = null;
-			String[] names = null;
 
-			names = new String[] { "Objects", "Objects/Server", "Objects/Server/ServerStatus" };
-			res = opcUaClient.translateBrowsePathsToNodeIds(serverUrl, Identifiers.RootFolder, names);
+			MyBrowsePath myBrowsePath = new MyBrowsePath(Identifiers.RootFolder);
+			myBrowsePath.setElements("0/Objects", "0/Objects/0/Server", "0/Objects/0/Server/0/ServerStatus");
+			res = opcUaClient.translateBrowsePathsToNodeIds(serverUrl, myBrowsePath);
 			assertEquals(3, res.length);
 			for (int i = 0; i < res.length; ++i) {
 				assertEquals(1, res[i].getTargets().length);
 				assertNotNull(res[i].getTargets()[0].getTargetId().toString());
 			}
-
-			names = new String[] { "/Objects", "/Objects/Server", "/Objects/Server/ServerStatus" };
-			res = opcUaClient.translateRootBrowsePathsToNodeIds(serverUrl, names);
-			assertEquals(3, res.length);
-			for (int i = 0; i < res.length; ++i) {
-				assertEquals(1, res[i].getTargets().length);
-				assertNotNull(res[i].getTargets()[0].getTargetId().toString());
-			}
-
 		}
 		catch (Throwable t) {
 			fail(t.getMessage());
@@ -135,8 +127,11 @@ public class SessionTest {
 			assertNotNull(dataValues[1].getValue().toString());
 			assertNotNull(dataValues[2].getValue().toString());
 
+			// TODO ctoscano reimplement using 0/Objects/0/Server/0/ServerArr
 			// With BrowsePaths
-			String[] pathArray = new String[] { "/Objects/Server/ServerArray", "/Objects/Server/NamespaceArray", "/Objects/Server/ServerStatus", "/Objects/Server/ServiceLevel", "/Objects/Server/Auditing", "/Objects/Server/EstimatedReturnTime", "/Objects/Server/ServerCapabilities", "/Objects/Server/ServerDiagnostics", "/Objects/Server/VendorServerInfo", "/Objects/Server/ServerRedundancy", "/Objects/Server/Namespaces", "/Objects/Server/ServerConfiguration" };
+			String[] pathArray = new String[] { "/Objects/Server/ServerArray", "/Objects/Server/NamespaceArray", "/Objects/Server/ServerStatus", "/Objects/Server/ServiceLevel", "/Objects/Server/Auditing",
+			    "/Objects/Server/EstimatedReturnTime", "/Objects/Server/ServerCapabilities", "/Objects/Server/ServerDiagnostics", "/Objects/Server/VendorServerInfo", "/Objects/Server/ServerRedundancy",
+			    "/Objects/Server/Namespaces", "/Objects/Server/ServerConfiguration" };
 			dataValues = opcUaClient.readVariableValue(serverUrl, pathArray);
 
 			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());

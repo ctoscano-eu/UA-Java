@@ -273,9 +273,9 @@ public class OpcUaClient {
 	}
 
 	// path must be something like "11111/222222/333333"
-	synchronized public BrowsePathResult[] translateBrowsePathsToNodeIds(String serverUrl, NodeId startingNode, String... pathArray) throws ServiceFaultException, ServiceResultException {
+	synchronized public BrowsePathResult[] translateBrowsePathsToNodeIds(String serverUrl, MyBrowsePath myBrowsePath) throws ServiceFaultException, ServiceResultException {
 		try {
-			return opcUaSessionList.getOpcUaSession(serverUrl).translateBrowsePathsToNodeIds(startingNode, pathArray);
+			return opcUaSessionList.getOpcUaSession(serverUrl).translateBrowsePathsToNodeIds(myBrowsePath);
 		}
 		catch (ServiceResultException e) {
 			processServiceResultException(serverUrl, e);
