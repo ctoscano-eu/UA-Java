@@ -129,9 +129,9 @@ public class SessionTest {
 
 			// TODO ctoscano reimplement using 0/Objects/0/Server/0/ServerArr
 			// With BrowsePaths
-			String[] pathArray = new String[] { "/Objects/Server/ServerArray", "/Objects/Server/NamespaceArray", "/Objects/Server/ServerStatus", "/Objects/Server/ServiceLevel", "/Objects/Server/Auditing",
-			    "/Objects/Server/EstimatedReturnTime", "/Objects/Server/ServerCapabilities", "/Objects/Server/ServerDiagnostics", "/Objects/Server/VendorServerInfo", "/Objects/Server/ServerRedundancy",
-			    "/Objects/Server/Namespaces", "/Objects/Server/ServerConfiguration" };
+			String[] pathArray = new String[] { "/0/Objects/0/Server/0/ServerArray", "/0/Objects/0/Server/0/NamespaceArray", "/0/Objects/0/Server/0/ServerStatus", "/0/Objects/0/Server/0/ServiceLevel", "/0/Objects/0/Server/0/Auditing",
+			    "/0/Objects/0/Server/0/EstimatedReturnTime", "/0/Objects/0/Server/0/ServerCapabilities", "/0/Objects/0/Server/0/ServerDiagnostics", "/0/Objects/0/Server/0/VendorServerInfo", "/0/Objects/0/Server/0/ServerRedundancy",
+			    "/0/Objects/0/Server/0/Namespaces", "/0/Objects/0/Server/0/ServerConfiguration" };
 			dataValues = opcUaClient.readVariableValue(serverUrl, pathArray);
 
 			assertEquals(StatusCode.GOOD, dataValues[0].getStatusCode());
@@ -173,7 +173,7 @@ public class SessionTest {
 	@Test
 	public void testbrowseHierarchyOfNodeVariablesUnderObjects() {
 		try {
-			BrowsePathResult[] res1 = opcUaClient.translateRootBrowsePathsToNodeIds(serverUrl, "/Objects");
+			BrowsePathResult[] res1 = opcUaClient.translateRootBrowsePathsToNodeIds(serverUrl, "/0/Objects");
 			ExpandedNodeId objectsNodeId = res1[0].getTargets()[0].getTargetId();
 
 			List<BrowseResult> res2 = opcUaClient.browseHierarchyOfNodeVariables(serverUrl, opcUaClient.toNodeId(serverUrl, objectsNodeId));
@@ -187,7 +187,7 @@ public class SessionTest {
 	@Test
 	public void testWriteVariables() {
 		try {
-			BrowsePathResult[] var = opcUaClient.translateRootBrowsePathsToNodeIds(serverUrl, "/Objects/MyCNCDevice/Model");
+			BrowsePathResult[] var = opcUaClient.translateRootBrowsePathsToNodeIds(serverUrl, "/0/Objects/0/MyCNCDevice/0/Model");
 			NodeId varNodeId = opcUaClient.toNodeId(serverUrl, var[0].getTargets()[0].getTargetId());
 			DataValue[] dataValues = opcUaClient.readVariableValue(serverUrl, varNodeId);
 			assertEquals("NX1234", dataValues[0].getValue().toString());
@@ -218,7 +218,7 @@ public class SessionTest {
 		try {
 			CreateSubscriptionResponse subscription = opcUaClient.createSubscription(serverUrl);
 
-			BrowsePathResult[] var = opcUaClient.translateRootBrowsePathsToNodeIds(serverUrl, "/Objects/MyCNCDevice/Model");
+			BrowsePathResult[] var = opcUaClient.translateRootBrowsePathsToNodeIds(serverUrl, "/0/Objects/0/MyCNCDevice/0/Model");
 			NodeId varNodeId = opcUaClient.toNodeId(serverUrl, var[0].getTargets()[0].getTargetId());
 
 			ReadValueId itemToMonitor = new ReadValueId(varNodeId, Attributes.Value, null, null);

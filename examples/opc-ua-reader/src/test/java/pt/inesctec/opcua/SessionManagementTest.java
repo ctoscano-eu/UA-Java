@@ -69,7 +69,7 @@ public class SessionManagementTest {
 		try {
 			setUp(goodServerUrl);
 
-			opcUaClient.translateRootBrowsePathsToNodeIds(goodServerUrl, "/Objects");
+			opcUaClient.translateRootBrowsePathsToNodeIds(goodServerUrl, "/0/Objects");
 
 			//myClient.sessionChannel.getSecureChannel().isOpen()); // it is always true ....
 			//myClient.sessionChannel.getSecureChannel().getClass(); // org.opcfoundation.ua.transport.tcp.io.SecureChannelTcp)
@@ -79,7 +79,7 @@ public class SessionManagementTest {
 			// shutdown manually the server and then restart it
 
 			try {
-				opcUaClient.translateRootBrowsePathsToNodeIds(goodServerUrl, "/Objects");
+				opcUaClient.translateRootBrowsePathsToNodeIds(goodServerUrl, "/0/Objects");
 			}
 			catch (ServiceResultException t) {
 				assertEquals(StatusCodes.Bad_Timeout, t.getStatusCode().getValue());
@@ -87,7 +87,7 @@ public class SessionManagementTest {
 				//assertEquals(StatusCodes.Bad_ConnectionRejected, t.getStatusCode().getValue());
 			}
 
-			opcUaClient.translateRootBrowsePathsToNodeIds(goodServerUrl, "/Objects");
+			opcUaClient.translateRootBrowsePathsToNodeIds(goodServerUrl, "/0/Objects");
 
 			shutdown();
 		}

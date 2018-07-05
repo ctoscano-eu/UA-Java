@@ -32,7 +32,7 @@ public class OpcUaVariablesToFetchTest {
 	@Test
 	public void testReadVariablesFromSameServer() {
 		try {
-			String[] variables = new String[] { "/Objects/Server/ServerArray", "/Objects/Server/NamespaceArray", "/Objects/Server/ServerStatus", "/Objects/Server/ServerStatus" };
+			String[] variables = new String[] { "/0/Objects/0/Server/0/ServerArray", "/0/Objects/0/Server/0/NamespaceArray", "/0/Objects/0/Server/0/ServerStatus", "/0/Objects/0/Server/0/ServerStatus" };
 
 			DataValue[] res = opcUaClient.readVariableValue("opc.tcp://localhost:4334/UA/teste", variables);
 			assertEquals(4, res.length);

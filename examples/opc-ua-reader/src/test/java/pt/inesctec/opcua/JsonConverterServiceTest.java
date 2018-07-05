@@ -31,12 +31,12 @@ public class JsonConverterServiceTest {
 	@Test
 	public void testConvertOneJsonString() {
 		try {
-			String jsonInString = "	{\r\n" + "		\"opcUaProperties\": {\r\n" + "			\"serverUrl\": \"opc.tcp://localhost:4334/UA/teste\",\r\n" + "			\"userName\": \"\",\r\n"
+			String jsonInString = "{\r\n" + "		\"opcUaProperties\": {\r\n" + "			\"serverUrl\": \"opc.tcp://localhost:4334/UA/teste\",\r\n" + "			\"userName\": \"\",\r\n"
 			    + "			\"password\": \"\"\r\n" + "		},\r\n" + "		\"mongoProperties\": {\r\n" + "			\"host\": \"localhost\",\r\n" + "			\"port\": \"27017\",\r\n"
 			    + "			\"database\": \"sensor_data_saver\",\r\n" + "			\"collection\": \"xpto\",\r\n" + "			\"userName\": \"\",\r\n" + "			\"password\": \"\"\r\n" + "		},\r\n"
-			    + "		\"fetchCycle\": \"1000\",\r\n" + "		\"opcUaVariables\": [\r\n" + "			{\r\n" + "				\"name\": \"/Objects/Server/ServerArray\",\r\n" + "				\"type\": \"String\",\r\n"
-			    + "				\"mongoFieldName\": \"ObjectsServerArray\"\r\n" + "			},\r\n" + "			{\r\n" + "				\"name\": \"/Objects/Server/NamespaceArray\",\r\n" + "				\"type\": \"String\",\r\n"
-			    + "				\"mongoFieldName\": \"ObjectsServerNamespaceArray\"\r\n" + "			}\r\n" + "		]\r\n" + "	}";
+			    + "		\"fetchCycle\": \"1000\",\r\n" + "		\"opcUaVariables\": [\r\n" + "			{\r\n" + "				\"name\": \"/0/Objects/0/Server/0/ServerArray\",\r\n" + "				\"type\": \"String\",\r\n"
+			    + "				\"mongoFieldName\": \"ObjectsServerArray\"\r\n" + "			},\r\n" + "			{\r\n" + "				\"name\": \"/0/Objects/0/Server/0/NamespaceArray\",\r\n"
+			    + "				\"type\": \"String\",\r\n" + "				\"mongoFieldName\": \"ObjectsServerNamespaceArray\"\r\n" + "			}\r\n" + "		]\r\n" + "	}";
 
 			OpcUaVariablesToFetch obj = jsonConverterService.json2OpcUaVariableToFetch(jsonInString);
 			assertEquals("opc.tcp://localhost:4334/UA/teste", obj.opcUaProperties.serverUrl);
@@ -62,15 +62,15 @@ public class JsonConverterServiceTest {
 			String jsonInString = "[\r\n" + "	{\r\n" + "		\"opcUaProperties\": {\r\n" + "			\"serverUrl\": \"opc.tcp://localhost:4334/UA/teste\",\r\n" + "			\"userName\": \"\",\r\n"
 			    + "			\"password\": \"\"\r\n" + "		},\r\n" + "		\"mongoProperties\": {\r\n" + "			\"host\": \"localhost\",\r\n" + "			\"port\": \"27017\",\r\n"
 			    + "			\"database\": \"sensor_data_saver\",\r\n" + "			\"collection\": \"xpto\",\r\n" + "			\"userName\": \"\",\r\n" + "			\"password\": \"\"\r\n" + "		},\r\n"
-			    + "		\"fetchCycle\": \"1000\",\r\n" + "		\"opcUaVariables\": [\r\n" + "			{\r\n" + "				\"name\": \"/Objects/Server/ServerArray\",\r\n" + "				\"type\": \"String\",\r\n"
-			    + "				\"mongoFieldName\": \"ObjectsServerArray\"\r\n" + "			},\r\n" + "			{\r\n" + "				\"name\": \"/Objects/Server/NamespaceArray\",\r\n" + "				\"type\": \"String\",\r\n"
-			    + "				\"mongoFieldName\": \"ObjectsServerNamespaceArray\"\r\n" + "			}\r\n" + "		]\r\n" + "	},\r\n" + "	{\r\n" + "		\"opcUaProperties\": {\r\n"
-			    + "			\"serverUrl\": \"opc.tcp://localhost:4334/UA/teste\",\r\n" + "			\"userName\": \"\",\r\n" + "			\"password\": \"\"\r\n" + "		},\r\n" + "		\"mongoProperties\": {\r\n"
-			    + "			\"host\": \"localhost\",\r\n" + "			\"port\": \"27017\",\r\n" + "			\"database\": \"sensor_data_saver\",\r\n" + "			\"collection\": \"xpto\",\r\n"
-			    + "			\"userName\": \"\",\r\n" + "			\"password\": \"\"\r\n" + "		},\r\n" + "		\"fetchCycle\": \"1000\",\r\n" + "		\"opcUaVariables\": [\r\n" + "			{\r\n"
-			    + "				\"name\": \"/Objects/Server/ServiceLevel\",\r\n" + "				\"type\": \"String\",\r\n" + "				\"mongoFieldName\": \"ObjectsServerServiceLevel\"\r\n" + "			},\r\n"
-			    + "			{\r\n" + "				\"name\": \"/Objects/Server/Auditing\",\r\n" + "				\"type\": \"String\",\r\n" + "				\"mongoFieldName\": \"ObjectsServerAuditing\"\r\n" + "			}\r\n"
-			    + "		]\r\n" + "	}\r\n" + "]\r\n" + "";
+			    + "		\"fetchCycle\": \"1000\",\r\n" + "		\"opcUaVariables\": [\r\n" + "			{\r\n" + "				\"name\": \"/0/Objects/0/Server/0/ServerArray\",\r\n" + "				\"type\": \"String\",\r\n"
+			    + "				\"mongoFieldName\": \"ObjectsServerArray\"\r\n" + "			},\r\n" + "			{\r\n" + "				\"name\": \"/0/Objects/0/Server/0/NamespaceArray\",\r\n"
+			    + "				\"type\": \"String\",\r\n" + "				\"mongoFieldName\": \"ObjectsServerNamespaceArray\"\r\n" + "			}\r\n" + "		]\r\n" + "	},\r\n" + "	{\r\n"
+			    + "		\"opcUaProperties\": {\r\n" + "			\"serverUrl\": \"opc.tcp://localhost:4334/UA/teste\",\r\n" + "			\"userName\": \"\",\r\n" + "			\"password\": \"\"\r\n" + "		},\r\n"
+			    + "		\"mongoProperties\": {\r\n" + "			\"host\": \"localhost\",\r\n" + "			\"port\": \"27017\",\r\n" + "			\"database\": \"sensor_data_saver\",\r\n"
+			    + "			\"collection\": \"xpto\",\r\n" + "			\"userName\": \"\",\r\n" + "			\"password\": \"\"\r\n" + "		},\r\n" + "		\"fetchCycle\": \"1000\",\r\n" + "		\"opcUaVariables\": [\r\n"
+			    + "			{\r\n" + "				\"name\": \"/0/Objects/0/Server/0/ServiceLevel\",\r\n" + "				\"type\": \"String\",\r\n" + "				\"mongoFieldName\": \"ObjectsServerServiceLevel\"\r\n"
+			    + "			},\r\n" + "			{\r\n" + "				\"name\": \"/0/Objects/0/Server/0/Auditing\",\r\n" + "				\"type\": \"String\",\r\n"
+			    + "				\"mongoFieldName\": \"ObjectsServerAuditing\"\r\n" + "			}\r\n" + "		]\r\n" + "	}\r\n" + "]\r\n" + "";
 
 			List<OpcUaVariablesToFetch> list = jsonConverterService.json2OpcUaVariableToFetchList(jsonInString);
 			assertEquals(2, list.size());
@@ -95,12 +95,12 @@ public class JsonConverterServiceTest {
 	@Test
 	public void testOpcUaVariablesToJsonConvertion() {
 		try {
-			String jsonInString = "	{\r\n" + "		\"opcUaProperties\": {\r\n" + "			\"serverUrl\": \"opc.tcp://localhost:4334/UA/teste\",\r\n" + "			\"userName\": \"\",\r\n"
+			String jsonInString = "{\r\n" + "		\"opcUaProperties\": {\r\n" + "			\"serverUrl\": \"opc.tcp://localhost:4334/UA/teste\",\r\n" + "			\"userName\": \"\",\r\n"
 			    + "			\"password\": \"\"\r\n" + "		},\r\n" + "		\"mongoProperties\": {\r\n" + "			\"host\": \"localhost\",\r\n" + "			\"port\": \"27017\",\r\n"
 			    + "			\"database\": \"sensor_data_saver\",\r\n" + "			\"collection\": \"xpto\",\r\n" + "			\"userName\": \"\",\r\n" + "			\"password\": \"\"\r\n" + "		},\r\n"
-			    + "		\"fetchCycle\": \"1000\",\r\n" + "		\"opcUaVariables\": [\r\n" + "			{\r\n" + "				\"name\": \"/Objects/Server/ServerArray\",\r\n" + "				\"type\": \"String\",\r\n"
-			    + "				\"mongoFieldName\": \"ObjectsServerArray\"\r\n" + "			},\r\n" + "			{\r\n" + "				\"name\": \"/Objects/Server/NamespaceArray\",\r\n" + "				\"type\": \"String\",\r\n"
-			    + "				\"mongoFieldName\": \"ObjectsServerNamespaceArray\"\r\n" + "			}\r\n" + "		]\r\n" + "	}";
+			    + "		\"fetchCycle\": \"1000\",\r\n" + "		\"opcUaVariables\": [\r\n" + "			{\r\n" + "				\"name\": \"/0/Objects/0/Server/0/ServerArray\",\r\n" + "				\"type\": \"String\",\r\n"
+			    + "				\"mongoFieldName\": \"ObjectsServerArray\"\r\n" + "			},\r\n" + "			{\r\n" + "				\"name\": \"/0/Objects/0/Server/0/NamespaceArray\",\r\n"
+			    + "				\"type\": \"String\",\r\n" + "				\"mongoFieldName\": \"ObjectsServerNamespaceArray\"\r\n" + "			}\r\n" + "		]\r\n" + "	}";
 
 			OpcUaVariablesToFetch obj = jsonConverterService.json2OpcUaVariableToFetch(jsonInString);
 
