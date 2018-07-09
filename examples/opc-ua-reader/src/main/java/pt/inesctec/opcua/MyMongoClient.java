@@ -1,6 +1,8 @@
 package pt.inesctec.opcua;
 
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import com.mongodb.MongoClient;
@@ -10,6 +12,8 @@ import com.mongodb.client.MongoCollection;
 import pt.inesctec.opcua.model.MongoProperties;
 
 public class MyMongoClient {
+
+	private Logger logger = LoggerFactory.getLogger(MyMongoClient.class);
 
 	private MongoProperties mongoProperties;
 	private MongoClientURI mongoClientURI;
@@ -62,17 +66,31 @@ public class MyMongoClient {
 			mongoTemplate.dropCollection(mongoProperties.collection);
 	}
 
+	public Document insertItemInCollection(String collection, String jsonItem) {
+		StringBuffer mongoCommand = new StringBuffer();
+		mongoCommand.append("{ \"insert\" : \"");
+		mongoCommand.append(collection);
+		mongoCommand.append("\",");
+		mongoCommand.append("  \"documents\" : [ ");
+		mongoCommand.append(jsonItem);
+		mongoCommand.append("]}");
+
+		return executeJsonCommand(mongoCommand.toString());
+	}
+
 	public Document insertItemInCollection(String jsonItem) {
 		StringBuffer mongoCommand = new StringBuffer();
-		mongoCommand.append("{ \"insertOne\" : \"test-collection\",");
-		mongoCommand.append("  \"document\" : ");
+		mongoCommand.append("{ \"insert\" : \"test-collection\",");
+		mongoCommand.append("  \"documents\" : [ ");
 		mongoCommand.append(jsonItem);
-		mongoCommand.append("}");
+		mongoCommand.append("]}");
 
 		return executeJsonCommand(mongoCommand.toString());
 	}
 
 	public Document executeJsonCommand(String jsonCommand) {
-		return mongoTemplate.executeCommand(jsonCommand);
+		Document doc = mongoTemplate.executeCommand(jsonCommand);
+		logger.info("Mongo command executed: " + "OK: " + doc.getDouble("ok").doubleValue() + " " + jsonCommand );
+		return doc;
 	}
 }

@@ -13,12 +13,14 @@ public class OpcUaVariablesFetcher extends Thread {
 	private Logger logger = LoggerFactory.getLogger(OpcUaVariablesFetcher.class);
 
 	private OpcUaClient opcUaClient;
+	private MyMongoClient myMongoClient;
 	private OpcUaVariablesToFetch opcUaVariablesToFetch;
 	private JsonConverterService jsonConverterService = new JsonConverterService();
 	private boolean shutdown = false;
 
-	public OpcUaVariablesFetcher(OpcUaClient opcUaClient, OpcUaVariablesToFetch opcUaVariablesToFetch) {
+	public OpcUaVariablesFetcher(OpcUaClient opcUaClient, MyMongoClient myMongoClient, OpcUaVariablesToFetch opcUaVariablesToFetch) {
 		this.opcUaClient = opcUaClient;
+		this.myMongoClient = myMongoClient;
 		this.opcUaVariablesToFetch = opcUaVariablesToFetch;
 	}
 
@@ -50,13 +52,8 @@ public class OpcUaVariablesFetcher extends Thread {
 
 	private void saveVariablesOnMongoDb() throws IOException {
 		String jsonOpcVariables = jsonConverterService.convertOpcUaVariablesToJson(opcUaVariablesToFetch);
-		StringBuffer mongoCommand = new StringBuffer();
-		mongoCommand.append("db.");
-		mongoCommand.append(opcUaVariablesToFetch.mongoProperties.collection);
-		mongoCommand.append(".insertOne(");
-		mongoCommand.append(jsonOpcVariables);
-		mongoCommand.append(")");
-		logger.info("Mongo Command: " + mongoCommand);
+
+		myMongoClient.insertItemInCollection(opcUaVariablesToFetch.mongoProperties.collection, jsonOpcVariables);
 	}
 
 	synchronized public void setShutdown(boolean flag) {

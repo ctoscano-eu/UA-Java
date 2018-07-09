@@ -42,7 +42,11 @@ public class ApplicationTest {
 			// Now create and start a Fetcher thread for each OpcUaVariablesToFetch
 			List<OpcUaVariablesFetcher> opcUaVariablesFetcherList = new ArrayList<OpcUaVariablesFetcher>();
 			for (OpcUaVariablesToFetch opcUaVariablesToFetch : list) {
-				OpcUaVariablesFetcher opcUaVariablesFetcher = new OpcUaVariablesFetcher(opcUaClient, opcUaVariablesToFetch);
+				// Create MongoClient
+				MyMongoClient myMongoClient = new MyMongoClient();
+				myMongoClient.create(opcUaVariablesToFetch.mongoProperties);
+
+				OpcUaVariablesFetcher opcUaVariablesFetcher = new OpcUaVariablesFetcher(opcUaClient, myMongoClient, opcUaVariablesToFetch);
 				opcUaVariablesFetcherList.add(opcUaVariablesFetcher);
 
 				opcUaVariablesFetcher.start();

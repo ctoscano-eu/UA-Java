@@ -34,11 +34,11 @@ public class MongoProperties {
 		StringBuffer buf = new StringBuffer();
 		buf.append("host: ");
 		buf.append(host);
-		buf.append("port: ");
+		buf.append(" port: ");
 		buf.append(port);
-		buf.append("database: ");
+		buf.append(" database: ");
 		buf.append(database);
-		buf.append("collection: ");
+		buf.append(" collection: ");
 		buf.append(collection);
 		buf.append(" userName: ");
 		buf.append(userName);

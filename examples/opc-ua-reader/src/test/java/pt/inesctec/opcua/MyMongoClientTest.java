@@ -1,5 +1,6 @@
 package pt.inesctec.opcua;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.bson.Document;
@@ -36,6 +37,8 @@ public class MyMongoClientTest {
 
 			Document document = myMongoClient.insertItemInCollection("{\r\n" + "  \"varName\" : \"varValue\"\r\n" + "}");
 			assertNotNull(document);
+			assertEquals(1, document.getInteger("n").intValue());
+			assertEquals(1.0, document.getDouble("ok").doubleValue(), 0.1);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
