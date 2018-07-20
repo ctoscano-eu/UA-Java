@@ -15,6 +15,7 @@ import pt.inesctec.opcua.model.OpcUaProperties;
 public class OpcUaVariablesToFetchTest {
 
 	private final String serverUrl = "opc.tcp://localhost:4334/UA/teste";
+
 	private OpcUaClient opcUaClient;
 
 	@Before
@@ -34,7 +35,7 @@ public class OpcUaVariablesToFetchTest {
 		try {
 			String[] variables = new String[] { "/0/Objects/0/Server/0/ServerArray", "/0/Objects/0/Server/0/NamespaceArray", "/0/Objects/0/Server/0/ServerStatus", "/0/Objects/0/Server/0/ServerStatus" };
 
-			DataValue[] res = opcUaClient.readVariableValue("opc.tcp://localhost:4334/UA/teste", variables);
+			DataValue[] res = opcUaClient.readVariableValue(serverUrl, variables);
 			assertEquals(4, res.length);
 			for (int i = 0; i < res.length; ++i)
 				assertEquals(StatusCode.GOOD, res[i].getStatusCode());
