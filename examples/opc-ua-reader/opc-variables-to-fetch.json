@@ -1,7 +1,7 @@
 [
 	{
 		"opcUaProperties": {
-			"serverUrl": "opc.tcp://localhost:4334/UA/teste",
+			"serverUrl": "opc.tcp://DESKTOP-UOT12BK:53530/OPCUA/SimulationServer",
 			"userName": "",
 			"password": ""
 		},
@@ -29,7 +29,7 @@
 	},
 	{
 		"opcUaProperties": {
-			"serverUrl": "opc.tcp://localhost:4334/UA/teste",
+      "serverUrl": "opc.tcp://DESKTOP-UOT12BK:53530/OPCUA/SimulationServer",
 			"userName": "",
 			"password": ""
 		},

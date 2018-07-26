@@ -162,7 +162,7 @@ public class OpcUaSession {
 		ReadValueId[] nodesToRead = new ReadValueId[nodeIdArray.length];
 		for (int i = 0; i < nodeIdArray.length; ++i)
 			nodesToRead[i] = new ReadValueId(nodeIdArray[i], Attributes.Value, null, null);
-		ReadResponse res = sessionChannel.Read(null, null, TimestampsToReturn.Neither, nodesToRead);
+		ReadResponse res = sessionChannel.Read(null, null, TimestampsToReturn.Both, nodesToRead);
 
 		logDiagnosticInfos(res.getDiagnosticInfos());
 		logServiceResult(res.getResponseHeader().getServiceResult());
