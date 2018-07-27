@@ -29,7 +29,7 @@ public class ApplicationTest {
 		try {
 			// read OpcUaVariablesToFetch file
 			JsonConverterService jsonConverterService = new JsonConverterService();
-			List<OpcUaVariablesToFetch> list = jsonConverterService.json2OpcUaVariableToFetchList(new File("opc-variables-to-fetch.json"));
+			List<OpcUaVariablesToFetch> list = jsonConverterService.json2OpcUaVariableToFetchList(new File("opc-variables-to-fetch-for-tests.json"));
 
 			// Create OpcUaClient
 			OpcUaClient opcUaClient = new OpcUaClient();

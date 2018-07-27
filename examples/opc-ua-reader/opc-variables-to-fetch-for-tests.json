@@ -1,0 +1,58 @@
+[
+	{
+		"opcUaProperties": {
+			"serverUrl": "opc.tcp://localhost:4334/UA/teste",
+			"userName": "",
+			"password": ""
+		},
+		"mongoProperties": {
+			"host": "localhost",
+			"port": "27017",
+			"database": "sensor_data_saver",
+			"collection": "xpto",
+			"userName": "",
+			"password": ""
+		},
+		"fetchCycle": "1000",
+		"opcUaVariables": [
+			{
+				"name": "/0/Objects/0/Server/0/ServerArray",
+				"type": "String",
+				"mongoFieldName": "ObjectsServerArray"
+			},
+			{
+				"name": "/0/Objects/0/Server/0/NamespaceArray",
+				"type": "String",
+				"mongoFieldName": "ObjectsServerNamespaceArray"
+			}
+		]
+	},
+	{
+		"opcUaProperties": {
+			"serverUrl": "opc.tcp://localhost:4334/UA/teste",
+			"userName": "",
+			"password": ""
+		},
+		"mongoProperties": {
+			"host": "localhost",
+			"port": "27017",
+			"database": "sensor_data_saver",
+			"collection": "xpto",
+			"userName": "",
+			"password": ""
+		},
+		"fetchCycle": "1000",
+		"opcUaVariables": [
+			{
+				"name": "/0/Objects/0/Server/0/ServiceLevel",
+				"type": "String",
+				"mongoFieldName": "ObjectsServerServiceLevel"
+			},
+			{
+				"name": "/0/Objects/0/Server/0/Auditing",
+				"type": "String",
+				"mongoFieldName": "ObjectsServerAuditing"
+			}
+		]
+	}
+]
