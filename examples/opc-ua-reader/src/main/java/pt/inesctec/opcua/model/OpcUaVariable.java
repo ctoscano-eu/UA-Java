@@ -12,6 +12,7 @@ public class OpcUaVariable {
 	public String name;
 	public String type;
 	public String mongoFieldName;
+	public String mongoFieldNameTimeStamp; // not mandatory, may be null
 
 	public OpcUaVariable() {
 		super();
@@ -25,6 +26,10 @@ public class OpcUaVariable {
 		buf.append(type);
 		buf.append(" mongoFieldName: ");
 		buf.append(mongoFieldName);
+		if (mongoFieldNameTimeStamp != null) {
+			buf.append(" mongoFieldNameTimeStamp: ");
+			buf.append(mongoFieldNameTimeStamp);
+		}
 		return buf.toString();
 	}
 
@@ -34,7 +39,8 @@ public class OpcUaVariable {
 			obj.name = node.get("name").textValue();
 			obj.type = node.get("type").textValue();
 			obj.mongoFieldName = node.get("mongoFieldName").textValue();
-
+			if (node.get("mongoFieldNameTimeStamp") != null)
+				obj.mongoFieldNameTimeStamp = node.get("mongoFieldNameTimeStamp").textValue();
 			return obj;
 		}
 		else

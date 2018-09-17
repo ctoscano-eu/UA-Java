@@ -89,10 +89,16 @@ public class OpcUaVariablesToFetch {
 
 		ObjectNode jsonNode = jsonNodeFactory.objectNode();
 		for (int i = 0; i < opcUaVariables.size(); ++i) {
-			if (dataValues[i] != null && dataValues[i].getValue() != null && dataValues[i].getStatusCode().equals(StatusCode.GOOD))
+			if (dataValues[i] != null && dataValues[i].getValue() != null && dataValues[i].getStatusCode().equals(StatusCode.GOOD)) {
 				jsonNode.put(opcUaVariables.get(i).mongoFieldName, dataValues[i].getValue().toString());
-			else
+				if (opcUaVariables.get(i).mongoFieldNameTimeStamp != null)
+					jsonNode.put(opcUaVariables.get(i).mongoFieldNameTimeStamp, dataValues[i].getSourceTimestamp().toString());
+			}
+			else {
 				jsonNode.put(opcUaVariables.get(i).mongoFieldName, ""); // TODO ctoscano if we don't have any value .....
+				if (opcUaVariables.get(i).mongoFieldNameTimeStamp != null)
+					jsonNode.put(opcUaVariables.get(i).mongoFieldNameTimeStamp, ""); // TODO ctoscano if we don't have any value .....
+			}
 		}
 
 		return jsonNode;
