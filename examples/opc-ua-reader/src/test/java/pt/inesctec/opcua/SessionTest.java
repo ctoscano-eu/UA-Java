@@ -35,6 +35,7 @@ public class SessionTest {
 
 	//private final String serverUrl = "opc.tcp://194.117.27.107:53530/OPCUA/SimulationServer";
 	private final String serverUrl = "opc.tcp://localhost:4334/UA/teste";
+	//private final String serverUrl = "opc.tcp://77.54.34.169:16664";
 	//private final String serverUrl = "opc.tcp://194.117.27.178:4334/UA/teste";
 
 	private OpcUaClient opcUaClient;
