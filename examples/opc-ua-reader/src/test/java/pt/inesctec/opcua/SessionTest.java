@@ -52,6 +52,14 @@ public class SessionTest {
 		opcUaClient.shutdownOpcUaSession(serverUrl);
 	}
 
+	
+	@Test
+	public void testParse () {
+		int port1 = Integer.parseInt("16664");
+		int port2 = Integer.parseInt("16663");
+		
+	}
+	
 	@Test
 	public void testBrowseNodeOjectsAndVariables() {
 		try {
