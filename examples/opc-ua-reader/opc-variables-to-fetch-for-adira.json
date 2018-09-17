@@ -1,0 +1,104 @@
+[
+	{
+		"opcUaProperties": {
+			"serverUrl": "opc.tcp://77.54.34.169:16664",
+			"userName": "",
+			"password": ""
+		},
+		"mongoProperties": {
+			"host": "localhost",
+			"port": "27017",
+			"database": "laser-machine",
+			"collection": "xpto",
+			"userName": "",
+			"password": ""
+		},
+		"fetchCycle": "1000",
+		"opcUaVariables": [
+			{
+				"name": "/0/Objects/1/KvCom ax2.ra16",
+				"type": "String",
+				"mongoFieldName": "ax2.ra16",
+        "mongoFieldNameTimeStamp": "ax2.ra16.timestamp"
+			},
+			{
+        "name": "/0/Objects/1/KvCom ax2.ra17",
+        "type": "String",
+        "mongoFieldName": "ax2.ra17",
+        "mongoFieldNameTimeStamp": "ax2.ra17.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom ax2.ra18",
+        "type": "String",
+        "mongoFieldName": "ax2.ra18",
+        "mongoFieldNameTimeStamp": "ax2.ra18.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom ax2.ra24",
+        "type": "String",
+        "mongoFieldName": "ax2.ra24",
+        "mongoFieldNameTimeStamp": "ax2.ra24.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom ax2.ra28",
+        "type": "String",
+        "mongoFieldName": "ax2.ra28",
+        "mongoFieldNameTimeStamp": "ax2.ra28.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom ax2.ra29",
+        "type": "String",
+        "mongoFieldName": "ax2.ra29",
+        "mongoFieldNameTimeStamp": "ax2.ra29.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom ax2.ra5",
+        "type": "String",
+        "mongoFieldName": "ax2.ra5",
+        "mongoFieldNameTimeStamp": "ax2.ra5.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom ax2.ra75",
+        "type": "String",
+        "mongoFieldName": "ax2.ra75",
+        "mongoFieldNameTimeStamp": "ax2.ra75.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom ax4.ra18",
+        "type": "String",
+        "mongoFieldName": "ax4.ra18",
+        "mongoFieldNameTimeStamp": "ax4.ra18.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom ax4.ra28",
+        "type": "String",
+        "mongoFieldName": "ax4.ra28",
+        "mongoFieldNameTimeStamp": "ax4.ra28.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom ax4.ra5",
+        "type": "String",
+        "mongoFieldName": "ax4.ra5",
+        "mongoFieldNameTimeStamp": "ax4.ra5.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom ax4.ra75",
+        "type": "String",
+        "mongoFieldName": "ax4.ra75",
+        "mongoFieldNameTimeStamp": "ax4.ra75.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom prog0.ara",
+        "type": "String",
+        "mongoFieldName": "prog0.ara",
+        "mongoFieldNameTimeStamp": "prog0.ara.timestamp"
+      },
+      {
+        "name": "/0/Objects/1/KvCom prog0.xa",
+        "type": "String",
+        "mongoFieldName": "prog0.xa",
+        "mongoFieldNameTimeStamp": "prog0.xa.timestamp"
+      }
+		]
+	}
+]
